@@ -6,6 +6,7 @@ import java.util.HashMap;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -15,6 +16,8 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 public class Catalog extends ListActivity {
+  private static final String LOG_TAG = "tivo_catalog";
+
   private HashMap<String, String> listItem(int id) {
     HashMap<String, String> map = new HashMap<String, String>();
     map.put("id", String.valueOf(id));
@@ -58,5 +61,17 @@ public class Catalog extends ListActivity {
         }
       }
     });
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    Log.i(LOG_TAG, ">>> onResume()");
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    Log.i(LOG_TAG, ">>> onPause()");
   }
 }
