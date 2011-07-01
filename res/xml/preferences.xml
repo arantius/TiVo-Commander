@@ -7,7 +7,7 @@
   ></EditTextPreference>
   <EditTextPreference android:summary="Media Access Key"
     android:key="tivo_mak" android:title="MAK"
-    android:dialogMessage="Log in to tivo.com, then open the 'Vew media access key' section to find this value."
+    android:dialogMessage="@string/pref_mak_instructions"
   ></EditTextPreference>
   <PreferenceCategory android:title="Advanced"
     android:summary="You should not change these."
