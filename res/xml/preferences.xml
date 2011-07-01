@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-  android:title="TiVo Commander Preferences"
+  android:title="TiVo Commander Settings"
 >
   <EditTextPreference android:summary="IP address or host name"
     android:title="TiVo Address" android:key="tivo_addr"
