@@ -64,14 +64,26 @@ public class Catalog extends ListActivity {
   }
 
   @Override
-  public void onResume() {
-    super.onResume();
-    Log.i(LOG_TAG, ">>> onResume()");
+  public void onDestroy() {
+    super.onPause();
+    Log.i(LOG_TAG, ">>> onDestroy()");
   }
 
   @Override
   public void onPause() {
     super.onPause();
     Log.i(LOG_TAG, ">>> onPause()");
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    Log.i(LOG_TAG, ">>> onResume()");
+  }
+
+  @Override
+  public void onStop() {
+    super.onPause();
+    Log.i(LOG_TAG, ">>> onStop()");
   }
 }
