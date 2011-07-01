@@ -3,7 +3,7 @@
   android:title="TiVo Commander Settings"
 >
   <EditTextPreference android:summary="IP address or host name"
-    android:title="TiVo Address" android:key="tivo_addr"
+    android:key="tivo_addr" android:title="TiVo Address"
   ></EditTextPreference>
   <EditTextPreference android:summary="Media Access Key"
     android:key="tivo_mak" android:title="MAK"
@@ -13,7 +13,8 @@
     android:summary="You should not change these."
   >
     <EditTextPreference android:summary="This should always be 1413"
-      android:title="TiVo Port" android:defaultValue="1413" android:key="tivo_port"
+      android:key="tivo_port" android:title="TiVo Port"
+      android:defaultValue="1413"
     ></EditTextPreference>
   </PreferenceCategory>
 </PreferenceScreen>

@@ -13,20 +13,20 @@ public class Main extends Activity {
   protected Boolean checkSettings() {
     SharedPreferences prefs = PreferenceManager
         .getDefaultSharedPreferences(getBaseContext());
-    String tivo_addr = prefs.getString("tivo_addr", "");
-    String tivo_mak = prefs.getString("tivo_mak", "");
-    Integer tivo_port;
+    String tivoAddr = prefs.getString("tivo_addr", "");
+    String tivoMak = prefs.getString("tivo_mak", "");
+    Integer tivoPort;
     try {
-      tivo_port = Integer.parseInt(prefs.getString("tivo_port", ""));
+      tivoPort = Integer.parseInt(prefs.getString("tivo_port", ""));
     } catch (NumberFormatException e) {
-      tivo_port = 0;
+      tivoPort = 0;
     }
 
-    Log.i(LOG_TAG, "addr: " + tivo_addr);
-    Log.i(LOG_TAG, "mak: " + tivo_mak);
-    Log.i(LOG_TAG, "port: " + tivo_port);
+    Log.i(LOG_TAG, "addr: " + tivoAddr);
+    Log.i(LOG_TAG, "mak: " + tivoMak);
+    Log.i(LOG_TAG, "port: " + tivoPort);
 
-    if ("" == tivo_addr || "" == tivo_mak || 0 >= tivo_port) {
+    if ("" == tivoAddr || "" == tivoMak || 0 >= tivoPort) {
       Intent i = new Intent(getBaseContext(), Settings.class);
       startActivity(i);
       return false;
