@@ -7,26 +7,29 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.arantius.tivocommander.rpc.MindRpc;
+
 public class Main extends Activity {
   private static final String LOG_TAG = "tivo_main";
+
+  public static volatile String mTivoAddr;
+  public static volatile Integer mTivoPort;
+  public static volatile String mTivoMak;
+
+  public static MindRpc mRpc;
 
   protected Boolean checkSettings() {
     SharedPreferences prefs = PreferenceManager
         .getDefaultSharedPreferences(getBaseContext());
-    String tivoAddr = prefs.getString("tivo_addr", "");
-    String tivoMak = prefs.getString("tivo_mak", "");
-    Integer tivoPort;
+    mTivoAddr = prefs.getString("tivo_addr", "");
     try {
-      tivoPort = Integer.parseInt(prefs.getString("tivo_port", ""));
+      mTivoPort = Integer.parseInt(prefs.getString("tivo_port", ""));
     } catch (NumberFormatException e) {
-      tivoPort = 0;
+      mTivoPort = 0;
     }
+    mTivoMak = prefs.getString("tivo_mak", "");
 
-    Log.i(LOG_TAG, "addr: " + tivoAddr);
-    Log.i(LOG_TAG, "mak: " + tivoMak);
-    Log.i(LOG_TAG, "port: " + tivoPort);
-
-    if ("" == tivoAddr || "" == tivoMak || 0 >= tivoPort) {
+    if ("" == mTivoAddr || 0 >= mTivoPort || "" == mTivoMak) {
       Intent i = new Intent(getBaseContext(), Settings.class);
       startActivity(i);
       return false;
@@ -38,18 +41,44 @@ public class Main extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    Log.i(LOG_TAG, ">>> onCreate()");
+
     if (checkSettings()) {
+      startRpc();
+      // Start the catalog activity ...
       Intent i = new Intent(getBaseContext(), Catalog.class);
       startActivity(i);
-      // Remove this (empty) activity from the stack.
+      // ... and remove this (empty) activity from the stack.
       finish();
+    }
+
+    Log.i(LOG_TAG, "<<< onCreate()");
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    Log.i(LOG_TAG, ">>> onPause()");
+
+    if (mRpc != null) {
+      mRpc.interrupt();
     }
   }
 
   @Override
   public void onResume() {
-    super.onResume();
     Log.i(LOG_TAG, ">>> onResume()");
-    checkSettings();
+    super.onResume();
+    startRpc();
+    Log.i(LOG_TAG, "<<< onResume()");
+  }
+
+  private void startRpc() {
+    Log.i(LOG_TAG, ">>> startRpc()");
+    if (checkSettings()
+        && (mRpc == null || mRpc.getState() == Thread.State.NEW)) {
+      mRpc = new MindRpc();
+      mRpc.start();
+    }
   }
 }
