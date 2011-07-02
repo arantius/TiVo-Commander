@@ -16,8 +16,6 @@ public class BodyAuthenticate extends MindRpcRequest {
 
       mData.put("credential", credential);
     } catch (JSONException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
     }
   }
 }

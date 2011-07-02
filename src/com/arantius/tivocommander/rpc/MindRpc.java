@@ -125,12 +125,11 @@ public class MindRpc extends Thread {
       // If necessary, send requests.
       try {
         if (mRequestQueue.peek() != null) {
-          Log.d(LOG_TAG, ">>> make request");
           MindRpcRequest request = mRequestQueue.remove();
           String reqStr = request.toString();
           mOutputStream.write(reqStr);
           mOutputStream.flush();
-          Log.d(LOG_TAG, "<<< make request");
+          Log.d(LOG_TAG, "sent request " + request.getDataString());
         }
       } catch (IOException e) {
         Log.e(LOG_TAG, "write: io exception!", e);

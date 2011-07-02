@@ -29,6 +29,10 @@ public abstract class MindRpcRequest {
     }
   }
 
+  public String getDataString() {
+    return mData.toString();
+  }
+
   public int getRpcId() {
     return mRpcId;
   }

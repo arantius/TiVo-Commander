@@ -51,14 +51,21 @@ public class Catalog extends ListActivity {
             (HashMap<String, String>) adapter.getItem(position);
 
         int listItemId = Integer.parseInt(map.get("id"));
+        Intent intent = null;
         switch (listItemId) {
+        case R.string.catalog_remote:
+          intent = new Intent(getBaseContext(), Remote.class);
+          break;
         case R.string.catalog_settings:
-          Intent i = new Intent(getBaseContext(), Settings.class);
-          startActivity(i);
+          intent = new Intent(getBaseContext(), Settings.class);
           break;
         default:
           Toast.makeText(getApplicationContext(), "Not Implemented",
               Toast.LENGTH_SHORT).show();
+        }
+
+        if (intent != null) {
+          startActivity(intent);
         }
       }
     });
