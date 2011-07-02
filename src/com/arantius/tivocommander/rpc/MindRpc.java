@@ -32,8 +32,8 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseFactory;
 public class MindRpc extends Thread {
   private static final String LOG_TAG = "tivo_mindrpc";
 
-  public static volatile Integer mRequestId = 0;
-  public static volatile Integer mSessionId = 0;
+  public static volatile int mRequestId = 1;
+  public static volatile int mSessionId;
 
   private BufferedReader mInputStream = null;
   private BufferedWriter mOutputStream = null;

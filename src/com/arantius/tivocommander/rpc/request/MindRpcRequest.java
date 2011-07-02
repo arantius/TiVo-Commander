@@ -8,8 +8,8 @@ import android.util.Log;
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public abstract class MindRpcRequest {
-  protected Integer mRequestId = 1;
-  protected Integer mSessionId = 0;
+  private int mRpcId = 1;
+  protected int mSessionId = 0;
 
   protected String mType;
   protected String mResponseCount = "single";

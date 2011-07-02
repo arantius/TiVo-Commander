@@ -13,7 +13,7 @@ public class Main extends Activity {
   private static final String LOG_TAG = "tivo_main";
 
   public static volatile String mTivoAddr;
-  public static volatile Integer mTivoPort;
+  public static volatile int mTivoPort;
   public static volatile String mTivoMak;
 
   public static MindRpc mRpc;
