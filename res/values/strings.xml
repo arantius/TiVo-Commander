@@ -9,4 +9,7 @@
   <string name="catalog_remote">Remote</string>
   <string name="catalog_settings">Settings</string>
   <string name="pref_mak_instructions">"Log in to tivo.com, then open the 'Vew media access key' section to find this value."</string>
+  <string name="error_addr">"Please provide your TiVo's address."</string>
+  <string name="error_port">"Please provide your TiVo's port."</string>
+  <string name="error_mak">"Please provide your TiVo's Media Access Key."</string>
 </resources>

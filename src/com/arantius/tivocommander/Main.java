@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
@@ -29,9 +30,17 @@ public class Main extends Activity {
     }
     mTivoMak = prefs.getString("tivo_mak", "");
 
-    if ("" == mTivoAddr || 0 >= mTivoPort || "" == mTivoMak) {
-      Intent i = new Intent(getBaseContext(), Settings.class);
-      startActivity(i);
+    int error = 0;
+    if ("" == mTivoAddr) {
+      error = R.string.error_addr;
+    } else if (0 >= mTivoPort) {
+      error = R.string.error_port;
+    } else if ("" == mTivoMak) {
+      error = R.string.error_mak;
+    }
+
+    if (error != 0) {
+      settingsError(error);
       return false;
     }
 
@@ -71,6 +80,13 @@ public class Main extends Activity {
     super.onResume();
     startRpc();
     Log.i(LOG_TAG, "<<< onResume()");
+  }
+
+  public void settingsError(int messageId) {
+    Toast.makeText(getApplicationContext(), messageId, Toast.LENGTH_SHORT)
+        .show();
+    Intent i = new Intent(getBaseContext(), Settings.class);
+    startActivity(i);
   }
 
   private void startRpc() {
