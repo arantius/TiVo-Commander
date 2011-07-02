@@ -17,7 +17,7 @@ public abstract class MindRpcRequest {
   protected JSONObject mData = new JSONObject();
 
   public MindRpcRequest(String type) {
-    mRequestId = MindRpc.mRequestId++;
+    setRpcId(MindRpc.getRpcId());
     mSessionId = MindRpc.mSessionId;
     mType = type;
 
@@ -27,6 +27,14 @@ public abstract class MindRpcRequest {
       // TODO Auto-generated catch block
       Log.e("tivo", "can't put type?", e);
     }
+  }
+
+  public int getRpcId() {
+    return mRpcId;
+  }
+
+  protected void setRpcId(int mRpcId) {
+    this.mRpcId = mRpcId;
   }
 
   private String join(String glue, String... s) {
@@ -50,7 +58,7 @@ public abstract class MindRpcRequest {
   public String toString() {
     String sessionIdHeader = String.format("X-ApplicationSessionId:0x%x",
         mSessionId);
-    String headers = join("\r\n", "Type:request", "RpcId:" + mRequestId,
+    String headers = join("\r\n", "Type:request", "RpcId:" + getRpcId(),
         "SchemaVersion:7", "Content-Type:application/json", "RequestType:"
             + mType, "ResponseCount:" + mResponseCount, "BodyId:" + mBodyId,
         "X-ApplicationName:Quicksilver", "X-ApplicationVersion:1.2",

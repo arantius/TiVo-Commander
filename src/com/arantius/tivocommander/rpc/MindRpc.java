@@ -32,7 +32,7 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseFactory;
 public class MindRpc extends Thread {
   private static final String LOG_TAG = "tivo_mindrpc";
 
-  public static volatile int mRequestId = 1;
+  private static volatile int mRpcId = 1;
   public static volatile int mSessionId;
 
   private BufferedReader mInputStream = null;
@@ -53,6 +53,14 @@ public class MindRpc extends Thread {
     public X509Certificate[] getAcceptedIssuers() {
       return new X509Certificate[0];
     }
+  }
+
+  public static int getRpcId() {
+    return mRpcId++;
+  }
+
+  public static void setRpcId(int mRpcId) {
+    MindRpc.mRpcId = mRpcId;
   }
 
   public void addRequest(MindRpcRequest request) {
