@@ -38,8 +38,10 @@ public class MindRpc extends Thread {
   private BufferedReader mInputStream = null;
   private BufferedWriter mOutputStream = null;
 
-  private final ConcurrentLinkedQueue<MindRpcRequest> mRequestQueue = new ConcurrentLinkedQueue<MindRpcRequest>();
-  private final ConcurrentLinkedQueue<MindRpcResponse> mResponseQueue = new ConcurrentLinkedQueue<MindRpcResponse>();
+  private final ConcurrentLinkedQueue<MindRpcRequest> mRequestQueue =
+      new ConcurrentLinkedQueue<MindRpcRequest>();
+  private final ConcurrentLinkedQueue<MindRpcResponse> mResponseQueue =
+      new ConcurrentLinkedQueue<MindRpcResponse>();
 
   protected class AlwaysTrustManager implements X509TrustManager {
     public void checkClientTrusted(X509Certificate[] cert, String authType)
@@ -88,12 +90,12 @@ public class MindRpc extends Thread {
     // And use it to create a socket.
     try {
       mSessionId = 0x26c000 + new Random().nextInt(0xFFFF);
-      Socket sock = sslSocketFactory.createSocket(Main.mTivoAddr,
-          Main.mTivoPort);
-      mInputStream = new BufferedReader(new InputStreamReader(
-          sock.getInputStream()));
-      mOutputStream = new BufferedWriter(new OutputStreamWriter(
-          sock.getOutputStream()));
+      Socket sock =
+          sslSocketFactory.createSocket(Main.mTivoAddr, Main.mTivoPort);
+      mInputStream =
+          new BufferedReader(new InputStreamReader(sock.getInputStream()));
+      mOutputStream =
+          new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
     } catch (UnknownHostException e) {
       Log.i(LOG_TAG, "connect: unknown host!", e);
       return;
@@ -107,7 +109,8 @@ public class MindRpc extends Thread {
   public void run() {
     Log.i(LOG_TAG, ">>> MindRPC run() ...");
 
-    MindRpcResponseFactory mindRpcResponseFactory = new MindRpcResponseFactory();
+    MindRpcResponseFactory mindRpcResponseFactory =
+        new MindRpcResponseFactory();
     connect();
     addRequest(new BodyAuthenticate());
 
@@ -148,12 +151,11 @@ public class MindRpc extends Thread {
           char[] body = new char[bodyLen];
           mInputStream.read(body, 0, bodyLen);
 
-          MindRpcResponse response = mindRpcResponseFactory.create(headers,
-              body);
+          MindRpcResponse response =
+              mindRpcResponseFactory.create(headers, body);
         }
         return;
       } catch (IOException e) {
-        // TODO Auto-generated catch block
         Log.e(LOG_TAG, "read: IOException!", e);
       }
     }

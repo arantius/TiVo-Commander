@@ -20,8 +20,8 @@ public class Main extends Activity {
   public static MindRpc mRpc;
 
   protected Boolean checkSettings() {
-    SharedPreferences prefs = PreferenceManager
-        .getDefaultSharedPreferences(getBaseContext());
+    SharedPreferences prefs =
+        PreferenceManager.getDefaultSharedPreferences(getBaseContext());
     mTivoAddr = prefs.getString("tivo_addr", "");
     try {
       mTivoPort = Integer.parseInt(prefs.getString("tivo_port", ""));

@@ -29,16 +29,17 @@ public class Catalog extends ListActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    ArrayList<HashMap<String, String>> listItems = new ArrayList<HashMap<String, String>>();
+    ArrayList<HashMap<String, String>> listItems =
+        new ArrayList<HashMap<String, String>>();
     listItems.add(this.listItem(R.string.catalog_remote));
     listItems.add(this.listItem(R.string.catalog_my_shows));
     listItems.add(this.listItem(R.string.catalog_browse));
     listItems.add(this.listItem(R.string.catalog_guide));
     listItems.add(this.listItem(R.string.catalog_settings));
 
-    final ListAdapter adapter = new SimpleAdapter(this, listItems,
-        R.layout.list_item, new String[] { "name" },
-        new int[] { R.id.catalog_name });
+    final ListAdapter adapter =
+        new SimpleAdapter(this, listItems, R.layout.list_item,
+            new String[] { "name" }, new int[] { R.id.catalog_name });
     setListAdapter(adapter);
 
     final ListView lv = getListView();
@@ -46,8 +47,8 @@ public class Catalog extends ListActivity {
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id) {
         @SuppressWarnings("unchecked")
-        HashMap<String, String> map = (HashMap<String, String>) adapter
-            .getItem(position);
+        HashMap<String, String> map =
+            (HashMap<String, String>) adapter.getItem(position);
 
         int listItemId = Integer.parseInt(map.get("id"));
         switch (listItemId) {

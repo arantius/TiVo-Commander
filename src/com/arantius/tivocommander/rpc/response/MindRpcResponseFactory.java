@@ -13,8 +13,8 @@ public class MindRpcResponseFactory {
     int rpcId = 0;
 
     String line;
-    BufferedReader headerReader = new BufferedReader(new CharArrayReader(
-        headers));
+    BufferedReader headerReader =
+        new BufferedReader(new CharArrayReader(headers));
     try {
       while ((line = headerReader.readLine()) != null) {
         if (line.length() > 9 && "IsFinal:".equals(line.substring(0, 8))) {
