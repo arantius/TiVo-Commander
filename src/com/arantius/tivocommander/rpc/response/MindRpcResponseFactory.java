@@ -41,7 +41,7 @@ public class MindRpcResponseFactory {
     }
 
     if (responseType.equals("bodyAuthenticateResponse")) {
-      return new BodyAuthenticateResponse(isFinal, rpcId, bodyObj);
+      return new BodyAuthenticate(isFinal, rpcId, bodyObj);
     } else {
       return null;
     }
