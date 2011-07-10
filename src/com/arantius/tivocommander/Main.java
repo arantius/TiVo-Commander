@@ -3,7 +3,6 @@ package com.arantius.tivocommander;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -19,7 +18,7 @@ public class Main extends Activity {
 
   public static MindRpc mRpc;
 
-  protected Boolean checkSettings() {
+  private boolean checkSettings() {
     SharedPreferences prefs =
         PreferenceManager.getDefaultSharedPreferences(getBaseContext());
     mTivoAddr = prefs.getString("tivo_addr", "");
@@ -48,10 +47,9 @@ public class Main extends Activity {
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    Log.i(LOG_TAG, ">>> onCreate()");
-
+  public void onResume() {
+    super.onResume();
+    Log.i(LOG_TAG, ">>> onResume()");
     if (checkSettings()) {
       startRpc();
       // Start the catalog activity ...
@@ -60,25 +58,6 @@ public class Main extends Activity {
       // ... and remove this (empty) activity from the stack.
       finish();
     }
-
-    Log.i(LOG_TAG, "<<< onCreate()");
-  }
-
-  @Override
-  public void onPause() {
-    super.onPause();
-    Log.i(LOG_TAG, ">>> onPause()");
-
-    if (mRpc != null) {
-      mRpc.interrupt();
-    }
-  }
-
-  @Override
-  public void onResume() {
-    Log.i(LOG_TAG, ">>> onResume()");
-    super.onResume();
-    startRpc();
     Log.i(LOG_TAG, "<<< onResume()");
   }
 
@@ -91,10 +70,12 @@ public class Main extends Activity {
 
   private void startRpc() {
     Log.i(LOG_TAG, ">>> startRpc()");
-    if (checkSettings()
-        && (mRpc == null || mRpc.getState() == Thread.State.NEW)) {
+    if (checkSettings()) {
       mRpc = new MindRpc();
-      mRpc.start();
+      int errorCode = mRpc.init();
+      if (errorCode != 0) {
+        settingsError(errorCode);
+      }
     }
   }
 }

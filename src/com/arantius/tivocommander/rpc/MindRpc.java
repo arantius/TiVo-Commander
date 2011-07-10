@@ -13,7 +13,6 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
@@ -24,26 +23,23 @@ import javax.net.ssl.X509TrustManager;
 import android.util.Log;
 
 import com.arantius.tivocommander.Main;
+import com.arantius.tivocommander.R;
 import com.arantius.tivocommander.rpc.request.BodyAuthenticate;
 import com.arantius.tivocommander.rpc.request.MindRpcRequest;
-import com.arantius.tivocommander.rpc.response.MindRpcResponse;
-import com.arantius.tivocommander.rpc.response.MindRpcResponseFactory;
 
-public class MindRpc extends Thread {
+public class MindRpc {
   private static final String LOG_TAG = "tivo_mindrpc";
 
   private static volatile int mRpcId = 1;
   public static volatile int mSessionId;
 
+  private Socket mSocket = null;
   private BufferedReader mInputStream = null;
+  private MindRpcInput mInputThread = null;
   private BufferedWriter mOutputStream = null;
+  private MindRpcOutput mOutputThread = null;
 
-  private final ConcurrentLinkedQueue<MindRpcRequest> mRequestQueue =
-      new ConcurrentLinkedQueue<MindRpcRequest>();
-  private final ConcurrentLinkedQueue<MindRpcResponse> mResponseQueue =
-      new ConcurrentLinkedQueue<MindRpcResponse>();
-
-  protected class AlwaysTrustManager implements X509TrustManager {
+  private class AlwaysTrustManager implements X509TrustManager {
     public void checkClientTrusted(X509Certificate[] cert, String authType)
         throws CertificateException {
     }
@@ -61,15 +57,13 @@ public class MindRpc extends Thread {
     return mRpcId++;
   }
 
-  public static void setRpcId(int mRpcId) {
-    MindRpc.mRpcId = mRpcId;
-  }
-
   public void addRequest(MindRpcRequest request) {
-    mRequestQueue.add(request);
+    mOutputThread.addRequest(request);
   }
 
-  protected void connect() {
+  private final boolean connect() {
+    Log.i(LOG_TAG, ">>> connect() ...");
+
     SSLSocketFactory sslSocketFactory = null;
 
     // Set up the socket factory.
@@ -81,82 +75,88 @@ public class MindRpc extends Thread {
       sslSocketFactory = context.getSocketFactory();
     } catch (KeyManagementException e) {
       Log.e(LOG_TAG, "ssl: KeyManagementException!", e);
-      return;
+      return false;
     } catch (NoSuchAlgorithmException e) {
       Log.e(LOG_TAG, "ssl: NoSuchAlgorithmException!", e);
-      return;
+      return false;
     }
 
     // And use it to create a socket.
     try {
       mSessionId = 0x26c000 + new Random().nextInt(0xFFFF);
-      Socket sock =
+      mSocket =
           sslSocketFactory.createSocket(Main.mTivoAddr, Main.mTivoPort);
       mInputStream =
-          new BufferedReader(new InputStreamReader(sock.getInputStream()));
+          new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
       mOutputStream =
-          new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
+          new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
     } catch (UnknownHostException e) {
       Log.i(LOG_TAG, "connect: unknown host!", e);
-      return;
+      return false;
     } catch (IOException e) {
       Log.e(LOG_TAG, "connect: io exception!", e);
-      return;
+      return false;
+    }
+
+    return true;
+  }
+
+  private void disconnect() {
+    if (mInputStream != null) {
+      try {
+        mInputStream.close();
+      } catch (IOException e) {
+        Log.e(LOG_TAG, "disconnect()", e);
+      }
+    }
+    if (mOutputStream != null) {
+      try {
+        mOutputStream.close();
+      } catch (IOException e) {
+        Log.e(LOG_TAG, "disconnect()", e);
+      }
+    }
+    if (mSocket != null) {
+      try {
+        mSocket.close();
+      } catch (IOException e) {
+        Log.e(LOG_TAG, "disconnect()", e);
+      }
     }
   }
 
-  @Override
-  public void run() {
-    Log.i(LOG_TAG, ">>> MindRPC run() ...");
+  public int init() {
+    Log.i(LOG_TAG, ">>> init() ...");
 
-    MindRpcResponseFactory mindRpcResponseFactory =
-        new MindRpcResponseFactory();
-    connect();
+    stopThreads();
+    disconnect();
+    if (!connect()) {
+      return R.string.error_connect;
+    }
+
+    mInputThread = new MindRpcInput();
+    mInputThread.setStream(mInputStream);
+    mInputThread.start();
+
+    mOutputThread = new MindRpcOutput();
+    mOutputThread.setStream(mOutputStream);
+    mOutputThread.start();
+
     addRequest(new BodyAuthenticate());
 
-    while (true) {
-      // Limit worst case battery consumption?
-      try {
-        Thread.sleep(333);
-      } catch (InterruptedException e) {
-        Log.e(LOG_TAG, "MindRPC sleep was interrupted!", e);
-      }
+    return 0;
+  }
 
-      // If necessary, send requests.
-      try {
-        if (mRequestQueue.peek() != null) {
-          MindRpcRequest request = mRequestQueue.remove();
-          String reqStr = request.toString();
-          mOutputStream.write(reqStr);
-          mOutputStream.flush();
-          Log.d(LOG_TAG, "sent request " + request.getDataString());
-        }
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "write: io exception!", e);
-      }
-
-      // If necessary, read responses.
-      try {
-        Log.d(LOG_TAG, "Reading a response ... ");
-        String respLine = mInputStream.readLine();
-        if ("MRPC/2".equals(respLine.substring(0, 6))) {
-          String[] bytes = respLine.split(" ");
-          int headerLen = Integer.parseInt(bytes[1]);
-          int bodyLen = Integer.parseInt(bytes[2]);
-
-          char[] headers = new char[headerLen];
-          mInputStream.read(headers, 0, headerLen);
-
-          char[] body = new char[bodyLen];
-          mInputStream.read(body, 0, bodyLen);
-
-          MindRpcResponse response =
-              mindRpcResponseFactory.create(headers, body);
-        }
-        return;
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "read: IOException!", e);
-      }
+  private void stopThreads() {
+    if (mInputThread != null) {
+      mInputThread.mStopFlag = true;
+      mInputThread.interrupt();
+      mInputThread = null;
+    }
+    if (mOutputThread != null) {
+      mOutputThread.mStopFlag = true;
+      mOutputThread.interrupt();
+      mOutputThread = null;
     }
   }
 }
