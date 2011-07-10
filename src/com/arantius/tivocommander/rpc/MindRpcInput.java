@@ -13,12 +13,12 @@ public class MindRpcInput extends Thread {
   private static final String LOG_TAG = "tivo_mindrpc_input";
   public boolean mStopFlag = false;
 
-  private BufferedReader mStream = null;
+  private final BufferedReader mStream;
   private final ConcurrentLinkedQueue<MindRpcResponse> mResponseQueue =
       new ConcurrentLinkedQueue<MindRpcResponse>();
 
-  public void setStream(BufferedReader stream) {
-    this.mStream = stream;
+  public MindRpcInput(BufferedReader stream) {
+    mStream = stream;
   }
 
   @Override

@@ -134,12 +134,10 @@ public class MindRpc {
       return R.string.error_connect;
     }
 
-    mInputThread = new MindRpcInput();
-    mInputThread.setStream(mInputStream);
+    mInputThread = new MindRpcInput(mInputStream);
     mInputThread.start();
 
-    mOutputThread = new MindRpcOutput();
-    mOutputThread.setStream(mOutputStream);
+    mOutputThread = new MindRpcOutput(mOutputStream);
     mOutputThread.start();
 
     addRequest(new BodyAuthenticate());

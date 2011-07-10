@@ -12,12 +12,12 @@ public class MindRpcOutput extends Thread {
   private static final String LOG_TAG = "tivo_mindrpc_output";
   public boolean mStopFlag = false;
 
-  private BufferedWriter mStream = null;
+  private final BufferedWriter mStream;
   private final ConcurrentLinkedQueue<MindRpcRequest> mRequestQueue =
       new ConcurrentLinkedQueue<MindRpcRequest>();
 
-  public void setStream(BufferedWriter stream) {
-    this.mStream = stream;
+  public MindRpcOutput(BufferedWriter stream) {
+    mStream = stream;
   }
 
   public void addRequest(MindRpcRequest request) {
