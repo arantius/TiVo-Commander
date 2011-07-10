@@ -12,25 +12,24 @@ import com.arantius.tivocommander.rpc.request.KeyEventSend;
 import com.arantius.tivocommander.rpc.request.MindRpcRequest;
 
 public class Remote extends ListActivity {
-  static final String[] actions = { "Pause", "Rewind", "Fast forward", "Up",
-      "Down", "Left", "Right", "Select" };
+  static final String[] labels = { "Play", "Pause", "Rewind", "Fast forward",
+      "Up", "Down", "Left", "Right", "Select" };
+  static final String[] events = { "play", "pause", "reverse", "forward", "up",
+      "down", "left", "right", "select" };
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     // setContentView(R.layout.main);
     setListAdapter(new ArrayAdapter<String>(this,
-        android.R.layout.simple_list_item_1, actions));
+        android.R.layout.simple_list_item_1, labels));
 
     final ListView lv = getListView();
     lv.setOnItemClickListener(new OnItemClickListener() {
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id) {
-        switch (position) {
-        case 0:
-          MindRpcRequest request = new KeyEventSend("pause");
-          Main.mRpc.addRequest(request);
-        }
+        MindRpcRequest request = new KeyEventSend(events[position]);
+        Main.mRpc.addRequest(request);
       }
     });
   }
