@@ -49,7 +49,9 @@ public class MindRpcInput extends Thread {
 
           MindRpcResponse response =
               mindRpcResponseFactory.create(headers, body);
-          mResponseQueue.add(response);
+          if (response != null) {
+            mResponseQueue.add(response);
+          }
         }
       } catch (IOException e) {
         Log.e(LOG_TAG, "read: IOException!", e);

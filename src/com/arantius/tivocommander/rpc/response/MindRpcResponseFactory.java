@@ -7,6 +7,8 @@ import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 public class MindRpcResponseFactory {
   public MindRpcResponse create(char[] headers, char[] body) {
     Boolean isFinal = true;
@@ -43,6 +45,8 @@ public class MindRpcResponseFactory {
     if (responseType.equals("bodyAuthenticateResponse")) {
       return new BodyAuthenticate(isFinal, rpcId, bodyObj);
     } else {
+      Log.e("tivo_response_factory", "Unknown response type, got data: "
+          + new String(body));
       return null;
     }
   }
