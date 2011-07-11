@@ -38,8 +38,8 @@ public class Catalog extends ListActivity {
     listItems.add(this.listItem(R.string.catalog_settings));
 
     final ListAdapter adapter =
-        new SimpleAdapter(this, listItems, R.layout.list_item,
-            new String[] { "name" }, new int[] { R.id.catalog_name });
+        new SimpleAdapter(this, listItems, android.R.layout.simple_list_item_1,
+            new String[] { "name" }, new int[] { android.R.id.text1 });
     setListAdapter(adapter);
 
     final ListView lv = getListView();
