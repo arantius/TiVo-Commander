@@ -24,7 +24,6 @@ public abstract class MindRpcRequest {
     try {
       mData.put("type", mType);
     } catch (JSONException e) {
-      // TODO Auto-generated catch block
       Log.e("tivo", "can't put type?", e);
     }
   }

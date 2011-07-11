@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 import java.util.Random;
 
 import javax.net.ssl.KeyManager;
@@ -27,9 +28,17 @@ import com.arantius.tivocommander.Main;
 import com.arantius.tivocommander.R;
 import com.arantius.tivocommander.rpc.request.BodyAuthenticate;
 import com.arantius.tivocommander.rpc.request.MindRpcRequest;
+import com.arantius.tivocommander.rpc.response.MindRpcResponse;
+import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class MindRpc {
   private static final String LOG_TAG = "tivo_mindrpc";
+
+  // Singleton.
+  public static final MindRpc INSTANCE = new MindRpc();
+  private MindRpc() {
+    // Private constructor enforces singleton-ness.
+  }
 
   private static volatile int mRpcId = 1;
   private static volatile int mSessionId;
@@ -39,6 +48,8 @@ public class MindRpc {
   private MindRpcInput mInputThread = null;
   private BufferedWriter mOutputStream = null;
   private MindRpcOutput mOutputThread = null;
+  private final HashMap<Integer, MindRpcResponseListener> mResponseListenerMap =
+      new HashMap<Integer, MindRpcResponseListener>();
 
   private class AlwaysTrustManager implements X509TrustManager {
     public void checkClientTrusted(X509Certificate[] cert, String authType)
@@ -62,8 +73,18 @@ public class MindRpc {
     return mSessionId;
   }
 
-  public void addRequest(MindRpcRequest request) {
+  /**
+   * Add an outgoing request to the queue.
+   *
+   * @param request The requestequest to be sent.
+   * @param listener The object to notify when the response(s) come back.
+   */
+  public void addRequest(MindRpcRequest request,
+      MindRpcResponseListener listener) {
     mOutputThread.addRequest(request);
+    if (listener != null) {
+      mResponseListenerMap.put(request.getRpcId(), listener);
+    }
   }
 
   private final boolean connect() {
@@ -89,8 +110,7 @@ public class MindRpc {
     // And use it to create a socket.
     try {
       mSessionId = 0x26c000 + new Random().nextInt(0xFFFF);
-      mSocket =
-          sslSocketFactory.createSocket(Main.mTivoAddr, Main.mTivoPort);
+      mSocket = sslSocketFactory.createSocket(Main.mTivoAddr, Main.mTivoPort);
       mInputStream =
           new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
       mOutputStream =
@@ -130,6 +150,17 @@ public class MindRpc {
     }
   }
 
+  protected void dispatchResponse(MindRpcResponse response) {
+    Integer rpcId = response.getRpcId();
+    if (!mResponseListenerMap.containsKey(rpcId)) {
+      return;
+    }
+
+    mResponseListenerMap.get(rpcId).onResponse(response);
+    // TODO: Remove only when the response .isFinal().
+    mResponseListenerMap.remove(rpcId);
+  }
+
   public int init(Activity originActivity) {
     Log.i(LOG_TAG, ">>> init() ...");
 
@@ -145,7 +176,11 @@ public class MindRpc {
     mOutputThread = new MindRpcOutput(mOutputStream);
     mOutputThread.start();
 
-    addRequest(new BodyAuthenticate());
+    addRequest(new BodyAuthenticate(), new MindRpcResponseListener() {
+      public void onResponse(MindRpcResponse response) {
+        Log.d(LOG_TAG, "Listener for bodyauth ran!");
+      }
+    });
 
     return 0;
   }

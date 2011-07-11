@@ -2,20 +2,20 @@ package com.arantius.tivocommander.rpc;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.util.Log;
 
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseFactory;
 
+/**
+ * Handle network level input. Generate appropriate response objects.
+ */
 public class MindRpcInput extends Thread {
   private static final String LOG_TAG = "tivo_mindrpc_input";
   public boolean mStopFlag = false;
 
   private final BufferedReader mStream;
-  private final ConcurrentLinkedQueue<MindRpcResponse> mResponseQueue =
-      new ConcurrentLinkedQueue<MindRpcResponse>();
 
   public MindRpcInput(BufferedReader stream) {
     mStream = stream;
@@ -50,7 +50,7 @@ public class MindRpcInput extends Thread {
           MindRpcResponse response =
               mindRpcResponseFactory.create(headers, body);
           if (response != null) {
-            mResponseQueue.add(response);
+            MindRpc.INSTANCE.dispatchResponse(response);
           }
         }
       } catch (IOException e) {

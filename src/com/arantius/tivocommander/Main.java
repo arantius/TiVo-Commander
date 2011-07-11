@@ -16,8 +16,6 @@ public class Main extends Activity {
   public static volatile int mTivoPort;
   public static volatile String mTivoMak;
 
-  public static MindRpc mRpc;
-
   private boolean checkSettings() {
     SharedPreferences prefs =
         PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -71,8 +69,7 @@ public class Main extends Activity {
   private void startRpc() {
     Log.i(LOG_TAG, ">>> startRpc()");
     if (checkSettings()) {
-      mRpc = new MindRpc();
-      int errorCode = mRpc.init(this);
+      int errorCode = MindRpc.INSTANCE.init(this);
       if (errorCode != 0) {
         settingsError(errorCode);
       }
