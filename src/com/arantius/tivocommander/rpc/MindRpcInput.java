@@ -50,6 +50,7 @@ public class MindRpcInput extends Thread {
           MindRpcResponse response =
               mindRpcResponseFactory.create(headers, body);
           if (response != null) {
+            // TODO: This needs to be properly delegated to the UI thread.
             MindRpc.dispatchResponse(response);
           }
         }
