@@ -34,7 +34,7 @@ public class Remote extends ListActivity {
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id) {
         MindRpcRequest request = new KeyEventSend(events[position]);
-        MindRpc.INSTANCE.addRequest(request, new MindRpcResponseListener() {
+        MindRpc.addRequest(request, new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             Log.d(LOG_TAG, "Listener for remote ran!");
           }

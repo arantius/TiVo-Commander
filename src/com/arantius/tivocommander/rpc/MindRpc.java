@@ -31,27 +31,23 @@ import com.arantius.tivocommander.rpc.request.MindRpcRequest;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
-public class MindRpc {
-  private static final String LOG_TAG = "tivo_mindrpc";
+public enum MindRpc {
+  INSTANCE;
 
-  // Singleton.
-  public static final MindRpc INSTANCE = new MindRpc();
-  private MindRpc() {
-    // Private constructor enforces singleton-ness.
-  }
+  private static final String LOG_TAG = "tivo_mindrpc";
 
   private static volatile int mRpcId = 1;
   private static volatile int mSessionId;
 
-  private Socket mSocket = null;
-  private BufferedReader mInputStream = null;
-  private MindRpcInput mInputThread = null;
-  private BufferedWriter mOutputStream = null;
-  private MindRpcOutput mOutputThread = null;
-  private final HashMap<Integer, MindRpcResponseListener> mResponseListenerMap =
+  private static Socket mSocket = null;
+  private static BufferedReader mInputStream = null;
+  private static MindRpcInput mInputThread = null;
+  private static BufferedWriter mOutputStream = null;
+  private static MindRpcOutput mOutputThread = null;
+  private static HashMap<Integer, MindRpcResponseListener> mResponseListenerMap =
       new HashMap<Integer, MindRpcResponseListener>();
 
-  private class AlwaysTrustManager implements X509TrustManager {
+  private static class AlwaysTrustManager implements X509TrustManager {
     public void checkClientTrusted(X509Certificate[] cert, String authType)
         throws CertificateException {
     }
@@ -79,7 +75,7 @@ public class MindRpc {
    * @param request The requestequest to be sent.
    * @param listener The object to notify when the response(s) come back.
    */
-  public void addRequest(MindRpcRequest request,
+  public static void addRequest(MindRpcRequest request,
       MindRpcResponseListener listener) {
     mOutputThread.addRequest(request);
     if (listener != null) {
@@ -87,7 +83,7 @@ public class MindRpc {
     }
   }
 
-  private final boolean connect() {
+  private static boolean connect() {
     Log.i(LOG_TAG, ">>> connect() ...");
 
     SSLSocketFactory sslSocketFactory = null;
@@ -126,7 +122,7 @@ public class MindRpc {
     return true;
   }
 
-  private void disconnect() {
+  private static void disconnect() {
     if (mInputStream != null) {
       try {
         mInputStream.close();
@@ -150,7 +146,7 @@ public class MindRpc {
     }
   }
 
-  protected void dispatchResponse(MindRpcResponse response) {
+  protected static void dispatchResponse(MindRpcResponse response) {
     Integer rpcId = response.getRpcId();
     if (!mResponseListenerMap.containsKey(rpcId)) {
       return;
@@ -161,7 +157,7 @@ public class MindRpc {
     mResponseListenerMap.remove(rpcId);
   }
 
-  public int init(Activity originActivity) {
+  public static int init(Activity originActivity) {
     Log.i(LOG_TAG, ">>> init() ...");
 
     stopThreads();
@@ -185,7 +181,7 @@ public class MindRpc {
     return 0;
   }
 
-  private void stopThreads() {
+  private static void stopThreads() {
     if (mInputThread != null) {
       mInputThread.mStopFlag = true;
       mInputThread.interrupt();

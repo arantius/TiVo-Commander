@@ -50,7 +50,7 @@ public class MindRpcInput extends Thread {
           MindRpcResponse response =
               mindRpcResponseFactory.create(headers, body);
           if (response != null) {
-            MindRpc.INSTANCE.dispatchResponse(response);
+            MindRpc.dispatchResponse(response);
           }
         }
       } catch (IOException e) {

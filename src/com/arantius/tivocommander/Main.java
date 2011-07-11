@@ -69,7 +69,7 @@ public class Main extends Activity {
   private void startRpc() {
     Log.i(LOG_TAG, ">>> startRpc()");
     if (checkSettings()) {
-      int errorCode = MindRpc.INSTANCE.init(this);
+      int errorCode = MindRpc.init(this);
       if (errorCode != 0) {
         settingsError(errorCode);
       }
