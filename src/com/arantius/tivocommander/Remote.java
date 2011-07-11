@@ -12,10 +12,12 @@ import com.arantius.tivocommander.rpc.request.KeyEventSend;
 import com.arantius.tivocommander.rpc.request.MindRpcRequest;
 
 public class Remote extends ListActivity {
-  static final String[] labels = { "Play", "Pause", "Rewind", "Fast forward",
-      "Up", "Down", "Left", "Right", "Select" };
-  static final String[] events = { "play", "pause", "reverse", "forward", "up",
-      "down", "left", "right", "select" };
+  private static final String LOG_TAG = "tivo_catalog";
+
+  private static final String[] labels = { "Play", "Pause", "Rewind",
+      "Fast forward", "Up", "Down", "Left", "Right", "Select" };
+  private static final String[] events = { "play", "pause", "reverse",
+      "forward", "up", "down", "left", "right", "select" };
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
