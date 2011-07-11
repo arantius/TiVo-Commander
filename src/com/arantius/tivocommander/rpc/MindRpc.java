@@ -22,10 +22,14 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.arantius.tivocommander.Main;
 import com.arantius.tivocommander.R;
+import com.arantius.tivocommander.Settings;
 import com.arantius.tivocommander.rpc.request.BodyAuthenticate;
 import com.arantius.tivocommander.rpc.request.MindRpcRequest;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
@@ -38,6 +42,10 @@ public enum MindRpc {
 
   private static volatile int mRpcId = 1;
   private static volatile int mSessionId;
+
+  private static String mTivoAddr;
+  private static int mTivoPort;
+  private static String mTivoMak;
 
   private static Socket mSocket = null;
   private static BufferedReader mInputStream = null;
@@ -106,7 +114,7 @@ public enum MindRpc {
     // And use it to create a socket.
     try {
       mSessionId = 0x26c000 + new Random().nextInt(0xFFFF);
-      mSocket = sslSocketFactory.createSocket(Main.mTivoAddr, Main.mTivoPort);
+      mSocket = sslSocketFactory.createSocket(mTivoAddr, mTivoPort);
       mInputStream =
           new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
       mOutputStream =
@@ -157,13 +165,19 @@ public enum MindRpc {
     mResponseListenerMap.remove(rpcId);
   }
 
-  public static int init(Activity originActivity) {
+  public static void init(final Activity originActivity) {
     Log.i(LOG_TAG, ">>> init() ...");
 
     stopThreads();
     disconnect();
+
+    if (!checkSettings(originActivity)) {
+      return;
+    }
+
     if (!connect()) {
-      return R.string.error_connect;
+      settingsError(originActivity, R.string.error_connect);
+      return;
     }
 
     mInputThread = new MindRpcInput(mInputStream);
@@ -178,7 +192,40 @@ public enum MindRpc {
       }
     });
 
-    return 0;
+  private static boolean checkSettings(Activity activity) {
+    SharedPreferences prefs =
+        PreferenceManager
+            .getDefaultSharedPreferences(activity.getBaseContext());
+    mTivoAddr = prefs.getString("tivo_addr", "");
+    try {
+      mTivoPort = Integer.parseInt(prefs.getString("tivo_port", ""));
+    } catch (NumberFormatException e) {
+      mTivoPort = 0;
+    }
+    mTivoMak = prefs.getString("tivo_mak", "");
+
+    int error = 0;
+    if ("" == mTivoAddr) {
+      error = R.string.error_addr;
+    } else if (0 >= mTivoPort) {
+      error = R.string.error_port;
+    } else if ("" == mTivoMak) {
+      error = R.string.error_mak;
+    }
+
+    if (error != 0) {
+      settingsError(activity, error);
+      return false;
+    }
+
+    return true;
+  }
+
+  private static void settingsError(Activity activity, int messageId) {
+    Toast.makeText(activity.getBaseContext(), messageId,
+        Toast.LENGTH_SHORT).show();
+    Intent i = new Intent(activity.getBaseContext(), Settings.class);
+    activity.startActivity(i);
   }
 
   private static void stopThreads() {

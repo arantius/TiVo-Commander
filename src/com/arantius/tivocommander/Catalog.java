@@ -15,6 +15,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.arantius.tivocommander.rpc.MindRpc;
+
 public class Catalog extends ListActivity {
   private static final String LOG_TAG = "tivo_catalog";
 
@@ -87,6 +89,7 @@ public class Catalog extends ListActivity {
   public void onResume() {
     super.onResume();
     Log.i(LOG_TAG, ">>> onResume()");
+    MindRpc.init(this);
   }
 
   @Override

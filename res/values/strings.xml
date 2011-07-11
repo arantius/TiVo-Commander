@@ -12,5 +12,6 @@
   <string name="error_addr">"Please provide your TiVo's address."</string>
   <string name="error_port">"Please provide your TiVo's port."</string>
   <string name="error_mak">"Please provide your TiVo's Media Access Key."</string>
-  <string name="error_connect">Could not connect; check settings.</string>
+  <string name="error_connect">Could not connect; check host &amp; port settings.</string>
+  <string name="error_auth">Authentication failed; check MAK settings.</string>
 </resources>

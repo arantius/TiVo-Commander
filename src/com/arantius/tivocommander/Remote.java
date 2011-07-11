@@ -42,4 +42,11 @@ public class Remote extends ListActivity {
       }
     });
   }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    Log.i(LOG_TAG, ">>> onResume()");
+    MindRpc.init(this);
+  }
 }
