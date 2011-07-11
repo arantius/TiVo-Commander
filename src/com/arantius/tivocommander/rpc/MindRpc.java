@@ -32,7 +32,7 @@ public class MindRpc {
   private static final String LOG_TAG = "tivo_mindrpc";
 
   private static volatile int mRpcId = 1;
-  public static volatile int mSessionId;
+  private static volatile int mSessionId;
 
   private Socket mSocket = null;
   private BufferedReader mInputStream = null;
@@ -56,6 +56,10 @@ public class MindRpc {
 
   public static int getRpcId() {
     return mRpcId++;
+  }
+
+  public static int getSessionId() {
+    return mSessionId;
   }
 
   public void addRequest(MindRpcRequest request) {

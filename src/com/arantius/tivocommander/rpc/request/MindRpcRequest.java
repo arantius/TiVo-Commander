@@ -18,7 +18,7 @@ public abstract class MindRpcRequest {
 
   public MindRpcRequest(String type) {
     setRpcId(MindRpc.getRpcId());
-    mSessionId = MindRpc.mSessionId;
+    mSessionId = MindRpc.getSessionId();
     mType = type;
 
     try {
