@@ -20,6 +20,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import android.app.Activity;
 import android.util.Log;
 
 import com.arantius.tivocommander.Main;
@@ -125,7 +126,7 @@ public class MindRpc {
     }
   }
 
-  public int init() {
+  public int init(Activity originActivity) {
     Log.i(LOG_TAG, ">>> init() ...");
 
     stopThreads();
