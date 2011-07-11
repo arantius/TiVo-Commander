@@ -44,6 +44,8 @@ public class MindRpcResponseFactory {
 
     if (responseType.equals("bodyAuthenticateResponse")) {
       return new BodyAuthenticateResponse(isFinal, rpcId, bodyObj);
+    } else if (responseType.equals("success")) {
+      return new SuccessResponse(isFinal, rpcId, bodyObj);
     } else {
       Log.e("tivo_response_factory", "Unknown response type, got data: "
           + new String(body));
