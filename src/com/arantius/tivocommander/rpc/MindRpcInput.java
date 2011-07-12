@@ -47,10 +47,9 @@ public class MindRpcInput extends Thread {
           char[] body = new char[bodyLen];
           mStream.read(body, 0, bodyLen);
 
-          MindRpcResponse response =
+          final MindRpcResponse response =
               mindRpcResponseFactory.create(headers, body);
           if (response != null) {
-            // TODO: This needs to be properly delegated to the UI thread.
             MindRpc.dispatchResponse(response);
           }
         }

@@ -40,6 +40,7 @@ public enum MindRpc {
 
   private static final String LOG_TAG = "tivo_mindrpc";
 
+  private static Activity mOriginActivity;
   private static volatile int mRpcId = 1;
   private static volatile int mSessionId;
 
@@ -154,19 +155,25 @@ public enum MindRpc {
     }
   }
 
-  protected static void dispatchResponse(MindRpcResponse response) {
-    Integer rpcId = response.getRpcId();
+  protected static void dispatchResponse(final MindRpcResponse response) {
+    final Integer rpcId = response.getRpcId();
     if (!mResponseListenerMap.containsKey(rpcId)) {
       return;
     }
 
-    mResponseListenerMap.get(rpcId).onResponse(response);
-    // TODO: Remove only when the response .isFinal().
-    mResponseListenerMap.remove(rpcId);
+    mOriginActivity.runOnUiThread(new Runnable() {
+      public void run() {
+        mResponseListenerMap.get(rpcId).onResponse(response);
+        // TODO: Remove only when the response .isFinal().
+        mResponseListenerMap.remove(rpcId);
+      }
+    });
   }
 
   public static void init(final Activity originActivity) {
     Log.i(LOG_TAG, ">>> init() ...");
+
+    mOriginActivity = originActivity;
 
     stopThreads();
     disconnect();
@@ -186,11 +193,14 @@ public enum MindRpc {
     mOutputThread = new MindRpcOutput(mOutputStream);
     mOutputThread.start();
 
-    addRequest(new BodyAuthenticate(), new MindRpcResponseListener() {
+    addRequest(new BodyAuthenticate(mTivoMak), new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
-        Log.d(LOG_TAG, "Listener for bodyauth ran!");
+        if (response.get("status").equals("failure")) {
+          settingsError(originActivity, R.string.error_auth);
+        }
       }
     });
+  }
 
   private static boolean checkSettings(Activity activity) {
     SharedPreferences prefs =
@@ -222,6 +232,8 @@ public enum MindRpc {
   }
 
   private static void settingsError(Activity activity, int messageId) {
+    stopThreads();
+    disconnect();
     Toast.makeText(activity.getBaseContext(), messageId,
         Toast.LENGTH_SHORT).show();
     Intent i = new Intent(activity.getBaseContext(), Settings.class);
