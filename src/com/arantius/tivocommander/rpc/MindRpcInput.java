@@ -13,7 +13,7 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseFactory;
  */
 public class MindRpcInput extends Thread {
   private static final String LOG_TAG = "tivo_mindrpc_input";
-  public boolean mStopFlag = false;
+  public volatile boolean mStopFlag = false;
 
   private final BufferedReader mStream;
 
@@ -36,6 +36,10 @@ public class MindRpcInput extends Thread {
       try {
         Log.d(LOG_TAG, "Reading a response ... ");
         String respLine = mStream.readLine();
+        if (respLine == null) {
+          // The socket has closed.
+          break;
+        }
         if ("MRPC/2".equals(respLine.substring(0, 6))) {
           String[] bytes = respLine.split(" ");
           int headerLen = Integer.parseInt(bytes[1]);

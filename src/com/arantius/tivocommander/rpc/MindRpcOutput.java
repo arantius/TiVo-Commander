@@ -13,7 +13,7 @@ import com.arantius.tivocommander.rpc.request.MindRpcRequest;
  */
 public class MindRpcOutput extends Thread {
   private static final String LOG_TAG = "tivo_mindrpc_output";
-  public boolean mStopFlag = false;
+  public volatile boolean mStopFlag = false;
 
   private final BufferedWriter mStream;
 
@@ -42,7 +42,7 @@ public class MindRpcOutput extends Thread {
       try {
         Thread.sleep(33);
       } catch (InterruptedException e) {
-        Log.e(LOG_TAG, "MindRPC sleep was interrupted!", e);
+        break;
       }
 
       // If necessary, send requests.

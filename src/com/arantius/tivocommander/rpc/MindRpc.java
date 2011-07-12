@@ -132,6 +132,13 @@ public enum MindRpc {
   }
 
   private static void disconnect() {
+    if (mSocket != null) {
+      try {
+        mSocket.close();
+      } catch (IOException e) {
+        Log.e(LOG_TAG, "disconnect()", e);
+      }
+    }
     if (mInputStream != null) {
       try {
         mInputStream.close();
@@ -142,13 +149,6 @@ public enum MindRpc {
     if (mOutputStream != null) {
       try {
         mOutputStream.close();
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "disconnect()", e);
-      }
-    }
-    if (mSocket != null) {
-      try {
-        mSocket.close();
       } catch (IOException e) {
         Log.e(LOG_TAG, "disconnect()", e);
       }
