@@ -175,6 +175,11 @@ public enum MindRpc {
 
     mOriginActivity = originActivity;
 
+    if (checkConnected()) {
+      // Already connected? Great.
+      return;
+    }
+
     stopThreads();
     disconnect();
 
@@ -200,6 +205,20 @@ public enum MindRpc {
         }
       }
     });
+  }
+
+  private static boolean checkConnected() {
+    if (mInputThread == null
+        || mInputThread.getState() == Thread.State.TERMINATED
+        || mOutputThread == null
+        || mOutputThread.getState() == Thread.State.TERMINATED) {
+      return false;
+    }
+    if (mSocket == null || mSocket.isClosed()) {
+      return false;
+    }
+
+    return true;
   }
 
   private static boolean checkSettings(Activity activity) {
