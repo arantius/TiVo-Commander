@@ -39,7 +39,7 @@ public class MindRpcResponseFactory {
 
     String responseType;
     try {
-      responseType = (String) bodyObj.get("type");
+      responseType = bodyObj.getString("type");
     } catch (JSONException e) {
       return null;
     }
