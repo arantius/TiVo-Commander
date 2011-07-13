@@ -14,7 +14,7 @@ public class KeyEventSend extends MindRpcRequest {
       mData.put("event", "ascii");
       mData.put("value", letter);
     } catch (JSONException e) {
-      Log.e(LOG_TAG, "", e);
+      Log.e(LOG_TAG, "Create KeyEventSend request", e);
     }
   }
 
@@ -24,7 +24,7 @@ public class KeyEventSend extends MindRpcRequest {
     try {
       mData.put("event", key);
     } catch (JSONException e) {
-      Log.e(LOG_TAG, "", e);
+      Log.e(LOG_TAG, "Create KeyEventSend request", e);
     }
   }
 }

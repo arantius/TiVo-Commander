@@ -3,7 +3,11 @@ package com.arantius.tivocommander.rpc.response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 public abstract class MindRpcResponse {
+  private static final String LOG_TAG = "tivo_commander";
+
   private final JSONObject mBody;
   private final Boolean mIsFinal;
   private final int mRpcId;
@@ -18,6 +22,7 @@ public abstract class MindRpcResponse {
     try {
       return mBody.get(key);
     } catch (JSONException e) {
+      Log.e(LOG_TAG, "MindRpcResponse.get()", e);
       return null;
     }
   }

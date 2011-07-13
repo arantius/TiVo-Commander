@@ -34,6 +34,7 @@ public class MindRpcResponseFactory {
     try {
       bodyObj = new JSONObject(new String(body));
     } catch (JSONException e) {
+      Log.e(LOG_TAG, "Parse response body", e);
       return null;
     }
 
@@ -41,6 +42,7 @@ public class MindRpcResponseFactory {
     try {
       responseType = bodyObj.getString("type");
     } catch (JSONException e) {
+      Log.e(LOG_TAG, "Parse response body type", e);
       return null;
     }
 
