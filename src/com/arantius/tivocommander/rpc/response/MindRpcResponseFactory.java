@@ -50,6 +50,8 @@ public class MindRpcResponseFactory {
       return new BodyAuthenticateResponse(isFinal, rpcId, bodyObj);
     } else if (responseType.equals("idSequence")) {
       return new IdSequenceResponse(isFinal, rpcId, bodyObj);
+    } else if (responseType.equals("recordingFolderItemList")) {
+      return new RecordingFolderItemListResponse(isFinal, rpcId, bodyObj);
     } else if (responseType.equals("success")) {
       return new SuccessResponse(isFinal, rpcId, bodyObj);
     } else {
