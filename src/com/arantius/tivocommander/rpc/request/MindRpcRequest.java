@@ -45,13 +45,20 @@ public abstract class MindRpcRequest {
    */
   @Override
   public String toString() {
-    String headers =
-        join("\r\n", "Type:request", "RpcId:" + getRpcId(), "SchemaVersion:7",
-            "Content-Type:application/json", "RequestType:" + mType,
-            "ResponseCount:" + mResponseCount, "BodyId:" + mBodyId,
-            "X-ApplicationName:Quicksilver", "X-ApplicationVersion:1.2",
-            String.format("X-ApplicationSessionId:0x%x", mSessionId));
-    String body = mData.toString() + "\n";
+    // @formatter:off
+    String headers = join("\r\n",
+        "Type: request",
+        "RpcId: " + getRpcId(),
+        "SchemaVersion:7",
+        "Content-Type: application/json",
+        "RequestType: " + mType,
+        "ResponseCount: " + mResponseCount,
+        "BodyId: " + mBodyId,
+        "X-ApplicationName:Quicksilver ",
+        "X-ApplicationVersion:1.2 ",
+        String.format("X-ApplicationSessionId: 0x%x", mSessionId));
+    // @formatter:on
+    String body = mData.toString();
     // "+ 2" is the "\r\n" we'll add next.
     String reqLine =
         String.format("MRPC/2 %d %d", headers.length() + 2, body.length());
