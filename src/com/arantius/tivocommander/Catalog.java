@@ -6,7 +6,6 @@ import java.util.HashMap;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -15,18 +14,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import com.arantius.tivocommander.rpc.MindRpc;
-
 public class Catalog extends ListActivity {
-  private static final String LOG_TAG = "tivo_catalog";
-
-  private HashMap<String, String> listItem(int id) {
-    HashMap<String, String> map = new HashMap<String, String>();
-    map.put("id", String.valueOf(id));
-    map.put("name", this.getString(id));
-    return map;
-  }
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -73,28 +61,10 @@ public class Catalog extends ListActivity {
     });
   }
 
-  @Override
-  public void onDestroy() {
-    super.onPause();
-    Log.i(LOG_TAG, ">>> onDestroy()");
-  }
-
-  @Override
-  public void onPause() {
-    super.onPause();
-    Log.i(LOG_TAG, ">>> onPause()");
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    Log.i(LOG_TAG, ">>> onResume()");
-    MindRpc.init(this);
-  }
-
-  @Override
-  public void onStop() {
-    super.onPause();
-    Log.i(LOG_TAG, ">>> onStop()");
+  private HashMap<String, String> listItem(int id) {
+    HashMap<String, String> map = new HashMap<String, String>();
+    map.put("id", String.valueOf(id));
+    map.put("name", this.getString(id));
+    return map;
   }
 }

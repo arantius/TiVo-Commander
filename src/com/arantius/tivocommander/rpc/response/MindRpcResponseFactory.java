@@ -10,6 +10,8 @@ import org.json.JSONObject;
 import android.util.Log;
 
 public class MindRpcResponseFactory {
+  private static final String LOG_TAG = "tivo_commander";
+
   public MindRpcResponse create(char[] headers, char[] body) {
     Boolean isFinal = true;
     int rpcId = 0;
@@ -47,8 +49,7 @@ public class MindRpcResponseFactory {
     } else if (responseType.equals("success")) {
       return new SuccessResponse(isFinal, rpcId, bodyObj);
     } else {
-      Log.e("tivo_response_factory", "Unknown response type, got data: "
-          + new String(body));
+      Log.e(LOG_TAG, "Unknown response type, got data: " + new String(body));
       return null;
     }
   }

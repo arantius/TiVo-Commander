@@ -38,24 +38,6 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 public enum MindRpc {
   INSTANCE;
 
-  private static final String LOG_TAG = "tivo_mindrpc";
-
-  private static Activity mOriginActivity;
-  private static volatile int mRpcId = 1;
-  private static volatile int mSessionId;
-
-  private static String mTivoAddr;
-  private static int mTivoPort;
-  private static String mTivoMak;
-
-  private static Socket mSocket = null;
-  private static BufferedReader mInputStream = null;
-  private static MindRpcInput mInputThread = null;
-  private static BufferedWriter mOutputStream = null;
-  private static MindRpcOutput mOutputThread = null;
-  private static HashMap<Integer, MindRpcResponseListener> mResponseListenerMap =
-      new HashMap<Integer, MindRpcResponseListener>();
-
   private static class AlwaysTrustManager implements X509TrustManager {
     public void checkClientTrusted(X509Certificate[] cert, String authType)
         throws CertificateException {
@@ -70,13 +52,20 @@ public enum MindRpc {
     }
   }
 
-  public static int getRpcId() {
-    return mRpcId++;
-  }
-
-  public static int getSessionId() {
-    return mSessionId;
-  }
+  private static final String LOG_TAG = "tivo_commander";
+  private static BufferedReader mInputStream;
+  private static MindRpcInput mInputThread;
+  private static Activity mOriginActivity;
+  private static BufferedWriter mOutputStream;
+  private static MindRpcOutput mOutputThread;
+  private static HashMap<Integer, MindRpcResponseListener> mResponseListenerMap =
+      new HashMap<Integer, MindRpcResponseListener>();
+  private static volatile int mRpcId = 1;
+  private static volatile int mSessionId;
+  private static Socket mSocket;
+  private static String mTivoAddr;
+  private static String mTivoMak;
+  private static int mTivoPort;
 
   /**
    * Add an outgoing request to the queue.
@@ -92,87 +81,15 @@ public enum MindRpc {
     }
   }
 
-  private static boolean connect() {
-    Log.i(LOG_TAG, ">>> connect() ...");
-
-    SSLSocketFactory sslSocketFactory = null;
-
-    // Set up the socket factory.
-    try {
-      TrustManager[] tm = new TrustManager[] { new AlwaysTrustManager() };
-      SSLContext context = SSLContext.getInstance("TLS");
-      context.init(new KeyManager[0], tm, new SecureRandom());
-
-      sslSocketFactory = context.getSocketFactory();
-    } catch (KeyManagementException e) {
-      Log.e(LOG_TAG, "ssl: KeyManagementException!", e);
-      return false;
-    } catch (NoSuchAlgorithmException e) {
-      Log.e(LOG_TAG, "ssl: NoSuchAlgorithmException!", e);
-      return false;
-    }
-
-    // And use it to create a socket.
-    try {
-      mSessionId = 0x26c000 + new Random().nextInt(0xFFFF);
-      mSocket = sslSocketFactory.createSocket(mTivoAddr, mTivoPort);
-      mInputStream =
-          new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
-      mOutputStream =
-          new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
-    } catch (UnknownHostException e) {
-      Log.i(LOG_TAG, "connect: unknown host!", e);
-      return false;
-    } catch (IOException e) {
-      Log.e(LOG_TAG, "connect: io exception!", e);
-      return false;
-    }
-
-    return true;
+  public static int getRpcId() {
+    return mRpcId++;
   }
 
-  private static void disconnect() {
-    if (mSocket != null) {
-      try {
-        mSocket.close();
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "disconnect()", e);
-      }
-    }
-    if (mInputStream != null) {
-      try {
-        mInputStream.close();
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "disconnect()", e);
-      }
-    }
-    if (mOutputStream != null) {
-      try {
-        mOutputStream.close();
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "disconnect()", e);
-      }
-    }
-  }
-
-  protected static void dispatchResponse(final MindRpcResponse response) {
-    final Integer rpcId = response.getRpcId();
-    if (!mResponseListenerMap.containsKey(rpcId)) {
-      return;
-    }
-
-    mOriginActivity.runOnUiThread(new Runnable() {
-      public void run() {
-        mResponseListenerMap.get(rpcId).onResponse(response);
-        // TODO: Remove only when the response .isFinal().
-        mResponseListenerMap.remove(rpcId);
-      }
-    });
+  public static int getSessionId() {
+    return mSessionId;
   }
 
   public static void init(final Activity originActivity) {
-    Log.i(LOG_TAG, ">>> init() ...");
-
     mOriginActivity = originActivity;
 
     if (checkConnected()) {
@@ -250,6 +167,67 @@ public enum MindRpc {
     return true;
   }
 
+  private static boolean connect() {
+    SSLSocketFactory sslSocketFactory = null;
+
+    // Set up the socket factory.
+    try {
+      TrustManager[] tm = new TrustManager[] { new AlwaysTrustManager() };
+      SSLContext context = SSLContext.getInstance("TLS");
+      context.init(new KeyManager[0], tm, new SecureRandom());
+
+      sslSocketFactory = context.getSocketFactory();
+    } catch (KeyManagementException e) {
+      Log.e(LOG_TAG, "ssl: KeyManagementException!", e);
+      return false;
+    } catch (NoSuchAlgorithmException e) {
+      Log.e(LOG_TAG, "ssl: NoSuchAlgorithmException!", e);
+      return false;
+    }
+
+    // And use it to create a socket.
+    try {
+      mSessionId = 0x26c000 + new Random().nextInt(0xFFFF);
+      mSocket = sslSocketFactory.createSocket(mTivoAddr, mTivoPort);
+      mInputStream =
+          new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
+      mOutputStream =
+          new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
+    } catch (UnknownHostException e) {
+      Log.i(LOG_TAG, "connect: unknown host!", e);
+      return false;
+    } catch (IOException e) {
+      Log.e(LOG_TAG, "connect: io exception!", e);
+      return false;
+    }
+
+    return true;
+  }
+
+  private static void disconnect() {
+    if (mSocket != null) {
+      try {
+        mSocket.close();
+      } catch (IOException e) {
+        Log.e(LOG_TAG, "disconnect()", e);
+      }
+    }
+    if (mInputStream != null) {
+      try {
+        mInputStream.close();
+      } catch (IOException e) {
+        Log.e(LOG_TAG, "disconnect()", e);
+      }
+    }
+    if (mOutputStream != null) {
+      try {
+        mOutputStream.close();
+      } catch (IOException e) {
+        Log.e(LOG_TAG, "disconnect()", e);
+      }
+    }
+  }
+
   private static void settingsError(Activity activity, int messageId) {
     stopThreads();
     disconnect();
@@ -270,5 +248,20 @@ public enum MindRpc {
       mOutputThread.interrupt();
       mOutputThread = null;
     }
+  }
+
+  protected static void dispatchResponse(final MindRpcResponse response) {
+    final Integer rpcId = response.getRpcId();
+    if (!mResponseListenerMap.containsKey(rpcId)) {
+      return;
+    }
+
+    mOriginActivity.runOnUiThread(new Runnable() {
+      public void run() {
+        mResponseListenerMap.get(rpcId).onResponse(response);
+        // TODO: Remove only when the response .isFinal().
+        mResponseListenerMap.remove(rpcId);
+      }
+    });
   }
 }

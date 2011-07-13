@@ -6,23 +6,17 @@ import org.json.JSONObject;
 import android.util.Log;
 
 public abstract class MindRpcResponse {
+  private static final String LOG_TAG = "tivo_commander";
+
   private final JSONObject mBody;
   private final Boolean mIsFinal;
   private final int mRpcId;
 
   public MindRpcResponse(Boolean isFinal, int rpcId, JSONObject bodyObj) {
-    Log.d("mindrpcresponse", "got: " + bodyObj.toString());
+    Log.d(LOG_TAG, "got: " + bodyObj.toString());
     mBody = bodyObj;
     mIsFinal = isFinal;
     mRpcId = rpcId;
-  }
-
-  public Boolean isFinal() {
-    return mIsFinal;
-  }
-
-  public int getRpcId() {
-    return mRpcId;
   }
 
   public Object get(String key) {
@@ -31,5 +25,13 @@ public abstract class MindRpcResponse {
     } catch (JSONException e) {
       return null;
     }
+  }
+
+  public int getRpcId() {
+    return mRpcId;
+  }
+
+  public Boolean isFinal() {
+    return mIsFinal;
   }
 }

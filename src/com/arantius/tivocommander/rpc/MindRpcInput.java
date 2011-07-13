@@ -12,9 +12,9 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseFactory;
  * Handle network level input. Generate appropriate response objects.
  */
 public class MindRpcInput extends Thread {
-  private static final String LOG_TAG = "tivo_mindrpc_input";
-  public volatile boolean mStopFlag = false;
+  private static final String LOG_TAG = "tivo_commander";
 
+  public volatile boolean mStopFlag = false;
   private final BufferedReader mStream;
 
   public MindRpcInput(BufferedReader stream) {
@@ -23,18 +23,15 @@ public class MindRpcInput extends Thread {
 
   @Override
   public void run() {
-    Log.i(LOG_TAG, ">>> run() ...");
     MindRpcResponseFactory mindRpcResponseFactory =
         new MindRpcResponseFactory();
 
     while (true) {
       if (mStopFlag) {
-        Log.d(LOG_TAG, "Got stop flag!");
         break;
       }
 
       try {
-        Log.d(LOG_TAG, "Reading a response ... ");
         String respLine = mStream.readLine();
         if (respLine == null) {
           // The socket has closed.
@@ -62,7 +59,5 @@ public class MindRpcInput extends Thread {
         break;
       }
     }
-
-    Log.i(LOG_TAG, "<<< run() ...");
   }
 }

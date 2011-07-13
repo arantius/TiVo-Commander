@@ -5,15 +5,7 @@ import org.json.JSONException;
 import android.util.Log;
 
 public class KeyEventSend extends MindRpcRequest {
-  public KeyEventSend(String key) {
-    super("keyEventSend");
-
-    try {
-      mData.put("event", key);
-    } catch (JSONException e) {
-      Log.e("tivo", "", e);
-    }
-  }
+  private static final String LOG_TAG = "tivo_commander";
 
   public KeyEventSend(char letter) {
     super("keyEventSend");
@@ -22,7 +14,17 @@ public class KeyEventSend extends MindRpcRequest {
       mData.put("event", "ascii");
       mData.put("value", letter);
     } catch (JSONException e) {
-      Log.e("tivo", "", e);
+      Log.e(LOG_TAG, "", e);
+    }
+  }
+
+  public KeyEventSend(String key) {
+    super("keyEventSend");
+
+    try {
+      mData.put("event", key);
+    } catch (JSONException e) {
+      Log.e(LOG_TAG, "", e);
     }
   }
 }

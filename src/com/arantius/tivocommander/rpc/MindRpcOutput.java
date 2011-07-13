@@ -12,13 +12,12 @@ import com.arantius.tivocommander.rpc.request.MindRpcRequest;
  * Handle network level output. Accept request objects.
  */
 public class MindRpcOutput extends Thread {
-  private static final String LOG_TAG = "tivo_mindrpc_output";
+  private static final String LOG_TAG = "tivo_commander";
+
   public volatile boolean mStopFlag = false;
-
-  private final BufferedWriter mStream;
-
-  private final ConcurrentLinkedQueue<MindRpcRequest> mRequestQueue =
+  private volatile ConcurrentLinkedQueue<MindRpcRequest> mRequestQueue =
       new ConcurrentLinkedQueue<MindRpcRequest>();
+  private final BufferedWriter mStream;
 
   public MindRpcOutput(BufferedWriter stream) {
     mStream = stream;
@@ -30,11 +29,8 @@ public class MindRpcOutput extends Thread {
 
   @Override
   public void run() {
-    Log.i(LOG_TAG, ">>> run() ...");
-
     while (true) {
       if (mStopFlag) {
-        Log.d(LOG_TAG, "Got stop flag!");
         break;
       }
 
@@ -52,14 +48,11 @@ public class MindRpcOutput extends Thread {
           String reqStr = request.toString();
           mStream.write(reqStr);
           mStream.flush();
-          Log.d(LOG_TAG, "sent request " + request.getDataString());
         }
       } catch (IOException e) {
         Log.e(LOG_TAG, "write: io exception!", e);
         break;
       }
     }
-
-    Log.i(LOG_TAG, "<<< run() ...");
   }
 }

@@ -8,13 +8,15 @@ import android.util.Log;
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public abstract class MindRpcRequest {
-  private int mRpcId = 1;
-  protected int mSessionId = 0;
+  private static final String LOG_TAG = "tivo_commander";
 
-  protected String mType;
-  protected String mResponseCount = "single";
+  private int mRpcId = 1;
+
   protected String mBodyId = "";
   protected JSONObject mData = new JSONObject();
+  protected String mResponseCount = "single";
+  protected int mSessionId = 0;
+  protected String mType;
 
   public MindRpcRequest(String type) {
     setRpcId(MindRpc.getRpcId());
@@ -24,7 +26,7 @@ public abstract class MindRpcRequest {
     try {
       mData.put("type", mType);
     } catch (JSONException e) {
-      Log.e("tivo", "can't put type?", e);
+      Log.e(LOG_TAG, "can't put type?", e);
     }
   }
 
@@ -34,22 +36,6 @@ public abstract class MindRpcRequest {
 
   public int getRpcId() {
     return mRpcId;
-  }
-
-  protected void setRpcId(int mRpcId) {
-    this.mRpcId = mRpcId;
-  }
-
-  private String join(String glue, String... s) {
-    if (s.length == 0) {
-      return null;
-    }
-    StringBuilder out = new StringBuilder();
-    out.append(s[0]);
-    for (int i = 1; i < s.length; i++) {
-      out.append(glue).append(s[i]);
-    }
-    return out.toString();
   }
 
   /**
@@ -70,5 +56,21 @@ public abstract class MindRpcRequest {
     String reqLine =
         String.format("MRPC/2 %d %d", headers.length() + 2, body.length());
     return join("\r\n", reqLine, headers, body);
+  }
+
+  private String join(String glue, String... s) {
+    if (s.length == 0) {
+      return null;
+    }
+    StringBuilder out = new StringBuilder();
+    out.append(s[0]);
+    for (int i = 1; i < s.length; i++) {
+      out.append(glue).append(s[i]);
+    }
+    return out.toString();
+  }
+
+  protected void setRpcId(int mRpcId) {
+    this.mRpcId = mRpcId;
   }
 }
