@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.arantius.tivocommander.rpc.MindRpc;
 public class Catalog extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,12 @@ public class Catalog extends ListActivity {
         }
       }
     });
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    MindRpc.init(this);
   }
 
   private HashMap<String, String> listItem(int id) {
