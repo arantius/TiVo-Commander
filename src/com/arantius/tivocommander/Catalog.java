@@ -15,6 +15,7 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
+
 public class Catalog extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,9 @@ public class Catalog extends ListActivity {
         int listItemId = Integer.parseInt(map.get("id"));
         Intent intent = null;
         switch (listItemId) {
+        case R.string.catalog_my_shows:
+          intent = new Intent(getBaseContext(), MyShows.class);
+          break;
         case R.string.catalog_remote:
           intent = new Intent(getBaseContext(), Remote.class);
           break;
