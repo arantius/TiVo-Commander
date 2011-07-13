@@ -1,5 +1,7 @@
 package com.arantius.tivocommander.rpc.request;
 
+import java.util.Iterator;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -63,6 +65,20 @@ public abstract class MindRpcRequest {
     String reqLine =
         String.format("MRPC/2 %d %d", headers.length() + 2, body.length());
     return join("\r\n", reqLine, headers, body);
+  }
+
+  protected void mergeJson(JSONObject src, JSONObject dest) {
+    @SuppressWarnings("unchecked")
+    Iterator<String> keys = src.keys();
+
+    while (keys.hasNext()) {
+      String key = keys.next();
+      try {
+        dest.put(key, src.get(key));
+      } catch (JSONException e) {
+        Log.e(LOG_TAG, "request merge", e);
+      }
+    }
   }
 
   private String join(String glue, String... s) {
