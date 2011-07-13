@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -14,6 +13,7 @@ import android.widget.ListView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.RecordingFolderItemSearch;
+import com.arantius.tivocommander.rpc.request.UiNavigate;
 import com.arantius.tivocommander.rpc.response.IdSequenceResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
@@ -33,7 +33,7 @@ public class MyShows extends ListActivity {
     final OnItemClickListener onClickListener = new OnItemClickListener() {
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id) {
-        Log.d(LOG_TAG, "clicked! " + mItems.get(position).getRecordingId());
+        MindRpc.addRequest(new UiNavigate(mItems.get(position)), null);
       }
     };
 
@@ -43,11 +43,11 @@ public class MyShows extends ListActivity {
         RecordingFolderItemListResponse response =
             (RecordingFolderItemListResponse) responseGeneric;
         mItems = response.getItems();
-        Log.i(LOG_TAG, "Got second ... " + Integer.toString(mItems.size()));
         String[] titles = new String[mItems.size()];
         for (int i = 0; i < mItems.size(); i++) {
           titles[i] = mItems.get(i).getTitle();
         }
+
         setListAdapter(new ArrayAdapter<String>(context,
             android.R.layout.simple_list_item_1, titles));
         final ListView lv = getListView();
