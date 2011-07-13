@@ -10,7 +10,7 @@ import com.arantius.tivocommander.rpc.MindRpc;
 public abstract class MindRpcRequest {
   private static final String LOG_TAG = "tivo_commander";
 
-  private int mRpcId = 1;
+  private final int mRpcId;
 
   protected String mBodyId = "";
   protected JSONObject mData = new JSONObject();
@@ -19,7 +19,7 @@ public abstract class MindRpcRequest {
   protected String mType;
 
   public MindRpcRequest(String type) {
-    setRpcId(MindRpc.getRpcId());
+    mRpcId = MindRpc.getRpcId();
     mSessionId = MindRpc.getSessionId();
     mType = type;
 
@@ -68,9 +68,5 @@ public abstract class MindRpcRequest {
       out.append(glue).append(s[i]);
     }
     return out.toString();
-  }
-
-  protected void setRpcId(int mRpcId) {
-    this.mRpcId = mRpcId;
   }
 }
