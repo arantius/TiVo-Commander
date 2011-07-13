@@ -46,7 +46,10 @@ public class MindRpcInput extends Thread {
           mStream.read(headers, 0, headerLen);
 
           char[] body = new char[bodyLen];
-          mStream.read(body, 0, bodyLen);
+          int bytesRead = 0;
+          while (bytesRead < bodyLen) {
+            bytesRead += mStream.read(body, bytesRead, bodyLen - bytesRead);
+          }
 
           final MindRpcResponse response =
               mindRpcResponseFactory.create(headers, body);

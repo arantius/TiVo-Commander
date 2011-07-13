@@ -53,6 +53,7 @@ public enum MindRpc {
     }
   }
 
+  private static final int BUFFER_SIZE = 1024;
   private static final String LOG_TAG = "tivo_commander";
   private static BufferedReader mInputStream;
   private static MindRpcInput mInputThread;
@@ -193,9 +194,11 @@ public enum MindRpc {
       mSessionId = 0x26c000 + new Random().nextInt(0xFFFF);
       mSocket = sslSocketFactory.createSocket(mTivoAddr, mTivoPort);
       mInputStream =
-          new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
+          new BufferedReader(new InputStreamReader(mSocket.getInputStream()),
+              BUFFER_SIZE);
       mOutputStream =
-          new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
+          new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()),
+              BUFFER_SIZE);
     } catch (UnknownHostException e) {
       Log.e(LOG_TAG, "connect: unknown host!", e);
       return false;
