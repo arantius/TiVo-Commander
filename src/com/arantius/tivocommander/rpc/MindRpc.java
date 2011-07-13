@@ -32,6 +32,7 @@ import com.arantius.tivocommander.R;
 import com.arantius.tivocommander.Settings;
 import com.arantius.tivocommander.rpc.request.BodyAuthenticate;
 import com.arantius.tivocommander.rpc.request.MindRpcRequest;
+import com.arantius.tivocommander.rpc.response.BodyAuthenticateResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
@@ -116,8 +117,10 @@ public enum MindRpc {
     mOutputThread.start();
 
     addRequest(new BodyAuthenticate(mTivoMak), new MindRpcResponseListener() {
-      public void onResponse(MindRpcResponse response) {
-        if (response.get("status").equals("failure")) {
+      public void onResponse(MindRpcResponse responseGeneric) {
+        BodyAuthenticateResponse response =
+            (BodyAuthenticateResponse) responseGeneric;
+        if (response.getStatus().equals("failure")) {
           settingsError(originActivity, R.string.error_auth);
         }
       }
