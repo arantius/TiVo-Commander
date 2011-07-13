@@ -197,7 +197,7 @@ public enum MindRpc {
       mOutputStream =
           new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
     } catch (UnknownHostException e) {
-      Log.i(LOG_TAG, "connect: unknown host!", e);
+      Log.e(LOG_TAG, "connect: unknown host!", e);
       return false;
     } catch (IOException e) {
       Log.e(LOG_TAG, "connect: io exception!", e);
