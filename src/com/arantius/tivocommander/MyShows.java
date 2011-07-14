@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,20 +21,33 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.arantius.tivocommander.rpc.response.RecordingFolderItemListResponse;
 
 public class MyShows extends ListActivity {
-  private static final String LOG_TAG = "tivo_commander";
-  private ArrayList<RecordingFolderItemListResponse.RecordingFolderItem> mItems =
+  private final ArrayList<RecordingFolderItemListResponse.RecordingFolderItem> mItems =
       new ArrayList<RecordingFolderItemListResponse.RecordingFolderItem>();
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
 
     final Context context = this;
 
     final OnItemClickListener onClickListener = new OnItemClickListener() {
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id) {
-        MindRpc.addRequest(new UiNavigate(mItems.get(position)), null);
+        RecordingFolderItemListResponse.RecordingFolderItem item;
+        item = mItems.get(position);
+        if (item.getFolderItemCount() > 0) {
+          Intent intent = new Intent(getBaseContext(), MyShows.class);
+          intent.putExtra("com.arantius.tivocommander.folderId",
+              item.getRecordingFolderId());
+          startActivity(intent);
+        } else {
+          MindRpc.addRequest(new UiNavigate(item), null);
+        }
       }
     };
 
@@ -42,7 +56,8 @@ public class MyShows extends ListActivity {
       public void onResponse(MindRpcResponse responseGeneric) {
         RecordingFolderItemListResponse response =
             (RecordingFolderItemListResponse) responseGeneric;
-        mItems = response.getItems();
+        mItems.clear();
+        mItems.addAll(response.getItems());
         String[] titles = new String[mItems.size()];
         for (int i = 0; i < mItems.size(); i++) {
           titles[i] = mItems.get(i).getTitle();
@@ -63,12 +78,13 @@ public class MyShows extends ListActivity {
       }
     };
 
-    MindRpc.addRequest(new RecordingFolderItemSearch(), idSequenceCallback);
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
+    Bundle bundle = getIntent().getExtras();
+    String folderId = null;
+    if (bundle != null) {
+      folderId = bundle.getString("com.arantius.tivocommander.folderId");
+    }
+    MindRpc.addRequest(new RecordingFolderItemSearch(folderId),
+        idSequenceCallback);
     MindRpc.init(this);
   }
 }
