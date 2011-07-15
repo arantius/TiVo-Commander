@@ -1,6 +1,6 @@
 package com.arantius.tivocommander;
 
-import java.util.ArrayList;
+import org.codehaus.jackson.JsonNode;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -15,35 +15,27 @@ import android.widget.ListView;
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.RecordingFolderItemSearch;
 import com.arantius.tivocommander.rpc.request.UiNavigate;
-import com.arantius.tivocommander.rpc.response.IdSequenceResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
-import com.arantius.tivocommander.rpc.response.RecordingFolderItemListResponse;
 
 public class MyShows extends ListActivity {
-  private final ArrayList<RecordingFolderItemListResponse.RecordingFolderItem> mItems =
-      new ArrayList<RecordingFolderItemListResponse.RecordingFolderItem>();
+  private JsonNode mItems;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
 
     final Context context = this;
 
     final OnItemClickListener onClickListener = new OnItemClickListener() {
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id) {
-        RecordingFolderItemListResponse.RecordingFolderItem item;
-        item = mItems.get(position);
-        if (item.getFolderItemCount() > 0) {
+        JsonNode item = mItems.get(position);
+        JsonNode countNode = item.get("folderItemCount");
+        if (countNode != null && countNode.getValueAsInt() > 0) {
           Intent intent = new Intent(getBaseContext(), MyShows.class);
-          intent.putExtra("com.arantius.tivocommander.folderId",
-              item.getRecordingFolderId());
+          String folderId = item.get("recordingFolderItemId").getValueAsText();
+          intent.putExtra("com.arantius.tivocommander.folderId", folderId);
           startActivity(intent);
         } else {
           MindRpc.addRequest(new UiNavigate(item), null);
@@ -53,14 +45,11 @@ public class MyShows extends ListActivity {
 
     final MindRpcResponseListener detailCallback;
     detailCallback = new MindRpcResponseListener() {
-      public void onResponse(MindRpcResponse responseGeneric) {
-        RecordingFolderItemListResponse response =
-            (RecordingFolderItemListResponse) responseGeneric;
-        mItems.clear();
-        mItems.addAll(response.getItems());
+      public void onResponse(MindRpcResponse response) {
+        mItems = response.getBody().get("recordingFolderItem");
         String[] titles = new String[mItems.size()];
         for (int i = 0; i < mItems.size(); i++) {
-          titles[i] = mItems.get(i).getTitle();
+          titles[i] = mItems.get(i).get("title").getValueAsText();
         }
 
         setListAdapter(new ArrayAdapter<String>(context,
@@ -71,10 +60,9 @@ public class MyShows extends ListActivity {
     };
 
     MindRpcResponseListener idSequenceCallback = new MindRpcResponseListener() {
-      public void onResponse(MindRpcResponse responseGeneric) {
-        IdSequenceResponse response = (IdSequenceResponse) responseGeneric;
-        MindRpc.addRequest(new RecordingFolderItemSearch(response.getIds()),
-            detailCallback);
+      public void onResponse(MindRpcResponse response) {
+        JsonNode ids = response.getBody().findValue("objectIdAndType");
+        MindRpc.addRequest(new RecordingFolderItemSearch(ids), detailCallback);
       }
     };
 
@@ -85,6 +73,11 @@ public class MyShows extends ListActivity {
     }
     MindRpc.addRequest(new RecordingFolderItemSearch(folderId),
         idSequenceCallback);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
     MindRpc.init(this);
   }
 }

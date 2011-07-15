@@ -32,7 +32,6 @@ import com.arantius.tivocommander.R;
 import com.arantius.tivocommander.Settings;
 import com.arantius.tivocommander.rpc.request.BodyAuthenticate;
 import com.arantius.tivocommander.rpc.request.MindRpcRequest;
-import com.arantius.tivocommander.rpc.response.BodyAuthenticateResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
@@ -118,10 +117,8 @@ public enum MindRpc {
     mOutputThread.start();
 
     addRequest(new BodyAuthenticate(mTivoMak), new MindRpcResponseListener() {
-      public void onResponse(MindRpcResponse responseGeneric) {
-        BodyAuthenticateResponse response =
-            (BodyAuthenticateResponse) responseGeneric;
-        if (response.getStatus().equals("failure")) {
+      public void onResponse(MindRpcResponse response) {
+        if (response.getBody().get("status").equals("failure")) {
           settingsError(originActivity, R.string.error_auth);
         }
       }
@@ -237,8 +234,8 @@ public enum MindRpc {
   private static void settingsError(Activity activity, int messageId) {
     stopThreads();
     disconnect();
-    Toast.makeText(activity.getBaseContext(), messageId,
-        Toast.LENGTH_SHORT).show();
+    Toast.makeText(activity.getBaseContext(), messageId, Toast.LENGTH_SHORT)
+        .show();
     Intent i = new Intent(activity.getBaseContext(), Settings.class);
     activity.startActivity(i);
   }

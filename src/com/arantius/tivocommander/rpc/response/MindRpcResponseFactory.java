@@ -4,13 +4,16 @@ import java.io.BufferedReader;
 import java.io.CharArrayReader;
 import java.io.IOException;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import android.util.Log;
 
 public class MindRpcResponseFactory {
   private static final String LOG_TAG = "tivo_commander";
+  private static final ObjectMapper mJsonParser = new ObjectMapper();
 
   public MindRpcResponse create(char[] headers, char[] body) {
     Boolean isFinal = true;
@@ -30,33 +33,17 @@ public class MindRpcResponseFactory {
     } catch (IOException e) {
     }
 
-    JSONObject bodyObj;
+    JsonNode bodyObj = null;
     try {
-      bodyObj = new JSONObject(new String(body));
-    } catch (JSONException e) {
+      bodyObj = mJsonParser.readValue(new String(body), JsonNode.class);
+    } catch (JsonMappingException e) {
       Log.e(LOG_TAG, "Parse response body", e);
-      return null;
+    } catch (JsonParseException e) {
+      Log.e(LOG_TAG, "Parse response body", e);
+    } catch (IOException e) {
+      Log.e(LOG_TAG, "Parse response body", e);
     }
 
-    String responseType;
-    try {
-      responseType = bodyObj.getString("type");
-    } catch (JSONException e) {
-      Log.e(LOG_TAG, "Parse response body type", e);
-      return null;
-    }
-
-    if (responseType.equals("bodyAuthenticateResponse")) {
-      return new BodyAuthenticateResponse(isFinal, rpcId, bodyObj);
-    } else if (responseType.equals("idSequence")) {
-      return new IdSequenceResponse(isFinal, rpcId, bodyObj);
-    } else if (responseType.equals("recordingFolderItemList")) {
-      return new RecordingFolderItemListResponse(isFinal, rpcId, bodyObj);
-    } else if (responseType.equals("success")) {
-      return new SuccessResponse(isFinal, rpcId, bodyObj);
-    } else {
-      Log.e(LOG_TAG, "Unknown response type, got data: " + new String(body));
-      return null;
-    }
+    return new MindRpcResponse(isFinal, rpcId, bodyObj);
   }
 }

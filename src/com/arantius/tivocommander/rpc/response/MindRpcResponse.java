@@ -1,30 +1,22 @@
 package com.arantius.tivocommander.rpc.response;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.codehaus.jackson.JsonNode;
 
-import android.util.Log;
-
-public abstract class MindRpcResponse {
+public class MindRpcResponse {
   private static final String LOG_TAG = "tivo_commander";
 
-  private final JSONObject mBody;
+  private final JsonNode mBody;
   private final Boolean mIsFinal;
   private final int mRpcId;
 
-  public MindRpcResponse(Boolean isFinal, int rpcId, JSONObject bodyObj) {
+  public MindRpcResponse(Boolean isFinal, int rpcId, JsonNode bodyObj) {
     mBody = bodyObj;
     mIsFinal = isFinal;
     mRpcId = rpcId;
   }
 
-  public Object get(String key) {
-    try {
-      return mBody.get(key);
-    } catch (JSONException e) {
-      Log.e(LOG_TAG, "MindRpcResponse.get()", e);
-      return null;
-    }
+  public JsonNode getBody() {
+    return mBody;
   }
 
   public int getRpcId() {

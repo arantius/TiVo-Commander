@@ -1,5 +1,6 @@
 package com.arantius.tivocommander.rpc.request;
 
+import org.codehaus.jackson.JsonNode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,13 +25,17 @@ public class RecordingFolderItemSearch extends MindRpcRequest {
     }
   }
 
-  /** Given a JSONArray of ids, produces details about the shows. */
-  public RecordingFolderItemSearch(JSONArray showIds) {
+  /** Given a set of IDs, produces details about the shows. */
+  public RecordingFolderItemSearch(JsonNode showIds) {
     super("recordingFolderItemSearch");
 
     mergeCommonDetails();
     try {
-      mData.put("objectIdAndType", showIds);
+      JSONArray showIdsA = new JSONArray();
+      for (JsonNode id : showIds) {
+        showIdsA.put(id.getValueAsText());
+      }
+      mData.put("objectIdAndType", showIdsA);
     } catch (JSONException e) {
       Log.e(LOG_TAG, "Create RecordingFolderItemSearch request", e);
     }
