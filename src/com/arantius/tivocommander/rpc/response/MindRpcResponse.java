@@ -3,8 +3,6 @@ package com.arantius.tivocommander.rpc.response;
 import org.codehaus.jackson.JsonNode;
 
 public class MindRpcResponse {
-  private static final String LOG_TAG = "tivo_commander";
-
   private final JsonNode mBody;
   private final Boolean mIsFinal;
   private final int mRpcId;
