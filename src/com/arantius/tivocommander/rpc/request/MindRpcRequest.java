@@ -1,9 +1,12 @@
 package com.arantius.tivocommander.rpc.request;
 
-import java.util.Iterator;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import android.util.Log;
 
@@ -11,11 +14,11 @@ import com.arantius.tivocommander.rpc.MindRpc;
 
 public abstract class MindRpcRequest {
   private static final String LOG_TAG = "tivo_commander";
-
+  private static final ObjectMapper mMapper = new ObjectMapper();
   private final int mRpcId;
 
   protected String mBodyId = "";
-  protected JSONObject mData = new JSONObject();
+  protected Map<String, Object> mDataMap = new HashMap<String, Object>();
   protected String mResponseCount = "single";
   protected int mSessionId = 0;
   protected String mType;
@@ -25,15 +28,20 @@ public abstract class MindRpcRequest {
     mSessionId = MindRpc.getSessionId();
     mType = type;
 
-    try {
-      mData.put("type", mType);
-    } catch (JSONException e) {
-      Log.e(LOG_TAG, "can't put type?", e);
-    }
+    mDataMap.put("type", mType);
   }
 
   public String getDataString() {
-    return mData.toString();
+    try {
+      return mMapper.writeValueAsString(mDataMap);
+    } catch (JsonGenerationException e) {
+      Log.e(LOG_TAG, "Stringify response body", e);
+    } catch (JsonMappingException e) {
+      Log.e(LOG_TAG, "Stringify response body", e);
+    } catch (IOException e) {
+      Log.e(LOG_TAG, "Stringify response body", e);
+    }
+    return null;
   }
 
   public int getRpcId() {
@@ -60,25 +68,11 @@ public abstract class MindRpcRequest {
         "X-ApplicationVersion:1.2 ",
         String.format("X-ApplicationSessionId: 0x%x", mSessionId));
     // @formatter:on
-    String body = mData.toString();
+    String body = getDataString();
     // "+ 2" is the "\r\n" we'll add next.
     String reqLine =
         String.format("MRPC/2 %d %d", headers.length() + 2, body.length());
     return join("\r\n", reqLine, headers, body);
-  }
-
-  protected void mergeJson(JSONObject src, JSONObject dest) {
-    @SuppressWarnings("unchecked")
-    Iterator<String> keys = src.keys();
-
-    while (keys.hasNext()) {
-      String key = keys.next();
-      try {
-        dest.put(key, src.get(key));
-      } catch (JSONException e) {
-        Log.e(LOG_TAG, "request merge", e);
-      }
-    }
   }
 
   private String join(String glue, String... s) {

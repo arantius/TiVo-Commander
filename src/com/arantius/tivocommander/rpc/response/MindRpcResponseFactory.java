@@ -33,15 +33,23 @@ public class MindRpcResponseFactory {
     } catch (IOException e) {
     }
 
+    String bodyStr = new String(body);
     JsonNode bodyObj = null;
     try {
-      bodyObj = mJsonParser.readValue(new String(body), JsonNode.class);
+      bodyObj = mJsonParser.readValue(bodyStr, JsonNode.class);
     } catch (JsonMappingException e) {
       Log.e(LOG_TAG, "Parse response body", e);
+      return null;
     } catch (JsonParseException e) {
       Log.e(LOG_TAG, "Parse response body", e);
+      return null;
     } catch (IOException e) {
       Log.e(LOG_TAG, "Parse response body", e);
+      return null;
+    }
+
+    if (bodyObj.get("type").getValueAsText().equals("error")) {
+      Log.e(LOG_TAG, "Response type is error! " + bodyStr);
     }
 
     return new MindRpcResponse(isFinal, rpcId, bodyObj);

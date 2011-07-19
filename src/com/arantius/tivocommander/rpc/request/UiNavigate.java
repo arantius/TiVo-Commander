@@ -1,35 +1,21 @@
 package com.arantius.tivocommander.rpc.request;
 
-import org.codehaus.jackson.JsonNode;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
 
-import android.util.Log;
+import org.codehaus.jackson.JsonNode;
 
 public class UiNavigate extends MindRpcRequest {
-  private static final String LOG_TAG = "tivo_commander";
-
   /** Playback for a given item. */
   public UiNavigate(JsonNode item) {
     super("uiNavigate");
 
-    JSONObject details = null;
-    try {
-      String recordingId = item.get("childRecordingId").getValueAsText();
-      // @formatter:off
-      details = new JSONObject("{"
-          + "'uri': 'x-tivo:classicui:playback',"
-          + "'parameters': {"
-            + "'fUseTrioId': 'true',"
-            + "'recordingId': '" + recordingId + "',"
-            + "'fHideBannerOnEnter': 'false'"
-            + "}"
-          + "}");
-      // @formatter:on
-    } catch (JSONException e) {
-      Log.e(LOG_TAG, "Create UiNavigate request", e);
-    }
-    mergeJson(details, mData);
-  }
+    Map<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("fUseTrioId", "true");
+    parameters.put("fHideBannerOnEnter", "false");
+    parameters.put("recordingId", item.get("childRecordingId"));
 
+    mDataMap.put("uri", "x-tivo:classicui:playback");
+    mDataMap.put("parameters", parameters);
+  }
 }
