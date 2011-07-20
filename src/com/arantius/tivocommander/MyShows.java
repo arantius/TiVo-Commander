@@ -19,6 +19,7 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class MyShows extends ListActivity {
+  private String mFolderId;
   private JsonNode mItems;
 
   @Override
@@ -51,7 +52,20 @@ public class MyShows extends ListActivity {
         mItems = response.getBody().get("recordingFolderItem");
         String[] titles = new String[mItems.size()];
         for (int i = 0; i < mItems.size(); i++) {
-          titles[i] = mItems.get(i).get("title").getValueAsText();
+          final JsonNode item = mItems.get(i);
+          JsonNode titleNode = null;
+          if (mFolderId != null) {
+            try {
+              titleNode =
+                  item.get("recordingForChildRecordingId").get("subtitle");
+            } catch (NullPointerException e) {
+              // No-op; will be null and overwritten below.
+            }
+          }
+          if (titleNode == null) {
+            titleNode = item.get("title");
+          }
+          titles[i] = titleNode.getValueAsText();
         }
 
         setListAdapter(new ArrayAdapter<String>(context,
@@ -69,15 +83,15 @@ public class MyShows extends ListActivity {
     };
 
     Bundle bundle = getIntent().getExtras();
-    String folderId = null;
     if (bundle != null) {
-      folderId = bundle.getString("com.arantius.tivocommander.folderId");
+      mFolderId = bundle.getString("com.arantius.tivocommander.folderId");
       setTitle("TiVo Commander - "
           + bundle.getString("com.arantius.tivocommander.folderName"));
     } else {
+      mFolderId = null;
       setTitle("TiVo Commander - My Shows");
     }
-    MindRpc.addRequest(new RecordingFolderItemSearch(folderId),
+    MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId),
         idSequenceCallback);
   }
 
