@@ -36,6 +36,8 @@ public class MyShows extends ListActivity {
           Intent intent = new Intent(getBaseContext(), MyShows.class);
           String folderId = item.get("recordingFolderItemId").getValueAsText();
           intent.putExtra("com.arantius.tivocommander.folderId", folderId);
+          String folderName = item.get("title").getValueAsText();
+          intent.putExtra("com.arantius.tivocommander.folderName", folderName);
           startActivity(intent);
         } else {
           MindRpc.addRequest(new UiNavigate(item), null);
@@ -70,6 +72,10 @@ public class MyShows extends ListActivity {
     String folderId = null;
     if (bundle != null) {
       folderId = bundle.getString("com.arantius.tivocommander.folderId");
+      setTitle("TiVo Commander - "
+          + bundle.getString("com.arantius.tivocommander.folderName"));
+    } else {
+      setTitle("TiVo Commander - My Shows");
     }
     MindRpc.addRequest(new RecordingFolderItemSearch(folderId),
         idSequenceCallback);

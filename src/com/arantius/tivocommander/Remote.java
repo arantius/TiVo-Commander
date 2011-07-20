@@ -21,6 +21,9 @@ public class Remote extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    setTitle("TiVo Commander - Remote Control");
+
     setListAdapter(new ArrayAdapter<String>(this,
         android.R.layout.simple_list_item_1, labels));
 
