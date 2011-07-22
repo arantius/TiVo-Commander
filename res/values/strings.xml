@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">TiVo Commander</string>
-
-  <!-- Features to display in the catalog. -->
-  <string name="catalog_browse">Browse</string>
-  <string name="catalog_guide">Guide</string>
-  <string name="catalog_my_shows">My Shows</string>
-  <string name="catalog_remote">Remote</string>
-  <string name="catalog_settings">Settings</string>
   <string name="pref_mak_instructions">"Log in to tivo.com, then open the 'Vew media access key' section to find this value."</string>
   <string name="error_addr">"Please provide your TiVo's address."</string>
   <string name="error_port">"Please provide your TiVo's port."</string>

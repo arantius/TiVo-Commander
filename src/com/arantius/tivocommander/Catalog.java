@@ -1,57 +1,44 @@
 package com.arantius.tivocommander;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public class Catalog extends ListActivity {
+  private static final String[] mFeatures =
+      { "Remote", "My Shows", "Settings" };
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    ArrayList<HashMap<String, String>> listItems =
-        new ArrayList<HashMap<String, String>>();
-    listItems.add(this.listItem(R.string.catalog_remote));
-    listItems.add(this.listItem(R.string.catalog_my_shows));
-    listItems.add(this.listItem(R.string.catalog_browse));
-    listItems.add(this.listItem(R.string.catalog_guide));
-    listItems.add(this.listItem(R.string.catalog_settings));
-
     final ListAdapter adapter =
-        new SimpleAdapter(this, listItems, android.R.layout.simple_list_item_1,
-            new String[] { "name" }, new int[] { android.R.id.text1 });
+        new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+            mFeatures);
     setListAdapter(adapter);
 
     final ListView lv = getListView();
     lv.setOnItemClickListener(new OnItemClickListener() {
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id) {
-        @SuppressWarnings("unchecked")
-        HashMap<String, String> map =
-            (HashMap<String, String>) adapter.getItem(position);
-
-        int listItemId = Integer.parseInt(map.get("id"));
         Intent intent = null;
-        switch (listItemId) {
-        case R.string.catalog_my_shows:
-          intent = new Intent(getBaseContext(), MyShows.class);
-          break;
-        case R.string.catalog_remote:
+        switch (position) {
+        case 0:
           intent = new Intent(getBaseContext(), Remote.class);
           break;
-        case R.string.catalog_settings:
+        case 1:
+          intent = new Intent(getBaseContext(), MyShows.class);
+          break;
+        case 2:
           intent = new Intent(getBaseContext(), Settings.class);
           break;
         default:
@@ -70,12 +57,5 @@ public class Catalog extends ListActivity {
   protected void onResume() {
     super.onResume();
     MindRpc.init(this);
-  }
-
-  private HashMap<String, String> listItem(int id) {
-    HashMap<String, String> map = new HashMap<String, String>();
-    map.put("id", String.valueOf(id));
-    map.put("name", this.getString(id));
-    return map;
   }
 }
