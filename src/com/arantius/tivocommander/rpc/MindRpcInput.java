@@ -37,7 +37,7 @@ public class MindRpcInput extends Thread {
           // The socket has closed.
           break;
         }
-        if ("MRPC/2".equals(respLine.substring(0, 6))) {
+        if (respLine.length() >= 6 && "MRPC/2".equals(respLine.substring(0, 6))) {
           String[] bytes = respLine.split(" ");
           int headerLen = Integer.parseInt(bytes[1]);
           int bodyLen = Integer.parseInt(bytes[2]);
