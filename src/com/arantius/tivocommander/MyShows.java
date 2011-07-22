@@ -1,5 +1,9 @@
 package com.arantius.tivocommander;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.codehaus.jackson.JsonNode;
 
 import android.app.ListActivity;
@@ -9,8 +13,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.RecordingFolderItemSearch;
@@ -19,6 +23,8 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class MyShows extends ListActivity {
+  private static final String LOG_TAG = "tivo_commander";
+
   private String mFolderId;
   private JsonNode mItems;
 
@@ -50,7 +56,9 @@ public class MyShows extends ListActivity {
     detailCallback = new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
         mItems = response.getBody().get("recordingFolderItem");
-        String[] titles = new String[mItems.size()];
+        List<HashMap<String, Object>> listItems =
+            new ArrayList<HashMap<String, Object>>();
+
         for (int i = 0; i < mItems.size(); i++) {
           final JsonNode item = mItems.get(i);
           JsonNode titleNode = null;
@@ -65,12 +73,44 @@ public class MyShows extends ListActivity {
           if (titleNode == null) {
             titleNode = item.get("title");
           }
-          titles[i] = titleNode.getValueAsText();
+
+          HashMap<String, Object> listItem = new HashMap<String, Object>();
+
+          listItem.put("icon", R.drawable.blank); // By default blank.
+          if (item.has("folderInProgress")) {
+            listItem.put("icon", R.drawable.folder_recording);
+          } else if (item.has("folderItemCount")) {
+            listItem.put("icon", R.drawable.folder);
+          } else if (item.has("recordingStatusType")) {
+            String recordingStatus =
+                item.get("recordingStatusType").getTextValue();
+            if (recordingStatus.equals("expired")) {
+              listItem.put("icon", R.drawable.recording_expired);
+            } else if (recordingStatus.equals("expiresSoon")) {
+              listItem.put("icon", R.drawable.recording_expiressoon);
+            } else if (recordingStatus.equals("inProgressRecording")) {
+              listItem.put("icon", R.drawable.recording_recording);
+            } else if (recordingStatus.equals("keepForever")) {
+              listItem.put("icon", R.drawable.recording_keep);
+            } else if (recordingStatus.equals("suggestion")) {
+              listItem.put("icon", R.drawable.recording_suggestion);
+            }
+          } else if (item.has("recordingForChildRecordingId")) {
+            JsonNode recording = item.get("recordingForChildRecordingId");
+            if (recording.has("state")) {
+              if (recording.get("state").getTextValue().equals("complete")) {
+                listItem.put("icon", R.drawable.recording);
+              }
+            }
+          }
+          listItem.put("title", titleNode.getValueAsText());
+          listItems.add(listItem);
         }
 
-        setListAdapter(new ArrayAdapter<String>(context,
-            android.R.layout.simple_list_item_1, titles));
         final ListView lv = getListView();
+        lv.setAdapter(new SimpleAdapter(context, listItems,
+            R.layout.list_my_shows, new String[] { "icon", "title" },
+            new int[] { R.id.show_icon, R.id.show_title }));
         lv.setOnItemClickListener(onClickListener);
       }
     };
