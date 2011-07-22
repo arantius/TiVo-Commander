@@ -79,6 +79,12 @@ public class MyShows extends ListActivity {
           listItem.put("icon", R.drawable.blank); // By default blank.
           if (item.has("folderInProgress")) {
             listItem.put("icon", R.drawable.folder_recording);
+          } else if (item.has("folderType")) {
+            if (item.get("folderType").getTextValue().equals("wishlist")) {
+              listItem.put("icon", R.drawable.folder_wishlist);
+            } else {
+              listItem.put("icon", R.drawable.folder);
+            }
           } else if (item.has("folderItemCount")) {
             listItem.put("icon", R.drawable.folder);
           } else if (item.has("recordingStatusType")) {
@@ -94,6 +100,8 @@ public class MyShows extends ListActivity {
               listItem.put("icon", R.drawable.recording_keep);
             } else if (recordingStatus.equals("suggestion")) {
               listItem.put("icon", R.drawable.recording_suggestion);
+            } else if (recordingStatus.equals("wishlist")) {
+              listItem.put("icon", R.drawable.recording_wishlist);
             }
           } else if (item.has("recordingForChildRecordingId")) {
             JsonNode recording = item.get("recordingForChildRecordingId");
