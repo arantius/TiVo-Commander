@@ -105,8 +105,8 @@ public class MyShows extends ListActivity {
             }
           } else if (item.has("recordingForChildRecordingId")) {
             JsonNode recording = item.get("recordingForChildRecordingId");
-            if (recording.has("state")) {
-              if (recording.get("state").getTextValue().equals("complete")) {
+            if (recording.has("type")) {
+              if (recording.get("type").getTextValue().equals("recording")) {
                 listItem.put("icon", R.drawable.recording);
               }
             }
