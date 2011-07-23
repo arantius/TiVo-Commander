@@ -31,6 +31,7 @@ public class MyShows extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    MindRpc.init(this);
 
     final Context context = this;
 
