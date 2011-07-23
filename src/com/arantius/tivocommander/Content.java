@@ -1,6 +1,18 @@
 package com.arantius.tivocommander;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.codehaus.jackson.JsonNode;
+
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -12,16 +24,68 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class Content extends Activity {
+  private final class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    @Override
+    protected Bitmap doInBackground(String... urls) {
+      URL url = null;
+      try {
+        url = new URL(urls[0]);
+      } catch (MalformedURLException e) {
+        Utils.logError("Parse URL; " + urls[0], e);
+        return null;
+      }
+      try {
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoInput(true);
+        conn.connect();
+        InputStream is = conn.getInputStream();
+        return BitmapFactory.decodeStream(is);
+      } catch (IOException e) {
+        Utils.logError("Download URL; " + urls[0], e);
+        return null;
+      }
+    }
+
+    @Override
+    protected void onPostExecute(Bitmap result) {
+      if (result != null) {
+        mImageView.setBackgroundDrawable(new BitmapDrawable(result));
+      }
+      mImageProgress.setVisibility(View.INVISIBLE);
+    }
+  }
+
   private final MindRpcResponseListener contentListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          mResponse = response;
+          mContent = response.getBody().path("content").path(0);
+
           setContentView(R.layout.content);
+          mImageView = findViewById(R.id.content_layout_image);
+          mImageProgress = findViewById(R.id.content_image_progress);
+
+          boolean foundImage = false;
+          JsonNode images = mContent.path("image");
+          for (JsonNode image : images) {
+            if ("showcaseBanner".equals(image.path("imageType").getTextValue())
+                && 200 == image.path("width").getIntValue()
+                && 150 == image.path("height").getIntValue()) {
+              new DownloadImageTask().execute(image.path("imageUrl")
+                  .getTextValue());
+              foundImage = true;
+              break;
+            }
+          }
+          if (!foundImage) {
+            mImageProgress.setVisibility(View.INVISIBLE);
+          }
         }
       };
 
+  private JsonNode mContent;
   private String mContentId;
-  private MindRpcResponse mResponse;
+  private View mImageView;
+  private View mImageProgress;
 
   public void doDelete(View v) {
     Toast.makeText(getBaseContext(), "Delete not implemented yet.",
@@ -35,8 +99,7 @@ public class Content extends Activity {
 
   public void doWatch(View v) {
     String recordingId =
-        mResponse.getBody().path("content").path(0)
-            .path("recordingForContentId").path(0).path("recordingId")
+        mContent.path("recordingForContentId").path(0).path("recordingId")
             .getTextValue();
     MindRpc.addRequest(new UiNavigate(recordingId), null);
   }

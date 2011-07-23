@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/content_layout">
   <LinearLayout android:id="@+id/content_layout_img_btn" android:layout_height="wrap_content" android:layout_width="fill_parent">
-    <FrameLayout android:layout_height="150dip" android:id="@+id/content_image_holder" android:layout_width="200dip">
+    <FrameLayout android:layout_height="150dip" android:layout_width="200dip" android:background="@drawable/content_banner" android:id="@+id/content_layout_image">
       <ProgressBar android:layout_height="wrap_content" android:id="@+id/content_image_progress" style="?android:attr/progressBarStyleLarge" android:layout_width="wrap_content" android:layout_gravity="center"></ProgressBar>
     </FrameLayout>
-    <LinearLayout android:layout_height="fill_parent" android:id="@+id/linearLayout2" android:orientation="vertical" android:layout_width="fill_parent">
+    <LinearLayout android:layout_height="fill_parent" android:orientation="vertical" android:layout_width="fill_parent" android:id="@+id/content_layout_btn" android:layout_marginTop="3dip">
       <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:onClick="doWatch" android:text="Watch Now" android:id="@+id/content_btn_watch"></Button>
       <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:onClick="doExplore" android:text="Explore" android:id="@+id/content_btn_explore"></Button>
       <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:onClick="doDelete" android:text="Delete" android:id="@+id/content_btn_delete"></Button>
