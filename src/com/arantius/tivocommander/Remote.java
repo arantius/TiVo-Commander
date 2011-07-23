@@ -75,6 +75,7 @@ public class Remote extends Activity implements OnClickListener {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    MindRpc.init(this);
 
     setTitle("TiVo Commander - Remote Control");
     setContentView(R.layout.remote);
