@@ -10,9 +10,12 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -23,7 +26,33 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class MyShows extends ListActivity {
-  private static final String LOG_TAG = "tivo_commander";
+  private class ProgressAdapter extends BaseAdapter {
+    private final LayoutInflater mInflater;
+    private final int mSize;
+
+    public ProgressAdapter(Context context, int size) {
+      mInflater =
+          (LayoutInflater) context
+              .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+      mSize = size;
+    }
+
+    public View getView(int position, View convertView, ViewGroup parent) {
+      return mInflater.inflate(R.layout.list_my_shows_progress, parent, false);
+    }
+
+    public int getCount() {
+      return mSize;
+    }
+
+    public Object getItem(int position) {
+      return null;
+    }
+
+    public long getItemId(int position) {
+      return 0;
+    }
+  }
 
   private String mFolderId;
   private JsonNode mItems;
@@ -129,6 +158,9 @@ public class MyShows extends ListActivity {
       public void onResponse(MindRpcResponse response) {
         JsonNode ids = response.getBody().findValue("objectIdAndType");
         MindRpc.addRequest(new RecordingFolderItemSearch(ids), detailCallback);
+
+        // Show the right number of progress throbbers while loading details.
+        setListAdapter(new ProgressAdapter(context, ids.size()));
       }
     };
 
