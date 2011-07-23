@@ -26,6 +26,10 @@ public abstract class MindRpcRequest {
     mDataMap.put("type", mType);
   }
 
+  public Map<String, Object> getDataMap() {
+    return mDataMap;
+  }
+
   public String getDataString() {
     String data = Utils.stringifyToJson(mDataMap);
     if (data == null) {

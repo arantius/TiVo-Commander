@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.util.Log;
 
+import com.arantius.tivocommander.Utils;
 import com.arantius.tivocommander.rpc.request.MindRpcRequest;
 
 /**
@@ -48,6 +49,8 @@ public class MindRpcOutput extends Thread {
           String reqStr = request.toString();
           mStream.write(reqStr);
           mStream.flush();
+          Utils.debugLog("Sent request:\n"
+              + Utils.stringifyToPrettyJson(request.getDataMap()));
         }
       } catch (IOException e) {
         Log.e(LOG_TAG, "write: io exception!", e);

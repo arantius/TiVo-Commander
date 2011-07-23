@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import android.util.Log;
 
+import com.arantius.tivocommander.Utils;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseFactory;
 
@@ -54,6 +55,8 @@ public class MindRpcInput extends Thread {
           final MindRpcResponse response =
               mindRpcResponseFactory.create(headers, body);
           if (response != null) {
+            Utils.debugLog("Got response:\n"
+                + Utils.stringifyToPrettyJson(response.getBody()));
             MindRpc.dispatchResponse(response);
           }
         }
