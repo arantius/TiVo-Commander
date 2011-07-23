@@ -15,6 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
@@ -58,12 +59,20 @@ public class Content extends Activity {
   private final MindRpcResponseListener contentListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          mContent = response.getBody().path("content").path(0);
-
           setContentView(R.layout.content);
+
+          mContent = response.getBody().path("content").path(0);
           mImageView = findViewById(R.id.content_layout_image);
           mImageProgress = findViewById(R.id.content_image_progress);
 
+          // Set text bits.
+          String title = mContent.path("title").getTextValue();
+          String subtitle = mContent.path("subtitle").getTextValue();
+          ((TextView) findViewById(R.id.content_title)).setText(title);
+          ((TextView) findViewById(R.id.content_subtitle)).setText(subtitle);
+          setTitle(title + " - " + subtitle);
+
+          // Find and set the image if possible.
           boolean foundImage = false;
           JsonNode images = mContent.path("image");
           for (JsonNode image : images) {
