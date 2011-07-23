@@ -1,20 +1,15 @@
 package com.arantius.tivocommander.rpc.request;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-
 import android.util.Log;
 
+import com.arantius.tivocommander.Utils;
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public abstract class MindRpcRequest {
   private static final String LOG_TAG = "tivo_commander";
-  private static final ObjectMapper mMapper = new ObjectMapper();
   private final int mRpcId;
 
   protected String mBodyId = "";
@@ -32,16 +27,11 @@ public abstract class MindRpcRequest {
   }
 
   public String getDataString() {
-    try {
-      return mMapper.writeValueAsString(mDataMap);
-    } catch (JsonGenerationException e) {
-      Log.e(LOG_TAG, "Stringify response body", e);
-    } catch (JsonMappingException e) {
-      Log.e(LOG_TAG, "Stringify response body", e);
-    } catch (IOException e) {
-      Log.e(LOG_TAG, "Stringify response body", e);
+    String data = Utils.stringifyToJson(mDataMap);
+    if (data == null) {
+      Log.e(LOG_TAG, "Stringify failure; request body");
     }
-    return null;
+    return data;
   }
 
   public int getRpcId() {

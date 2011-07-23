@@ -5,15 +5,13 @@ import java.io.CharArrayReader;
 import java.io.IOException;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import android.util.Log;
 
+import com.arantius.tivocommander.Utils;
+
 public class MindRpcResponseFactory {
   private static final String LOG_TAG = "tivo_commander";
-  private static final ObjectMapper mJsonParser = new ObjectMapper();
 
   public MindRpcResponse create(char[] headers, char[] body) {
     Boolean isFinal = true;
@@ -34,24 +32,16 @@ public class MindRpcResponseFactory {
     }
 
     String bodyStr = new String(body);
-    JsonNode bodyObj = null;
-    try {
-      bodyObj = mJsonParser.readValue(bodyStr, JsonNode.class);
-    } catch (JsonMappingException e) {
-      Log.e(LOG_TAG, "Parse response body", e);
+    JsonNode bodyObj = Utils.parseJson(bodyStr);
+    if (bodyObj == null) {
+      Log.e(LOG_TAG, "Parse failure; response body");
       return null;
-    } catch (JsonParseException e) {
-      Log.e(LOG_TAG, "Parse response body", e);
-      return null;
-    } catch (IOException e) {
-      Log.e(LOG_TAG, "Parse response body", e);
-      return null;
-    }
+    } else {
+      if (bodyObj.get("type").getValueAsText().equals("error")) {
+        Log.e(LOG_TAG, "Response type is error! " + bodyStr);
+      }
 
-    if (bodyObj.get("type").getValueAsText().equals("error")) {
-      Log.e(LOG_TAG, "Response type is error! " + bodyStr);
+      return new MindRpcResponse(isFinal, rpcId, bodyObj);
     }
-
-    return new MindRpcResponse(isFinal, rpcId, bodyObj);
   }
 }
