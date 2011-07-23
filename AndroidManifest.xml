@@ -14,7 +14,11 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-    <activity android:name="MyShows"></activity>
+    <activity android:name="MyShows">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+      </intent-filter>
+    </activity>
     <activity android:name="Remote"></activity>
     <activity android:name="Settings"></activity>
   </application>
