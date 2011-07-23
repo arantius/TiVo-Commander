@@ -78,8 +78,14 @@ public class MyShows extends ListActivity {
           HashMap<String, Object> listItem = new HashMap<String, Object>();
 
           listItem.put("icon", R.drawable.blank); // By default blank.
-          if (item.has("folderInProgress")) {
-            listItem.put("icon", R.drawable.folder_recording);
+          if (item.has("folderTransportType")) {
+            String folderTransportType =
+                item.get("folderTransportType").get(0).getTextValue();
+            if (folderTransportType.equals("mrv")) {
+              listItem.put("icon", R.drawable.folder_downloading);
+            } else if (folderTransportType.equals("stream")) {
+              listItem.put("icon", R.drawable.folder_recording);
+            }
           } else if (item.has("folderType")) {
             if (item.get("folderType").getTextValue().equals("wishlist")) {
               listItem.put("icon", R.drawable.folder_wishlist);
@@ -95,6 +101,8 @@ public class MyShows extends ListActivity {
               listItem.put("icon", R.drawable.recording_expired);
             } else if (recordingStatus.equals("expiresSoon")) {
               listItem.put("icon", R.drawable.recording_expiressoon);
+            } else if (recordingStatus.equals("inProgressDownload")) {
+              listItem.put("icon", R.drawable.recording_downloading);
             } else if (recordingStatus.equals("inProgressRecording")) {
               listItem.put("icon", R.drawable.recording_recording);
             } else if (recordingStatus.equals("keepForever")) {
