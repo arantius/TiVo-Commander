@@ -6,7 +6,7 @@ public class KeyEventSend extends MindRpcRequest {
     super("keyEventSend");
 
     mDataMap.put("event", "ascii");
-    mDataMap.put("value", letter);
+    mDataMap.put("value", (int) letter);
   }
 
   public KeyEventSend(String key) {
