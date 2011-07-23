@@ -24,6 +24,18 @@ public class Utils {
     }
   }
 
+  public static final String join(String glue, String... s) {
+    if (s.length == 0) {
+      return null;
+    }
+    StringBuilder out = new StringBuilder();
+    out.append(s[0]);
+    for (int i = 1; i < s.length; i++) {
+      out.append(glue).append(s[i]);
+    }
+    return out.toString();
+  }
+
   public final static void log(String message) {
     Log.i(LOG_TAG, message);
   }

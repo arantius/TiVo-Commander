@@ -50,7 +50,7 @@ public abstract class MindRpcRequest {
   @Override
   public String toString() {
     // @formatter:off
-    String headers = join("\r\n",
+    String headers = Utils.join("\r\n",
         "Type: request",
         "RpcId: " + getRpcId(),
         "SchemaVersion:7",
@@ -66,18 +66,6 @@ public abstract class MindRpcRequest {
     // "+ 2" is the "\r\n" we'll add next.
     String reqLine =
         String.format("MRPC/2 %d %d", headers.length() + 2, body.length());
-    return join("\r\n", reqLine, headers, body);
-  }
-
-  private String join(String glue, String... s) {
-    if (s.length == 0) {
-      return null;
-    }
-    StringBuilder out = new StringBuilder();
-    out.append(s[0]);
-    for (int i = 1; i < s.length; i++) {
-      out.append(glue).append(s[i]);
-    }
-    return out.toString();
+    return Utils.join("\r\n", reqLine, headers, body);
   }
 }
