@@ -24,6 +24,10 @@ public class Utils {
     }
   }
 
+  public final static void log(String message) {
+    Log.i(LOG_TAG, message);
+  }
+
   public final static JsonNode parseJson(String json) {
     try {
       return mMapper.readValue(json, JsonNode.class);
