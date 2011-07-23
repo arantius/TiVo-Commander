@@ -7,4 +7,5 @@
   <string name="error_mak">"Please provide your TiVo's Media Access Key."</string>
   <string name="error_connect">Could not connect; check host &amp; port settings.</string>
   <string name="error_auth">Authentication failed; check MAK settings.</string>
+  <string name="error_reading_content_id">Error reading content ID</string>
 </resources>

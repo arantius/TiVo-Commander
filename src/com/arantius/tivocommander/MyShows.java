@@ -21,7 +21,6 @@ import android.widget.SimpleAdapter;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.RecordingFolderItemSearch;
-import com.arantius.tivocommander.rpc.request.UiNavigate;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
@@ -70,6 +69,7 @@ public class MyShows extends ListActivity {
         JsonNode item = mItems.get(position);
         JsonNode countNode = item.get("folderItemCount");
         if (countNode != null && countNode.getValueAsInt() > 0) {
+          // Navigate to 'my shows' for this folder.
           Intent intent = new Intent(getBaseContext(), MyShows.class);
           String folderId = item.get("recordingFolderItemId").getValueAsText();
           intent.putExtra("com.arantius.tivocommander.folderId", folderId);
@@ -77,7 +77,13 @@ public class MyShows extends ListActivity {
           intent.putExtra("com.arantius.tivocommander.folderName", folderName);
           startActivity(intent);
         } else {
-          MindRpc.addRequest(new UiNavigate(item), null);
+          // Navigate to 'content' for this item.
+          Intent intent = new Intent(getBaseContext(), Content.class);
+          String contentId =
+              item.get("recordingForChildRecordingId").get("contentId")
+                  .getTextValue();
+          intent.putExtra("com.arantius.tivocommander.contentId", contentId);
+          startActivity(intent);
         }
       }
     };
