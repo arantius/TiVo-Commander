@@ -62,20 +62,13 @@ public class MyShows extends ListActivity {
 
         for (int i = 0; i < mItems.size(); i++) {
           final JsonNode item = mItems.get(i);
-          JsonNode titleNode = null;
-          if (mFolderId != null) {
-            try {
-              titleNode =
-                  item.get("recordingForChildRecordingId").get("subtitle");
-            } catch (NullPointerException e) {
-              // No-op; will be null and overwritten below.
-            }
-          }
-          if (titleNode == null) {
-            titleNode = item.get("title");
-          }
-
           HashMap<String, Object> listItem = new HashMap<String, Object>();
+
+          String title = item.get("title").getTextValue();
+          if ('"' == title.charAt(0) && '"' == title.charAt(title.length() - 1)) {
+            title = title.substring(1, title.length() - 1);
+          }
+          listItem.put("title", title);
 
           listItem.put("icon", R.drawable.blank); // By default blank.
           if (item.has("folderTransportType")) {
@@ -120,7 +113,7 @@ public class MyShows extends ListActivity {
               }
             }
           }
-          listItem.put("title", titleNode.getValueAsText());
+
           listItems.add(listItem);
         }
 
