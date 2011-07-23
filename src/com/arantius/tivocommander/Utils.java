@@ -1,6 +1,9 @@
 package com.arantius.tivocommander;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
@@ -24,15 +27,25 @@ public class Utils {
     }
   }
 
-  public static final String join(String glue, String... s) {
-    if (s.length == 0) {
-      return null;
-    }
+  public static final String join(String glue, String... strings) {
+    return joinList(glue, Arrays.asList(strings));
+  }
+
+  public static final String joinList(String glue, List<String> strings) {
+    Iterator<String> it = strings.iterator();
     StringBuilder out = new StringBuilder();
-    out.append(s[0]);
-    for (int i = 1; i < s.length; i++) {
-      out.append(glue).append(s[i]);
+    String s;
+    while (it.hasNext()) {
+      s = it.next();
+      if (s == null || s == "") {
+        continue;
+      }
+      out.append(s);
+      if (it.hasNext()) {
+        out.append(glue);
+      }
     }
+
     return out.toString();
   }
 

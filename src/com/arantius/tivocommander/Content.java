@@ -5,15 +5,20 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.codehaus.jackson.JsonNode;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,12 +70,34 @@ public class Content extends Activity {
           mImageView = findViewById(R.id.content_layout_image);
           mImageProgress = findViewById(R.id.content_image_progress);
 
-          // Set text bits.
+          // Display titles.
           String title = mContent.path("title").getTextValue();
           String subtitle = mContent.path("subtitle").getTextValue();
           ((TextView) findViewById(R.id.content_title)).setText(title);
           ((TextView) findViewById(R.id.content_subtitle)).setText(subtitle);
           setTitle(title + " - " + subtitle);
+
+          // Construct and display details.
+          ArrayList<String> detailParts = new ArrayList<String>();
+          int season = mContent.path("seasonNumber").getIntValue();
+          int epNum = mContent.path("episodeNum").path(0).getIntValue();
+          if (season != 0 && epNum != 0) {
+            detailParts.add(String.format("Sea %d Ep %d", season, epNum));
+          }
+          detailParts.add(mContent.path("tvRating").getTextValue());
+          detailParts.add(mContent.path("category").path(0).path("label")
+              .getTextValue());
+          int year = mContent.path("originalAirYear").getIntValue();
+          if (year != 0) {
+            detailParts.add(Integer.toString(year));
+          }
+          String detail1 =
+              "(" + Utils.joinList(", ", detailParts) + ")";
+          String detail2 = mContent.path("description").getTextValue();
+          Spannable details = new SpannableString(detail1 + " " + detail2);
+          details.setSpan(new ForegroundColorSpan(Color.WHITE),
+              detail1.length(), details.length(), 0);
+          ((TextView) findViewById(R.id.content_details)).setText(details);
 
           // Find and set the image if possible.
           boolean foundImage = false;

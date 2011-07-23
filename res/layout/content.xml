@@ -30,12 +30,25 @@
         android:text="Delete" android:id="@+id/content_btn_delete" />
     </LinearLayout>
   </LinearLayout>
-  <TextView android:id="@+id/content_title"
-    android:layout_width="wrap_content" android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceLarge"
-    android:text="Title" />
-  <TextView android:id="@+id/content_subtitle"
-    android:layout_width="wrap_content" android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceMedium"
-    android:text="Subtitle" />
+  <ScrollView android:id="@+id/content_text_scroll"
+    android:fadingEdge="vertical" android:fadingEdgeLength="20dip"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+  >
+    <LinearLayout android:id="@+id/content_text_layout"
+      android:layout_width="fill_parent" android:layout_height="fill_parent"
+      android:orientation="vertical"
+    >
+      <TextView android:id="@+id/content_title"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Title" />
+      <TextView android:id="@+id/content_subtitle"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Subtitle" />
+      <TextView android:id="@+id/content_details"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="Details" />
+    </LinearLayout>
+  </ScrollView>
 </LinearLayout>
