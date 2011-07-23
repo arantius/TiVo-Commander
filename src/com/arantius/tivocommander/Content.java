@@ -33,6 +33,7 @@ public class Content extends Activity {
       return;
     }
 
+    setContentView(R.layout.progress);
     MindRpc.addRequest(new ContentSearch(mContentId), contentListener);
   }
 }

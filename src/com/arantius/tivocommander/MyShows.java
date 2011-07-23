@@ -37,7 +37,7 @@ public class MyShows extends ListActivity {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-      return mInflater.inflate(R.layout.list_my_shows_progress, parent, false);
+      return mInflater.inflate(R.layout.progress, parent, false);
     }
 
     public int getCount() {
