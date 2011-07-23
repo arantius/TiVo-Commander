@@ -16,6 +16,7 @@ public class MindRpcInput extends Thread {
   private static final String LOG_TAG = "tivo_commander";
 
   public volatile boolean mStopFlag = false;
+
   private final BufferedReader mStream;
 
   public MindRpcInput(BufferedReader stream) {
@@ -39,18 +40,15 @@ public class MindRpcInput extends Thread {
           break;
         }
         if (respLine.length() >= 6 && "MRPC/2".equals(respLine.substring(0, 6))) {
-          String[] bytes = respLine.split(" ");
-          int headerLen = Integer.parseInt(bytes[1]);
-          int bodyLen = Integer.parseInt(bytes[2]);
+          String[] respBytes = respLine.split(" ");
+          int headerLen = Integer.parseInt(respBytes[1]);
+          int bodyLen = Integer.parseInt(respBytes[2]);
 
           char[] headers = new char[headerLen];
-          mStream.read(headers, 0, headerLen);
+          readBytes(headers, headerLen);
 
           char[] body = new char[bodyLen];
-          int bytesRead = 0;
-          while (bytesRead < bodyLen) {
-            bytesRead += mStream.read(body, bytesRead, bodyLen - bytesRead);
-          }
+          readBytes(body, bodyLen);
 
           final MindRpcResponse response =
               mindRpcResponseFactory.create(headers, body);
@@ -64,6 +62,13 @@ public class MindRpcInput extends Thread {
         Log.e(LOG_TAG, "read: IOException!", e);
         break;
       }
+    }
+  }
+
+  private void readBytes(char[] buf, int len) throws IOException {
+    int bytesRead = 0;
+    while (bytesRead < len) {
+      bytesRead += mStream.read(buf, bytesRead, len - bytesRead);
     }
   }
 }

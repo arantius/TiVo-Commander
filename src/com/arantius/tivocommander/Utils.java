@@ -34,6 +34,7 @@ public class Utils {
     } catch (IOException e) {
       Log.e(LOG_TAG, "parseJson failure", e);
     }
+    Log.e(LOG_TAG, "When parsing:\n" + json);
     return null;
   }
 
