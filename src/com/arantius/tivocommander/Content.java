@@ -159,7 +159,7 @@ public class Content extends Activity {
 
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
-      mContentId = bundle.getString("com.arantius.tivocommander.contentId");
+      mContentId = bundle.getString("contentId");
     } else {
       Toast.makeText(getBaseContext(), R.string.error_reading_content_id,
           Toast.LENGTH_SHORT).show();

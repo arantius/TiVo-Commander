@@ -114,12 +114,9 @@ public class MyShows extends ListActivity {
           if (countNode != null && countNode.getValueAsInt() > 0) {
             // Navigate to 'my shows' for this folder.
             Intent intent = new Intent(getBaseContext(), MyShows.class);
-            String folderId =
-                item.path("recordingFolderItemId").getValueAsText();
-            intent.putExtra("com.arantius.tivocommander.folderId", folderId);
-            String folderName = item.path("title").getValueAsText();
-            intent
-                .putExtra("com.arantius.tivocommander.folderName", folderName);
+            intent.putExtra("folderId", item.path("recordingFolderItemId")
+                .getValueAsText());
+            intent.putExtra("folderName", item.path("title").getValueAsText());
             startActivity(intent);
           } else {
             String contentId = getContentIdForItem(item);
@@ -128,9 +125,9 @@ public class MyShows extends ListActivity {
               MindRpc.addRequest(new UiNavigate(recordingId), null);
             } else {
               // Navigate to 'content' for this item.
-              Intent i = new Intent(getBaseContext(), Content.class);
-              i.putExtra("com.arantius.tivocommander.contentId", contentId);
-              startActivity(i);
+              Intent intent = new Intent(getBaseContext(), Content.class);
+              intent.putExtra("contentId", contentId);
+              startActivity(intent);
             }
           }
         }
@@ -143,9 +140,8 @@ public class MyShows extends ListActivity {
 
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
-      mFolderId = bundle.getString("com.arantius.tivocommander.folderId");
-      setTitle("TiVo Commander - "
-          + bundle.getString("com.arantius.tivocommander.folderName"));
+      mFolderId = bundle.getString("folderId");
+      setTitle("TiVo Commander - " + bundle.getString("folderName"));
     } else {
       mFolderId = null;
       setTitle("TiVo Commander - My Shows");
