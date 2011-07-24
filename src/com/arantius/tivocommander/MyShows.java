@@ -21,6 +21,7 @@ import android.widget.SimpleAdapter;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.RecordingFolderItemSearch;
+import com.arantius.tivocommander.rpc.request.UiNavigate;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
@@ -73,13 +74,18 @@ public class MyShows extends ListActivity {
             }
             listItem.put("title", title);
             listItem.put("icon", getIconForItem(item));
+            listItem.put("more", R.drawable.more);
+            if (item.path("folderItemCount").getIntValue() == 0
+                && getContentIdForItem(item) == null) {
+              listItem.put("more", R.drawable.blank);
+            }
             listItems.add(listItem);
           }
 
           final ListView lv = getListView();
           lv.setAdapter(new SimpleAdapter(mContext, listItems,
-              R.layout.list_my_shows, new String[] { "icon", "title" },
-              new int[] { R.id.show_icon, R.id.show_title }));
+              R.layout.list_my_shows, new String[] { "icon", "more", "title" },
+              new int[] { R.id.show_icon, R.id.show_more, R.id.show_title }));
           lv.setOnItemClickListener(mOnClickListener);
         }
       };
@@ -116,13 +122,16 @@ public class MyShows extends ListActivity {
                 .putExtra("com.arantius.tivocommander.folderName", folderName);
             startActivity(intent);
           } else {
-            // Navigate to 'content' for this item.
-            Intent intent = new Intent(getBaseContext(), Content.class);
-            String contentId =
-                item.path("recordingForChildRecordingId").path("contentId")
-                    .getTextValue();
-            intent.putExtra("com.arantius.tivocommander.contentId", contentId);
-            startActivity(intent);
+            String contentId = getContentIdForItem(item);
+            if (contentId == null) {
+              String recordingId = item.path("childRecordingId").getTextValue();
+              MindRpc.addRequest(new UiNavigate(recordingId), null);
+            } else {
+              // Navigate to 'content' for this item.
+              Intent i = new Intent(getBaseContext(), Content.class);
+              i.putExtra("com.arantius.tivocommander.contentId", contentId);
+              startActivity(i);
+            }
           }
         }
       };
@@ -149,6 +158,11 @@ public class MyShows extends ListActivity {
   public void onResume() {
     super.onResume();
     MindRpc.init(this);
+  }
+
+  protected final String getContentIdForItem(JsonNode item) {
+    return item.path("recordingForChildRecordingId").path("contentId")
+        .getTextValue();
   }
 
   protected final int getIconForItem(JsonNode item) {

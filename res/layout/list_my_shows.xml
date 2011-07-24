@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_height="fill_parent" android:id="@+id/linearLayout1"
-  android:layout_width="fill_parent" android:orientation="horizontal"
+  android:id="@+id/linearLayout1" android:orientation="horizontal"
+  android:layout_width="fill_parent" android:layout_height="wrap_content"
 >
-  <ImageView android:id="@+id/show_icon" android:focusable="false"
-    android:focusableInTouchMode="false" android:layout_height="fill_parent"
-    android:layout_width="wrap_content" android:paddingLeft="6dip" />
-  <TextView android:focusable="false"
-    android:focusableInTouchMode="false" android:id="@+id/show_title"
-    android:gravity="center_vertical" android:layout_height="wrap_content"
-    android:layout_width="fill_parent" android:minHeight="?android:attr/listPreferredItemHeight"
-    android:paddingLeft="6dip" android:text="TextView"
-    android:textAppearance="?android:attr/textAppearanceLarge" />
+  <ImageView android:id="@+id/show_icon" android:src="@drawable/recording"
+    android:focusable="false" android:focusableInTouchMode="false"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:paddingLeft="6dip" android:layout_gravity="center_vertical" />
+  <TextView android:id="@+id/show_title" android:text="Title"
+    android:focusable="false" android:focusableInTouchMode="false"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:gravity="center_vertical" android:layout_weight="1"
+    android:paddingLeft="6dip" android:paddingRight="6dip" />
+  <ImageView android:id="@+id/show_more" android:src="@drawable/more"
+    android:focusable="false" android:focusableInTouchMode="false"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical" android:paddingRight="6dip" />
 </LinearLayout>
