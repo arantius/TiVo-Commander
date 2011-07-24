@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.ContentSearch;
+import com.arantius.tivocommander.rpc.request.RecordingUpdate;
 import com.arantius.tivocommander.rpc.request.UiNavigate;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
@@ -69,6 +70,9 @@ public class Content extends Activity {
           mContent = response.getBody().path("content").path(0);
           mImageView = findViewById(R.id.content_layout_image);
           mImageProgress = findViewById(R.id.content_image_progress);
+          mRecordingId =
+              mContent.path("recordingForContentId").path(0)
+                  .path("recordingId").getTextValue();
 
           // Display titles.
           String title = mContent.path("title").getTextValue();
@@ -122,10 +126,11 @@ public class Content extends Activity {
   private String mContentId;
   private View mImageView;
   private View mImageProgress;
+  private String mRecordingId;
 
   public void doDelete(View v) {
-    Toast.makeText(getBaseContext(), "Delete not implemented yet.",
-        Toast.LENGTH_SHORT).show();
+    MindRpc.addRequest(new RecordingUpdate(mRecordingId, "deleted"), null);
+    finish();
   }
 
   public void doExplore(View v) {
@@ -134,10 +139,7 @@ public class Content extends Activity {
   }
 
   public void doWatch(View v) {
-    String recordingId =
-        mContent.path("recordingForContentId").path(0).path("recordingId")
-            .getTextValue();
-    MindRpc.addRequest(new UiNavigate(recordingId), null);
+    MindRpc.addRequest(new UiNavigate(mRecordingId), null);
   }
 
   @Override
