@@ -36,10 +36,6 @@ public class MyShows extends ListActivity {
       mSize = size;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
-      return mInflater.inflate(R.layout.progress, parent, false);
-    }
-
     public int getCount() {
       return mSize;
     }
@@ -51,124 +47,90 @@ public class MyShows extends ListActivity {
     public long getItemId(int position) {
       return 0;
     }
+
+    public View getView(int position, View convertView, ViewGroup parent) {
+      return mInflater.inflate(R.layout.progress, parent, false);
+    }
   }
 
+  private final Context mContext = this;
+
+  private final MindRpcResponseListener mDetailCallback =
+      new MindRpcResponseListener() {
+        public void onResponse(MindRpcResponse response) {
+          mItems = response.getBody().path("recordingFolderItem");
+          List<HashMap<String, Object>> listItems =
+              new ArrayList<HashMap<String, Object>>();
+
+          for (int i = 0; i < mItems.size(); i++) {
+            final JsonNode item = mItems.path(i);
+            HashMap<String, Object> listItem = new HashMap<String, Object>();
+
+            String title = item.path("title").getTextValue();
+            if ('"' == title.charAt(0)
+                && '"' == title.charAt(title.length() - 1)) {
+              title = title.substring(1, title.length() - 1);
+            }
+            listItem.put("title", title);
+            listItem.put("icon", getIconForItem(item));
+            listItems.add(listItem);
+          }
+
+          final ListView lv = getListView();
+          lv.setAdapter(new SimpleAdapter(mContext, listItems,
+              R.layout.list_my_shows, new String[] { "icon", "title" },
+              new int[] { R.id.show_icon, R.id.show_title }));
+          lv.setOnItemClickListener(mOnClickListener);
+        }
+      };
+
   private String mFolderId;
+
+  private final MindRpcResponseListener mIdSequenceCallback =
+      new MindRpcResponseListener() {
+        public void onResponse(MindRpcResponse response) {
+          JsonNode ids = response.getBody().findValue("objectIdAndType");
+          MindRpc.addRequest(new RecordingFolderItemSearch(ids),
+              mDetailCallback);
+
+          // Show the right number of progress throbbers while loading details.
+          setListAdapter(new ProgressAdapter(mContext, ids.size()));
+        }
+      };
   private JsonNode mItems;
+
+  private final OnItemClickListener mOnClickListener =
+      new OnItemClickListener() {
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id) {
+          JsonNode item = mItems.path(position);
+          JsonNode countNode = item.path("folderItemCount");
+          if (countNode != null && countNode.getValueAsInt() > 0) {
+            // Navigate to 'my shows' for this folder.
+            Intent intent = new Intent(getBaseContext(), MyShows.class);
+            String folderId =
+                item.path("recordingFolderItemId").getValueAsText();
+            intent.putExtra("com.arantius.tivocommander.folderId", folderId);
+            String folderName = item.path("title").getValueAsText();
+            intent
+                .putExtra("com.arantius.tivocommander.folderName", folderName);
+            startActivity(intent);
+          } else {
+            // Navigate to 'content' for this item.
+            Intent intent = new Intent(getBaseContext(), Content.class);
+            String contentId =
+                item.path("recordingForChildRecordingId").path("contentId")
+                    .getTextValue();
+            intent.putExtra("com.arantius.tivocommander.contentId", contentId);
+            startActivity(intent);
+          }
+        }
+      };
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     MindRpc.init(this);
-
-    final Context context = this;
-
-    final OnItemClickListener onClickListener = new OnItemClickListener() {
-      public void onItemClick(AdapterView<?> parent, View view, int position,
-          long id) {
-        JsonNode item = mItems.path(position);
-        JsonNode countNode = item.path("folderItemCount");
-        if (countNode != null && countNode.getValueAsInt() > 0) {
-          // Navigate to 'my shows' for this folder.
-          Intent intent = new Intent(getBaseContext(), MyShows.class);
-          String folderId = item.path("recordingFolderItemId").getValueAsText();
-          intent.putExtra("com.arantius.tivocommander.folderId", folderId);
-          String folderName = item.path("title").getValueAsText();
-          intent.putExtra("com.arantius.tivocommander.folderName", folderName);
-          startActivity(intent);
-        } else {
-          // Navigate to 'content' for this item.
-          Intent intent = new Intent(getBaseContext(), Content.class);
-          String contentId =
-              item.path("recordingForChildRecordingId").path("contentId")
-                  .getTextValue();
-          intent.putExtra("com.arantius.tivocommander.contentId", contentId);
-          startActivity(intent);
-        }
-      }
-    };
-
-    final MindRpcResponseListener detailCallback;
-    detailCallback = new MindRpcResponseListener() {
-      public void onResponse(MindRpcResponse response) {
-        mItems = response.getBody().path("recordingFolderItem");
-        List<HashMap<String, Object>> listItems =
-            new ArrayList<HashMap<String, Object>>();
-
-        for (int i = 0; i < mItems.size(); i++) {
-          final JsonNode item = mItems.path(i);
-          HashMap<String, Object> listItem = new HashMap<String, Object>();
-
-          String title = item.path("title").getTextValue();
-          if ('"' == title.charAt(0) && '"' == title.charAt(title.length() - 1)) {
-            title = title.substring(1, title.length() - 1);
-          }
-          listItem.put("title", title);
-
-          listItem.put("icon", R.drawable.blank); // By default blank.
-          if (item.has("folderTransportType")) {
-            String folderTransportType =
-                item.path("folderTransportType").path(0).getTextValue();
-            if (folderTransportType.equals("mrv")) {
-              listItem.put("icon", R.drawable.folder_downloading);
-            } else if (folderTransportType.equals("stream")) {
-              listItem.put("icon", R.drawable.folder_recording);
-            }
-          } else if (item.has("folderType")) {
-            if (item.path("folderType").getTextValue().equals("wishlist")) {
-              listItem.put("icon", R.drawable.folder_wishlist);
-            } else {
-              listItem.put("icon", R.drawable.folder);
-            }
-          } else if (item.has("folderItemCount")) {
-            listItem.put("icon", R.drawable.folder);
-          } else if (item.has("recordingStatusType")) {
-            String recordingStatus =
-                item.path("recordingStatusType").getTextValue();
-            if (recordingStatus.equals("expired")) {
-              listItem.put("icon", R.drawable.recording_expired);
-            } else if (recordingStatus.equals("expiresSoon")) {
-              listItem.put("icon", R.drawable.recording_expiressoon);
-            } else if (recordingStatus.equals("inProgressDownload")) {
-              listItem.put("icon", R.drawable.recording_downloading);
-            } else if (recordingStatus.equals("inProgressRecording")) {
-              listItem.put("icon", R.drawable.recording_recording);
-            } else if (recordingStatus.equals("keepForever")) {
-              listItem.put("icon", R.drawable.recording_keep);
-            } else if (recordingStatus.equals("suggestion")) {
-              listItem.put("icon", R.drawable.recording_suggestion);
-            } else if (recordingStatus.equals("wishlist")) {
-              listItem.put("icon", R.drawable.recording_wishlist);
-            }
-          } else if (item.has("recordingForChildRecordingId")) {
-            JsonNode recording = item.path("recordingForChildRecordingId");
-            if (recording.has("type")) {
-              if (recording.path("type").getTextValue().equals("recording")) {
-                listItem.put("icon", R.drawable.recording);
-              }
-            }
-          }
-
-          listItems.add(listItem);
-        }
-
-        final ListView lv = getListView();
-        lv.setAdapter(new SimpleAdapter(context, listItems,
-            R.layout.list_my_shows, new String[] { "icon", "title" },
-            new int[] { R.id.show_icon, R.id.show_title }));
-        lv.setOnItemClickListener(onClickListener);
-      }
-    };
-
-    MindRpcResponseListener idSequenceCallback = new MindRpcResponseListener() {
-      public void onResponse(MindRpcResponse response) {
-        JsonNode ids = response.getBody().findValue("objectIdAndType");
-        MindRpc.addRequest(new RecordingFolderItemSearch(ids), detailCallback);
-
-        // Show the right number of progress throbbers while loading details.
-        setListAdapter(new ProgressAdapter(context, ids.size()));
-      }
-    };
 
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
@@ -180,12 +142,58 @@ public class MyShows extends ListActivity {
       setTitle("TiVo Commander - My Shows");
     }
     MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId),
-        idSequenceCallback);
+        mIdSequenceCallback);
   }
 
   @Override
   public void onResume() {
     super.onResume();
     MindRpc.init(this);
+  }
+
+  protected final int getIconForItem(JsonNode item) {
+    if (item.has("folderTransportType")) {
+      String folderTransportType =
+          item.path("folderTransportType").path(0).getTextValue();
+      if (folderTransportType.equals("mrv")) {
+        return R.drawable.folder_downloading;
+      } else if (folderTransportType.equals("stream")) {
+        return R.drawable.folder_recording;
+      }
+    } else if (item.has("folderType")) {
+      if (item.path("folderType").getTextValue().equals("wishlist")) {
+        return R.drawable.folder_wishlist;
+      } else {
+        return R.drawable.folder;
+      }
+    } else if (item.has("folderItemCount")) {
+      return R.drawable.folder;
+    } else if (item.has("recordingStatusType")) {
+      String recordingStatus = item.path("recordingStatusType").getTextValue();
+      if (recordingStatus.equals("expired")) {
+        return R.drawable.recording_expired;
+      } else if (recordingStatus.equals("expiresSoon")) {
+        return R.drawable.recording_expiressoon;
+      } else if (recordingStatus.equals("inProgressDownload")) {
+        return R.drawable.recording_downloading;
+      } else if (recordingStatus.equals("inProgressRecording")) {
+        return R.drawable.recording_recording;
+      } else if (recordingStatus.equals("keepForever")) {
+        return R.drawable.recording_keep;
+      } else if (recordingStatus.equals("suggestion")) {
+        return R.drawable.recording_suggestion;
+      } else if (recordingStatus.equals("wishlist")) {
+        return R.drawable.recording_wishlist;
+      }
+    } else if (item.has("recordingForChildRecordingId")) {
+      JsonNode recording = item.path("recordingForChildRecordingId");
+      if (recording.has("type")) {
+        if (recording.path("type").getTextValue().equals("recording")) {
+          return R.drawable.recording;
+        }
+      }
+    }
+
+    return R.drawable.blank;
   }
 }
