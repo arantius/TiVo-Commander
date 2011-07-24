@@ -20,7 +20,7 @@
         <action android:name="android.intent.action.MAIN" />
       </intent-filter>
     </activity>
-    <activity android:name="Remote">
+    <activity android:name="Remote" android:screenOrientation="portrait">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
       </intent-filter>
