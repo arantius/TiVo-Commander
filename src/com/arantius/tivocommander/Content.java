@@ -78,8 +78,15 @@ public class Content extends Activity {
           String title = mContent.path("title").getTextValue();
           String subtitle = mContent.path("subtitle").getTextValue();
           ((TextView) findViewById(R.id.content_title)).setText(title);
-          ((TextView) findViewById(R.id.content_subtitle)).setText(subtitle);
-          setTitle(title + " - " + subtitle);
+          TextView subtitleView =
+              ((TextView) findViewById(R.id.content_subtitle));
+          if (subtitle == null) {
+            setTitle(title);
+            subtitleView.setHeight(0);
+          } else {
+            setTitle(title + " - " + subtitle);
+            subtitleView.setText(subtitle);
+          }
 
           // Construct and display details.
           ArrayList<String> detailParts = new ArrayList<String>();
@@ -95,14 +102,17 @@ public class Content extends Activity {
           if (year != 0) {
             detailParts.add(Integer.toString(year));
           }
-          String detail1 =
-              "(" + Utils.joinList(", ", detailParts) + ")";
+          String detail1 = "(" + Utils.joinList(", ", detailParts) + ")";
           String detail2 = mContent.path("description").getTextValue();
-          Spannable details = new SpannableString(detail1 + " " + detail2);
-          details.setSpan(new ForegroundColorSpan(Color.WHITE),
-              detail1.length(), details.length(), 0);
-          ((TextView) findViewById(R.id.content_details)).setText(details);
-
+          TextView detailView = ((TextView) findViewById(R.id.content_details));
+          if (detail2 == null) {
+            detailView.setText(detail1);
+          } else {
+            Spannable details = new SpannableString(detail1 + " " + detail2);
+            details.setSpan(new ForegroundColorSpan(Color.WHITE),
+                detail1.length(), details.length(), 0);
+            detailView.setText(details);
+          }
           // Find and set the image if possible.
           boolean foundImage = false;
           JsonNode images = mContent.path("image");
