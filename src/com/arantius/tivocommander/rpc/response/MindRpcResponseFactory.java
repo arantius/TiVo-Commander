@@ -37,7 +37,7 @@ public class MindRpcResponseFactory {
       Log.e(LOG_TAG, "Parse failure; response body");
       return null;
     } else {
-      if (bodyObj.get("type").getValueAsText().equals("error")) {
+      if (bodyObj.path("type").getValueAsText().equals("error")) {
         Log.e(LOG_TAG, "Response type is error! " + bodyStr);
       }
 

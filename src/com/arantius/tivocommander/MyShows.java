@@ -66,21 +66,21 @@ public class MyShows extends ListActivity {
     final OnItemClickListener onClickListener = new OnItemClickListener() {
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id) {
-        JsonNode item = mItems.get(position);
-        JsonNode countNode = item.get("folderItemCount");
+        JsonNode item = mItems.path(position);
+        JsonNode countNode = item.path("folderItemCount");
         if (countNode != null && countNode.getValueAsInt() > 0) {
           // Navigate to 'my shows' for this folder.
           Intent intent = new Intent(getBaseContext(), MyShows.class);
-          String folderId = item.get("recordingFolderItemId").getValueAsText();
+          String folderId = item.path("recordingFolderItemId").getValueAsText();
           intent.putExtra("com.arantius.tivocommander.folderId", folderId);
-          String folderName = item.get("title").getValueAsText();
+          String folderName = item.path("title").getValueAsText();
           intent.putExtra("com.arantius.tivocommander.folderName", folderName);
           startActivity(intent);
         } else {
           // Navigate to 'content' for this item.
           Intent intent = new Intent(getBaseContext(), Content.class);
           String contentId =
-              item.get("recordingForChildRecordingId").get("contentId")
+              item.path("recordingForChildRecordingId").path("contentId")
                   .getTextValue();
           intent.putExtra("com.arantius.tivocommander.contentId", contentId);
           startActivity(intent);
@@ -91,15 +91,15 @@ public class MyShows extends ListActivity {
     final MindRpcResponseListener detailCallback;
     detailCallback = new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
-        mItems = response.getBody().get("recordingFolderItem");
+        mItems = response.getBody().path("recordingFolderItem");
         List<HashMap<String, Object>> listItems =
             new ArrayList<HashMap<String, Object>>();
 
         for (int i = 0; i < mItems.size(); i++) {
-          final JsonNode item = mItems.get(i);
+          final JsonNode item = mItems.path(i);
           HashMap<String, Object> listItem = new HashMap<String, Object>();
 
-          String title = item.get("title").getTextValue();
+          String title = item.path("title").getTextValue();
           if ('"' == title.charAt(0) && '"' == title.charAt(title.length() - 1)) {
             title = title.substring(1, title.length() - 1);
           }
@@ -108,14 +108,14 @@ public class MyShows extends ListActivity {
           listItem.put("icon", R.drawable.blank); // By default blank.
           if (item.has("folderTransportType")) {
             String folderTransportType =
-                item.get("folderTransportType").get(0).getTextValue();
+                item.path("folderTransportType").path(0).getTextValue();
             if (folderTransportType.equals("mrv")) {
               listItem.put("icon", R.drawable.folder_downloading);
             } else if (folderTransportType.equals("stream")) {
               listItem.put("icon", R.drawable.folder_recording);
             }
           } else if (item.has("folderType")) {
-            if (item.get("folderType").getTextValue().equals("wishlist")) {
+            if (item.path("folderType").getTextValue().equals("wishlist")) {
               listItem.put("icon", R.drawable.folder_wishlist);
             } else {
               listItem.put("icon", R.drawable.folder);
@@ -124,7 +124,7 @@ public class MyShows extends ListActivity {
             listItem.put("icon", R.drawable.folder);
           } else if (item.has("recordingStatusType")) {
             String recordingStatus =
-                item.get("recordingStatusType").getTextValue();
+                item.path("recordingStatusType").getTextValue();
             if (recordingStatus.equals("expired")) {
               listItem.put("icon", R.drawable.recording_expired);
             } else if (recordingStatus.equals("expiresSoon")) {
@@ -141,9 +141,9 @@ public class MyShows extends ListActivity {
               listItem.put("icon", R.drawable.recording_wishlist);
             }
           } else if (item.has("recordingForChildRecordingId")) {
-            JsonNode recording = item.get("recordingForChildRecordingId");
+            JsonNode recording = item.path("recordingForChildRecordingId");
             if (recording.has("type")) {
-              if (recording.get("type").getTextValue().equals("recording")) {
+              if (recording.path("type").getTextValue().equals("recording")) {
                 listItem.put("icon", R.drawable.recording);
               }
             }

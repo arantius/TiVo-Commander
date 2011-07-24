@@ -118,7 +118,7 @@ public enum MindRpc {
 
     addRequest(new BodyAuthenticate(mTivoMak), new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
-        if (response.getBody().get("status").equals("failure")) {
+        if (response.getBody().path("status").equals("failure")) {
           settingsError(originActivity, R.string.error_auth);
         }
       }
