@@ -152,46 +152,44 @@ public class MyShows extends ListActivity {
   }
 
   protected final int getIconForItem(JsonNode item) {
-    if (item.has("folderTransportType")) {
-      String folderTransportType =
-          item.path("folderTransportType").path(0).getTextValue();
-      if (folderTransportType.equals("mrv")) {
-        return R.drawable.folder_downloading;
-      } else if (folderTransportType.equals("stream")) {
-        return R.drawable.folder_recording;
-      }
-    } else if (item.has("folderType")) {
-      if (item.path("folderType").getTextValue().equals("wishlist")) {
+    String folderTransportType =
+        item.path("folderTransportType").path(0).getTextValue();
+    if ("mrv".equals(folderTransportType)) {
+      return R.drawable.folder_downloading;
+    } else if ("stream".equals(folderTransportType)) {
+      return R.drawable.folder_recording;
+    }
+
+    if (item.has("folderItemCount")) {
+      if ("wishlist".equals(item.path("folderType").getTextValue())) {
         return R.drawable.folder_wishlist;
       } else {
         return R.drawable.folder;
       }
-    } else if (item.has("folderItemCount")) {
-      return R.drawable.folder;
-    } else if (item.has("recordingStatusType")) {
+    }
+
+    if (item.has("recordingStatusType")) {
       String recordingStatus = item.path("recordingStatusType").getTextValue();
-      if (recordingStatus.equals("expired")) {
+      if ("expired".equals(recordingStatus)) {
         return R.drawable.recording_expired;
-      } else if (recordingStatus.equals("expiresSoon")) {
+      } else if ("expiresSoon".equals(recordingStatus)) {
         return R.drawable.recording_expiressoon;
-      } else if (recordingStatus.equals("inProgressDownload")) {
+      } else if ("inProgressDownload".equals(recordingStatus)) {
         return R.drawable.recording_downloading;
-      } else if (recordingStatus.equals("inProgressRecording")) {
+      } else if ("inProgressRecording".equals(recordingStatus)) {
         return R.drawable.recording_recording;
-      } else if (recordingStatus.equals("keepForever")) {
+      } else if ("keepForever".equals(recordingStatus)) {
         return R.drawable.recording_keep;
-      } else if (recordingStatus.equals("suggestion")) {
+      } else if ("suggestion".equals(recordingStatus)) {
         return R.drawable.recording_suggestion;
-      } else if (recordingStatus.equals("wishlist")) {
+      } else if ("wishlist".equals(recordingStatus)) {
         return R.drawable.recording_wishlist;
       }
-    } else if (item.has("recordingForChildRecordingId")) {
-      JsonNode recording = item.path("recordingForChildRecordingId");
-      if (recording.has("type")) {
-        if (recording.path("type").getTextValue().equals("recording")) {
-          return R.drawable.recording;
-        }
-      }
+    }
+
+    if ("recording".equals(item.path("recordingForChildRecordingId")
+        .path("type").getTextValue())) {
+      return R.drawable.recording;
     }
 
     return R.drawable.blank;
