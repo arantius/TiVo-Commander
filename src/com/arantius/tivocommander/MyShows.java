@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -54,6 +55,7 @@ public class MyShows extends ListActivity {
     }
   }
 
+  private static final int INTENT_CONTENT = 1;
   private final Context mContext = this;
 
   private final MindRpcResponseListener mDetailCallback =
@@ -113,7 +115,7 @@ public class MyShows extends ListActivity {
           JsonNode countNode = item.path("folderItemCount");
           if (countNode != null && countNode.getValueAsInt() > 0) {
             // Navigate to 'my shows' for this folder.
-            Intent intent = new Intent(getBaseContext(), MyShows.class);
+            Intent intent = new Intent(MyShows.this, MyShows.class);
             intent.putExtra("folderId", item.path("recordingFolderItemId")
                 .getValueAsText());
             intent.putExtra("folderName", item.path("title").getValueAsText());
@@ -125,9 +127,9 @@ public class MyShows extends ListActivity {
               MindRpc.addRequest(new UiNavigate(recordingId), null);
             } else {
               // Navigate to 'content' for this item.
-              Intent intent = new Intent(getBaseContext(), Content.class);
+              Intent intent = new Intent(MyShows.this, Content.class);
               intent.putExtra("contentId", contentId);
-              startActivity(intent);
+              startActivityForResult(intent, INTENT_CONTENT);
             }
           }
         }
@@ -146,14 +148,22 @@ public class MyShows extends ListActivity {
       mFolderId = null;
       setTitle("TiVo Commander - My Shows");
     }
-    MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId),
-        mIdSequenceCallback);
+
+    startRequest();
   }
 
   @Override
   public void onResume() {
     super.onResume();
     MindRpc.init(this);
+  }
+
+  private void startRequest() {
+    // Replace any old data that might exist with a progress throbber.
+    setListAdapter(new ProgressAdapter(mContext, 0));
+    // Get new data.
+    MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId),
+        mIdSequenceCallback);
   }
 
   protected final String getContentIdForItem(JsonNode item) {
@@ -203,5 +213,18 @@ public class MyShows extends ListActivity {
     }
 
     return R.drawable.blank;
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (resultCode != Activity.RESULT_OK) {
+      return;
+    }
+
+    if (requestCode == INTENT_CONTENT) {
+      if (data.getBooleanExtra("refresh", false)) {
+        startRequest();
+      }
+    }
   }
 }

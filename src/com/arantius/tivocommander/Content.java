@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import org.codehaus.jackson.JsonNode;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -139,7 +140,13 @@ public class Content extends Activity {
   private String mRecordingId;
 
   public void doDelete(View v) {
+    // Delete the recording ...
     MindRpc.addRequest(new RecordingUpdate(mRecordingId, "deleted"), null);
+
+    // .. and tell the show list to refresh itself.
+    Intent resultIntent = new Intent();
+    resultIntent.putExtra("refresh", true);
+    setResult(Activity.RESULT_OK, resultIntent);
     finish();
   }
 
