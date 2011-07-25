@@ -96,7 +96,13 @@ public class Content extends Activity {
           if (season != 0 && epNum != 0) {
             detailParts.add(String.format("Sea %d Ep %d", season, epNum));
           }
-          detailParts.add(mContent.path("tvRating").getTextValue());
+          if (mContent.has("mpaaRating")) {
+            detailParts.add(mContent.path("mpaaRating").getTextValue()
+                .toUpperCase());
+          } else if (mContent.has("tvRating")) {
+            detailParts.add("TV-"
+                + mContent.path("tvRating").getTextValue().toUpperCase());
+          }
           detailParts.add(mContent.path("category").path(0).path("label")
               .getTextValue());
           int year = mContent.path("originalAirYear").getIntValue();
