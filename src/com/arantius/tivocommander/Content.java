@@ -83,7 +83,7 @@ public class Content extends Activity {
               ((TextView) findViewById(R.id.content_subtitle));
           if (subtitle == null) {
             setTitle(title);
-            subtitleView.setHeight(0);
+            subtitleView.setVisibility(View.GONE);
           } else {
             setTitle(title + " - " + subtitle);
             subtitleView.setText(subtitle);
