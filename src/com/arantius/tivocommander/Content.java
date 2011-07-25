@@ -21,6 +21,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,9 +58,10 @@ public class Content extends Activity {
     @Override
     protected void onPostExecute(Bitmap result) {
       if (result != null) {
-        mImageView.setBackgroundDrawable(new BitmapDrawable(result));
+        ImageView v = ((ImageView) findViewById(R.id.content_image));
+        v.setImageDrawable(new BitmapDrawable(result));
       }
-      mImageProgress.setVisibility(View.INVISIBLE);
+      mImageProgress.setVisibility(View.GONE);
     }
   }
 
@@ -69,7 +71,6 @@ public class Content extends Activity {
           setContentView(R.layout.content);
 
           mContent = response.getBody().path("content").path(0);
-          mImageView = findViewById(R.id.content_layout_image);
           mImageProgress = findViewById(R.id.content_image_progress);
           mRecordingId =
               mContent.path("recordingForContentId").path(0)
@@ -131,27 +132,33 @@ public class Content extends Activity {
           creditsView.setText(Utils.joinList(", ", credits));
 
           // Find and set the banner image if possible.
-          boolean foundImage = false;
-          JsonNode images = mContent.path("image");
-          for (JsonNode image : images) {
-            if ("showcaseBanner".equals(image.path("imageType").getTextValue())
-                && 200 == image.path("width").getIntValue()
-                && 150 == image.path("height").getIntValue()) {
-              new DownloadImageTask().execute(image.path("imageUrl")
-                  .getTextValue());
-              foundImage = true;
-              break;
-            }
-          }
-          if (!foundImage) {
-            mImageProgress.setVisibility(View.INVISIBLE);
+          String imageUrl = findImageUrl();
+          if (imageUrl != null) {
+            new DownloadImageTask().execute(imageUrl);
+          } else {
+            mImageProgress.setVisibility(View.GONE);
           }
         }
       };
 
+  private final String findImageUrl() {
+    String url = null;
+    int biggestSize = 0;
+    int size = 0;
+    for (JsonNode image : mContent.path("image")) {
+      size =
+          image.path("width").getIntValue()
+              * image.path("height").getIntValue();
+      if (size > biggestSize) {
+        biggestSize = size;
+        url = image.path("imageUrl").getTextValue();
+      }
+    }
+    return url;
+  }
+
   private JsonNode mContent;
   private String mContentId;
-  private View mImageView;
   private View mImageProgress;
   private String mRecordingId;
 
