@@ -120,7 +120,17 @@ public class Content extends Activity {
                 detail1.length(), details.length(), 0);
             detailView.setText(details);
           }
-          // Find and set the image if possible.
+
+          // Add credits.
+          ArrayList<String> credits = new ArrayList<String>();
+          for (JsonNode credit : mContent.path("credit")) {
+            credits.add(credit.path("first").getTextValue() + " "
+                + credit.path("last").getTextValue());
+          }
+          TextView creditsView = (TextView) findViewById(R.id.content_credits);
+          creditsView.setText(Utils.joinList(", ", credits));
+
+          // Find and set the banner image if possible.
           boolean foundImage = false;
           JsonNode images = mContent.path("image");
           for (JsonNode image : images) {

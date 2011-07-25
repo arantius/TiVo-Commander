@@ -48,7 +48,11 @@
         android:text="Subtitle" />
       <TextView android:id="@+id/content_details"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="Details" />
+        android:text="Details" android:layout_marginTop="2dip" />
+      <TextView android:id="@+id/content_credits"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="2dip" android:textColor="#00BFFF"
+        android:text="Credits" />
     </LinearLayout>
   </ScrollView>
 </LinearLayout>
