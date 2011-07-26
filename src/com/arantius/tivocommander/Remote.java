@@ -1,19 +1,86 @@
 package com.arantius.tivocommander;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.KeyEventSend;
-import com.arantius.tivocommander.rpc.request.MindRpcRequest;
 
 public class Remote extends Activity implements OnClickListener {
+  private EditText mEditText;
+  private InputMethodManager mInputManager;
+
+  private final TextWatcher mTextWatcher = new TextWatcher() {
+    public void afterTextChanged(Editable s) {
+    }
+
+    public void beforeTextChanged(CharSequence s, int start, int count,
+        int after) {
+    }
+
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+      if (count == 0) {
+        return;
+      } else if (before > count) {
+        while (before > count) {
+          MindRpc.addRequest(viewIdToEvent(R.id.remote_reverse), null);
+          count++;
+        }
+      } else {
+        for (int i = start + before; i < start + count; i++) {
+          MindRpc.addRequest(new KeyEventSend(s.charAt(i)), null);
+        }
+      }
+    }
+  };
+
   public void onClick(View v) {
+    if (v.getId() == R.id.remote_clear) {
+      mEditText.setText("");
+    }
+
+    MindRpc.addRequest(viewIdToEvent(v.getId()), null);
+  }
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    MindRpc.init(this);
+
+    setTitle("TiVo Commander - Remote Control");
+    setContentView(R.layout.remote);
+
+    mEditText = (EditText) findViewById(R.id.keyboard_activator);
+    mEditText.addTextChangedListener(mTextWatcher);
+    mInputManager =
+        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    MindRpc.init(this);
+  }
+
+  public void toggleKeyboard(View v) {
+    Utils.log("clicked keyboard");
+
+    mEditText.setText("");
+    mEditText.requestFocus();
+    mInputManager.toggleSoftInputFromWindow(mEditText.getWindowToken(), 0, 0);
+  }
+
+  private KeyEventSend viewIdToEvent(int id) {
     String eventStr = null;
     // @formatter:off
-    switch (v.getId()) {
+    switch (id) {
       case R.id.remote_tivo:        eventStr = "tivo"; break;
       case R.id.remote_liveTv:      eventStr = "liveTv"; break;
       case R.id.remote_info:        eventStr = "info"; break;
@@ -45,14 +112,12 @@ public class Remote extends Activity implements OnClickListener {
     }
     // @formatter:on
     if (eventStr != null) {
-      MindRpcRequest request = new KeyEventSend(eventStr);
-      MindRpc.addRequest(request, null);
-      return;
+      return new KeyEventSend(eventStr);
     }
 
     char eventChar = '\0';
     // @formatter:off
-    switch (v.getId()) {
+    switch (id) {
       case R.id.remote_num1:        eventChar = '1'; break;
       case R.id.remote_num2:        eventChar = '2'; break;
       case R.id.remote_num3:        eventChar = '3'; break;
@@ -66,24 +131,9 @@ public class Remote extends Activity implements OnClickListener {
     }
     // @formatter:on
     if (eventChar != '\0') {
-      MindRpcRequest request = new KeyEventSend(eventChar);
-      MindRpc.addRequest(request, null);
-      return;
+      return new KeyEventSend(eventChar);
     }
-  }
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    MindRpc.init(this);
-
-    setTitle("TiVo Commander - Remote Control");
-    setContentView(R.layout.remote);
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    MindRpc.init(this);
+    return null;
   }
 }
