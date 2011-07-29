@@ -76,7 +76,13 @@ public class Search extends ListActivity {
           mResultTitles.clear();
           for (int i = 0; i < mResults.size(); i++) {
             final JsonNode result = mResults.path(i);
-            mResultTitles.add(result.path("title").getTextValue());
+            String title = result.path("title").getTextValue();
+            if (title != null) {
+              mResultTitles.add(title);
+            } else {
+              Utils.log("Could not find title!");
+              Utils.log(result.toString());
+            }
           }
 
           mAdapter.notifyDataSetChanged();
