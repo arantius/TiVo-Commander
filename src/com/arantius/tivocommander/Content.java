@@ -68,6 +68,14 @@ public class Content extends Activity {
   private final MindRpcResponseListener contentListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          if ("error".equals(response.getBody().path("type").getValueAsText())) {
+            if ("staleData".equals(response.getBody().path("code"))) {
+              Toast.makeText(getBaseContext(), "Stale data error, panicing.",
+                  Toast.LENGTH_SHORT).show();
+              finish();
+              return;
+            }
+          }
           setContentView(R.layout.content);
 
           mContent = response.getBody().path("content").path(0);
