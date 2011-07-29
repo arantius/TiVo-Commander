@@ -25,6 +25,8 @@
         <action android:name="android.intent.action.MAIN" />
       </intent-filter>
     </activity>
+    <activity android:name="Search" android:screenOrientation="portrait">
+    </activity>
     <activity android:name="Settings"></activity>
   </application>
 </manifest>

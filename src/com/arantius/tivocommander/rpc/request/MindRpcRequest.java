@@ -10,20 +10,21 @@ import com.arantius.tivocommander.rpc.MindRpc;
 
 public abstract class MindRpcRequest {
   private static final String LOG_TAG = "tivo_commander";
-  private final int mRpcId;
 
   protected String mBodyId = "";
   protected Map<String, Object> mDataMap = new HashMap<String, Object>();
+  protected String mReqType;
   protected String mResponseCount = "single";
+  protected int mRpcId;
   protected int mSessionId = 0;
-  protected String mType;
+  protected final String mType = "request";
 
   public MindRpcRequest(String type) {
     mRpcId = MindRpc.getRpcId();
     mSessionId = MindRpc.getSessionId();
-    mType = type;
+    mReqType = type;
 
-    mDataMap.put("type", mType);
+    mDataMap.put("type", mReqType);
   }
 
   public Map<String, Object> getDataMap() {
@@ -51,11 +52,11 @@ public abstract class MindRpcRequest {
   public String toString() {
     // @formatter:off
     String headers = Utils.join("\r\n",
-        "Type: request",
+        "Type: " + mType,
         "RpcId: " + getRpcId(),
         "SchemaVersion:7",
         "Content-Type: application/json",
-        "RequestType: " + mType,
+        "RequestType: " + mReqType,
         "ResponseCount: " + mResponseCount,
         "BodyId: " + mBodyId,
         "X-ApplicationName:Quicksilver ",

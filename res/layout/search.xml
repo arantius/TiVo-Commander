@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout android:id="@+id/linearLayout1"
+  android:layout_width="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical" android:layout_height="fill_parent"
+>
+  <AutoCompleteTextView android:layout_width="fill_parent"
+    android:text="" android:layout_height="40dip" android:id="@+id/search_box"
+  >
+  </AutoCompleteTextView>
+  <ListView android:id="@android:id/android:list"
+    android:layout_weight="1" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+  ></ListView>
+</LinearLayout>

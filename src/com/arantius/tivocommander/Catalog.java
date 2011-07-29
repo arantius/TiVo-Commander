@@ -14,8 +14,8 @@ import android.widget.Toast;
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public class Catalog extends ListActivity {
-  private static final String[] mFeatures =
-      { "Remote", "My Shows", "Settings" };
+  private static final String[] mFeatures = { "Remote", "My Shows", "Search",
+      "Settings" };
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +39,9 @@ public class Catalog extends ListActivity {
           intent = new Intent(getBaseContext(), MyShows.class);
           break;
         case 2:
+          intent = new Intent(getBaseContext(), Search.class);
+          break;
+        case 3:
           intent = new Intent(getBaseContext(), Settings.class);
           break;
         default:
