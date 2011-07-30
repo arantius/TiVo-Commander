@@ -208,6 +208,7 @@ public enum MindRpc {
   }
 
   private static void disconnect() {
+    // TODO: Do disconnect on close (after N idle seconds?).
     if (mSocket != null) {
       try {
         mSocket.close();

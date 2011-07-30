@@ -84,6 +84,9 @@ public class MyShows extends ListActivity {
           }
 
           final ListView lv = getListView();
+          // TODO: Show date recorded.
+          // TODO: Show # recordings in folders.
+          // TODO: Save/restore scroll position of progress/detail list.
           lv.setAdapter(new SimpleAdapter(mContext, listItems,
               R.layout.list_my_shows, new String[] { "icon", "more", "title" },
               new int[] { R.id.show_icon, R.id.show_more, R.id.show_title }));
@@ -100,6 +103,7 @@ public class MyShows extends ListActivity {
           MindRpc.addRequest(new RecordingFolderItemSearch(ids),
               mDetailCallback);
 
+          // TODO: Incremental detail loading.
           // Show the right number of progress throbbers while loading details.
           setListAdapter(new ProgressAdapter(mContext, ids.size()));
         }
@@ -138,6 +142,9 @@ public class MyShows extends ListActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     MindRpc.init(this);
+
+    // TODO: Sorting.
+    // TODO: Show disk usage.
 
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {

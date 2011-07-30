@@ -123,6 +123,9 @@ public class Explore extends Activity {
         Toast.LENGTH_SHORT).show();
   }
 
+  // TODO: doSeasonPass()
+  // TODO: doStopRecording()
+
   public void doUpcoming(View v) {
     Toast.makeText(getBaseContext(), "Upcoming not implemented yet.",
         Toast.LENGTH_SHORT).show();
@@ -246,5 +249,7 @@ public class Explore extends Activity {
     } else {
       mImageProgress.setVisibility(View.GONE);
     }
+
+    // TODO: Show date recorded (?).
   }
 }

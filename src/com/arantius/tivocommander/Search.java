@@ -44,6 +44,7 @@ public class Search extends ListActivity {
         MindRpc.addRequest(new CancelRpc(mRequest.getRpcId()), null);
       }
       mRequest = new UnifiedItemSearch(params[0] + "*");
+      // TODO: Progress indicator.
       MindRpc.addRequest(mRequest, mSearchListener);
       return null;
     }
