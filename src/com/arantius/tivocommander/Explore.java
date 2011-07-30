@@ -236,11 +236,12 @@ public class Explore extends Activity {
     // Add credits.
     ArrayList<String> credits = new ArrayList<String>();
     for (JsonNode credit : mContent.path("credit")) {
-      if (!("actor".equals(credit.path("role").getTextValue()))) {
-        continue;
+      String role = credit.path("role").getTextValue();
+      if ("actor".equals(role) || "host".equals(role)
+          || "guestStar".equals(role)) {
+        credits.add(credit.path("first").getTextValue() + " "
+            + credit.path("last").getTextValue());
       }
-      credits.add(credit.path("first").getTextValue() + " "
-          + credit.path("last").getTextValue());
     }
     TextView creditsView = (TextView) findViewById(R.id.content_credits);
     creditsView.setText(Utils.joinList(", ", credits));
