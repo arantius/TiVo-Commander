@@ -55,7 +55,6 @@ public class MyShows extends ListActivity {
     }
   }
 
-  private static final int INTENT_CONTENT = 1;
   private final Context mContext = this;
 
   private final MindRpcResponseListener mDetailCallback =
@@ -127,9 +126,9 @@ public class MyShows extends ListActivity {
               MindRpc.addRequest(new UiNavigate(recordingId), null);
             } else {
               // Navigate to 'content' for this item.
-              Intent intent = new Intent(MyShows.this, Content.class);
+              Intent intent = new Intent(MyShows.this, ExploreTabs.class);
               intent.putExtra("contentId", contentId);
-              startActivityForResult(intent, INTENT_CONTENT);
+              startActivityForResult(intent, 1);
             }
           }
         }
@@ -221,10 +220,8 @@ public class MyShows extends ListActivity {
       return;
     }
 
-    if (requestCode == INTENT_CONTENT) {
-      if (data.getBooleanExtra("refresh", false)) {
-        startRequest();
-      }
+    if (data.getBooleanExtra("refresh", false)) {
+      startRequest();
     }
   }
 }

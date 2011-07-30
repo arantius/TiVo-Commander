@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent" android:layout_height="fill_parent"
-  android:id="@+id/content_layout1"
+  android:id="@+id/content_layout1" android:paddingTop="60dip"
 >
   <LinearLayout android:id="@+id/content_layout2"
     android:orientation="vertical" android:layout_width="fill_parent"
@@ -44,19 +44,40 @@
       </LinearLayout>
     </ScrollView>
   </LinearLayout>
-  <LinearLayout android:id="@+id/content_layout_btn"
-    android:layout_height="fill_parent" android:layout_width="230dip"
+  <LinearLayout android:id="@+id/all_layout_btn"
+    android:layout_height="wrap_content" android:layout_width="230dip"
     android:layout_marginTop="3dip" android:layout_weight="1"
     android:orientation="vertical"
   >
-    <Button android:id="@+id/content_btn_watch" android:text="Watch Now"
-      android:layout_width="fill_parent" android:layout_height="wrap_content"
-      android:onClick="doWatch" />
-    <Button android:id="@+id/content_btn_explore" android:text="Explore"
-      android:layout_width="fill_parent" android:layout_height="wrap_content"
-      android:onClick="doExplore" />
-    <Button android:id="@+id/content_btn_delete" android:text="Delete"
-      android:layout_width="fill_parent" android:layout_height="wrap_content"
-      android:onClick="doDelete" />
+    <LinearLayout android:id="@+id/collection_layout_btn"
+      android:layout_height="wrap_content" android:layout_width="fill_parent"
+      android:layout_weight="1" android:orientation="vertical"
+    >
+      <Button android:id="@+id/collection_btn_record"
+        android:text="Record" android:layout_width="fill_parent"
+        android:layout_height="wrap_content" android:onClick="doRecord" />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/content_layout_btn"
+      android:layout_height="wrap_content" android:layout_width="fill_parent"
+      android:layout_weight="1" android:orientation="vertical"
+    >
+      <Button android:id="@+id/content_btn_watch" android:text="Watch Now"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:onClick="doWatch" />
+      <Button android:id="@+id/content_btn_delete" android:text="Delete"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:onClick="doDelete" />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/common_layout_btn"
+      android:layout_height="wrap_content" android:layout_width="fill_parent"
+      android:layout_weight="1" android:orientation="vertical"
+    >
+      <Button android:id="@+id/collection_btn_upcoming"
+        android:text="Upcoming" android:layout_width="fill_parent"
+        android:layout_height="wrap_content" android:onClick="doUpcoming" />
+      <Button android:id="@+id/collection_btn_get_from"
+        android:text="Get From" android:layout_width="fill_parent"
+        android:layout_height="wrap_content" android:onClick="doGetFrom" />
+    </LinearLayout>
   </LinearLayout>
 </LinearLayout>

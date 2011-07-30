@@ -13,5 +13,6 @@ public class ContentSearch extends CommonSearch {
     super("contentSearch");
     addCommon(mImageRulesetJson, mNote, mResponseTemplateJson);
     mDataMap.put("contentId", new String[] { contentId });
+    mDataMap.put("filterUnavailableContent", false);
   }
 }

@@ -15,7 +15,6 @@ public class CommonSearch extends MindRpcRequest {
   protected void addCommon(String imageRulesetJson, String[] note,
       String responseTemplateJson) {
     mDataMap.put("bodyId", "-");
-    mDataMap.put("filterUnavailableContent", false);
     mDataMap.put("imageRuleset", Utils.parseJson(imageRulesetJson));
     mDataMap.put("levelOfDetail", "high");
     mDataMap.put("note", note);

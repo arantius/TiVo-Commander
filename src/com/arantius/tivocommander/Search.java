@@ -5,12 +5,17 @@ import java.util.ArrayList;
 import org.codehaus.jackson.JsonNode;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.CancelRpc;
@@ -62,6 +67,9 @@ public class Search extends ListActivity {
       if (mSearchTask != null) {
         mSearchTask.cancel(true);
       }
+
+      // TODO: Handle empty query.
+
       mSearchTask = new SearchTask().execute(s.toString());
     }
   };
@@ -72,6 +80,8 @@ public class Search extends ListActivity {
           mRequest = null;
           Utils.log("got search response!");
           mResults = response.getBody().path("unifiedItem");
+
+          // TODO: Handle zero results.
 
           mResultTitles.clear();
           for (int i = 0; i < mResults.size(); i++) {
@@ -89,6 +99,17 @@ public class Search extends ListActivity {
         }
       };
 
+  private final OnItemClickListener mOnClickListener =
+      new OnItemClickListener() {
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id) {
+          Intent intent = new Intent(getBaseContext(), ExploreTabs.class);
+          intent.putExtra("collectionId",
+              mResults.path(position).path("collectionId").getTextValue());
+          startActivity(intent);
+        }
+      };
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -103,6 +124,9 @@ public class Search extends ListActivity {
 
     setListAdapter(mAdapter);
     searchBox.addTextChangedListener(mTextWatcher);
+
+    final ListView lv = getListView();
+    lv.setOnItemClickListener(mOnClickListener);
   }
 
   @Override
