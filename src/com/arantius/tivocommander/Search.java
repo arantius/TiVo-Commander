@@ -39,7 +39,16 @@ public class Search extends ListActivity {
         return null;
       }
 
-      Utils.log("Starting search for: " + params[0]);
+      if ("".equals(params[0])) {
+        runOnUiThread(new Runnable() {
+          public void run() {
+            mResults = null;
+            mResultTitles.clear();
+            mAdapter.notifyDataSetChanged();
+          }
+        });
+      }
+
       if (mRequest != null) {
         MindRpc.addRequest(new CancelRpc(mRequest.getRpcId()), null);
       }
@@ -79,7 +88,6 @@ public class Search extends ListActivity {
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           mRequest = null;
-          Utils.log("got search response!");
           mResults = response.getBody().path("unifiedItem");
 
           // TODO: Handle zero results.
