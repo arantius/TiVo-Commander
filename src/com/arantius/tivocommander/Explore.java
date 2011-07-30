@@ -218,13 +218,16 @@ public class Explore extends Activity {
     if (year != 0) {
       detailParts.add(Integer.toString(year));
     }
-    String detail1 = "(" + Utils.joinList(", ", detailParts) + ")";
+    String detail1 = "(" + Utils.joinList(", ", detailParts) + ") ";
+    if ("() ".equals(detail1)) {
+      detail1 = "";
+    }
     String detail2 = mContent.path("description").getTextValue();
     TextView detailView = ((TextView) findViewById(R.id.content_details));
     if (detail2 == null) {
       detailView.setText(detail1);
     } else {
-      Spannable details = new SpannableString(detail1 + " " + detail2);
+      Spannable details = new SpannableString(detail1 + detail2);
       details.setSpan(new ForegroundColorSpan(Color.WHITE), detail1.length(),
           details.length(), 0);
       detailView.setText(details);
