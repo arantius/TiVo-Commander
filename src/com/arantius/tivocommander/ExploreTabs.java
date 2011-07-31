@@ -1,5 +1,6 @@
 package com.arantius.tivocommander;
 
+import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,21 +10,45 @@ import android.widget.TabHost.TabSpec;
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public class ExploreTabs extends TabActivity {
+  private String mCollectionId;
+  private String mContentId;
+  private TabHost mTabHost;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     MindRpc.init(this);
 
     setContentView(R.layout.explore_tabs);
-    TabHost tabHost = getTabHost();
+    mTabHost = getTabHost();
     Bundle bundle = getIntent().getExtras();
+    try {
+      mCollectionId = bundle.getString("collectionId");
+    } catch (NullPointerException e) {
+      mCollectionId = null;
+    }
+    try {
+      mContentId = bundle.getString("contentId");
+    } catch (NullPointerException e) {
+      mContentId = null;
+    }
 
-    TabSpec exploreTab = tabHost.newTabSpec("Explore");
-    exploreTab.setIndicator("Explore");
-    Intent exploreIntent = new Intent(getBaseContext(), Explore.class);
-    exploreIntent.putExtra("contentId", bundle.getString("contentId"));
-    exploreIntent.putExtra("collectionId", bundle.getString("collectionId"));
-    exploreTab.setContent(exploreIntent);
-    tabHost.addTab(exploreTab);
+    mTabHost.addTab(makeTab("Explore", Explore.class));
+  }
+
+  private TabSpec makeTab(String name, Class<? extends Activity> cls) {
+    TabSpec tab = mTabHost.newTabSpec(name);
+    tab.setIndicator(name);
+
+    Intent intent = new Intent(getBaseContext(), cls);
+    if (mCollectionId != null) {
+      intent.putExtra("collectionId", mCollectionId);
+    }
+    if (mContentId != null) {
+      intent.putExtra("contentId", mContentId);
+    }
+    tab.setContent(intent);
+
+    return tab;
   }
 }
