@@ -90,9 +90,13 @@ public class Explore extends Activity {
           }
 
           mContent = response.getBody().path("content").path(0);
-          mRecordingId =
-              mContent.path("recordingForContentId").path(0)
-                  .path("recordingId").getTextValue();
+
+          for (JsonNode recording : mContent.path("recordingForContentId")) {
+            if ("cancelled".equals(recording.path("state").getTextValue())) {
+              continue;
+            }
+            mRecordingId = recording.path("recordingId").getTextValue();
+          }
 
           tweakView();
         }
