@@ -71,7 +71,7 @@ public enum MindRpc {
   /**
    * Add an outgoing request to the queue.
    *
-   * @param request The requestequest to be sent.
+   * @param request The request to be sent.
    * @param listener The object to notify when the response(s) come back.
    */
   public static void addRequest(MindRpcRequest request,
