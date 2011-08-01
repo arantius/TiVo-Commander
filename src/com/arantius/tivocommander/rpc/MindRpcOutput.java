@@ -47,8 +47,8 @@ public class MindRpcOutput extends Thread {
         if (mRequestQueue.peek() != null) {
           MindRpcRequest request = mRequestQueue.remove();
           String reqStr = request.toString();
-          Utils.log(String.format("Sending %s request %d",
-              request.getReqType(), request.getRpcId()));
+          Utils.log(String.format("% 4d CALL %s", request.getRpcId(),
+              request.getReqType()));
           Utils.debugLog(Utils.stringifyToPrettyJson(request.getDataMap()));
           mStream.write(reqStr);
           mStream.flush();
