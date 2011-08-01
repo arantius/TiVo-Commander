@@ -47,10 +47,11 @@ public class MindRpcOutput extends Thread {
         if (mRequestQueue.peek() != null) {
           MindRpcRequest request = mRequestQueue.remove();
           String reqStr = request.toString();
+          Utils.log(String.format("Sending %s request %d",
+              request.getReqType(), request.getRpcId()));
+          Utils.debugLog(Utils.stringifyToPrettyJson(request.getDataMap()));
           mStream.write(reqStr);
           mStream.flush();
-          Utils.debugLog("Sent request:\n"
-              + Utils.stringifyToPrettyJson(request.getDataMap()));
         }
       } catch (IOException e) {
         Log.e(LOG_TAG, "write: io exception!", e);

@@ -6,11 +6,13 @@ public class MindRpcResponse {
   private final JsonNode mBody;
   private final Boolean mIsFinal;
   private final int mRpcId;
+  private final String mRespType;
 
   public MindRpcResponse(Boolean isFinal, int rpcId, JsonNode bodyObj) {
     mBody = bodyObj;
     mIsFinal = isFinal;
     mRpcId = rpcId;
+    mRespType = bodyObj.path("type").getTextValue();
   }
 
   public JsonNode getBody() {
@@ -19,6 +21,10 @@ public class MindRpcResponse {
 
   public int getRpcId() {
     return mRpcId;
+  }
+
+  public String getRespType() {
+    return mRespType;
   }
 
   public Boolean isFinal() {

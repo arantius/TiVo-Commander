@@ -39,6 +39,10 @@ public abstract class MindRpcRequest {
     return data;
   }
 
+  public String getReqType() {
+    return mReqType;
+  }
+
   public int getRpcId() {
     return mRpcId;
   }

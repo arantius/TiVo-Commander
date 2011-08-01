@@ -53,8 +53,9 @@ public class MindRpcInput extends Thread {
           final MindRpcResponse response =
               mindRpcResponseFactory.create(headers, body);
           if (response != null) {
-            Utils.debugLog("Got response:\n"
-                + Utils.stringifyToPrettyJson(response.getBody()));
+            Utils.log(String.format("Got %s response %d",
+                response.getRespType(), response.getRpcId()));
+            Utils.debugLog(Utils.stringifyToPrettyJson(response.getBody()));
             MindRpc.dispatchResponse(response);
           }
         }
