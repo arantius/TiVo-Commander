@@ -34,6 +34,7 @@ public class ExploreCommon extends Activity {
           }
 
           mContent = response.getBody().path("content").path(0);
+          mCollectionId = mContent.path("collectionId").getTextValue();
           onContent();
         }
       };
@@ -73,22 +74,6 @@ public class ExploreCommon extends Activity {
       finish();
       return null;
     }
-  }
-
-  protected final String findImageUrl(JsonNode node) {
-    String url = null;
-    int biggestSize = 0;
-    int size = 0;
-    for (JsonNode image : node.path("image")) {
-      size =
-          image.path("width").getIntValue()
-              * image.path("height").getIntValue();
-      if (size > biggestSize) {
-        biggestSize = size;
-        url = image.path("imageUrl").getTextValue();
-      }
-    }
-    return url;
   }
 
   protected void onContent() {

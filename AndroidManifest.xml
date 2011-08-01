@@ -30,5 +30,6 @@
     <activity android:name="Search" android:screenOrientation="portrait">
     </activity>
     <activity android:name="Settings"></activity>
+    <activity android:name="Suggestions"></activity>
   </application>
 </manifest>

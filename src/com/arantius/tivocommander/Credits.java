@@ -53,7 +53,7 @@ public class Credits extends ExploreCommon {
       }
 
       if (iv != null) {
-        String imgUrl = findImageUrl(item);
+        String imgUrl = Utils.findImageUrl(item);
         new DownloadImageTask(iv, pv).execute(imgUrl);
       }
 

@@ -35,6 +35,7 @@ public class ExploreTabs extends TabActivity {
 
     mTabHost.addTab(makeTab("Explore", Explore.class));
     mTabHost.addTab(makeTab("Credits", Credits.class));
+    mTabHost.addTab(makeTab("Also", Suggestions.class));
   }
 
   private TabSpec makeTab(String name, Class<? extends Activity> cls) {

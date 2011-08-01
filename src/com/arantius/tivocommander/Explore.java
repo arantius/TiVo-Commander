@@ -134,7 +134,7 @@ public class Explore extends ExploreCommon {
     // Find and set the banner image if possible.
     ImageView imageView = (ImageView) findViewById(R.id.content_image);
     View progressView = findViewById(R.id.content_image_progress);
-    String imageUrl = findImageUrl(mContent);
+    String imageUrl = Utils.findImageUrl(mContent);
     if (imageUrl != null) {
       new DownloadImageTask(imageView, progressView).execute(imageUrl);
     } else {

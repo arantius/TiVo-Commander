@@ -27,6 +27,22 @@ public class Utils {
     }
   }
 
+  public static final String findImageUrl(JsonNode node) {
+    String url = null;
+    int biggestSize = 0;
+    int size = 0;
+    for (JsonNode image : node.path("image")) {
+      size =
+          image.path("width").getIntValue()
+              * image.path("height").getIntValue();
+      if (size > biggestSize) {
+        biggestSize = size;
+        url = image.path("imageUrl").getTextValue();
+      }
+    }
+    return url;
+  }
+
   public static final String join(String glue, String... strings) {
     return joinList(glue, Arrays.asList(strings));
   }
