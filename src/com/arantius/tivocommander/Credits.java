@@ -33,7 +33,7 @@ public class Credits extends ExploreCommon {
       if (v == null) {
         LayoutInflater vi =
             (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        v = vi.inflate(R.layout.credits_item, null);
+        v = vi.inflate(R.layout.item_credits, null);
       }
 
       ImageView iv = (ImageView) v.findViewById(R.id.imageView1);
@@ -87,10 +87,10 @@ public class Credits extends ExploreCommon {
       credits[i++] = credit;
     }
 
-    setContentView(R.layout.credits);
+    setContentView(R.layout.list_explore);
     ListView lv = (ListView) findViewById(R.id.listView1);
     CreditsAdapter adapter =
-        new CreditsAdapter(this, R.layout.credits_item, credits);
+        new CreditsAdapter(this, R.layout.item_credits, credits);
     lv.setAdapter(adapter);
 
     // TODO: Set on click listener for exploring actors.
