@@ -45,26 +45,6 @@ public class ExploreCommon extends Activity {
   protected JsonNode mContent = null;
   protected String mContentId = null;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    MindRpc.init(this);
-
-    Bundle bundle = getIntent().getExtras();
-    if (bundle != null) {
-      mContentId = bundle.getString("contentId");
-      mCollectionId = bundle.getString("collectionId");
-    }
-
-    setContentView(R.layout.progress);
-    BaseSearch req = getRequest();
-    if (mContentId != null) {
-      MindRpc.addRequest(req, mContentListener);
-    } else if (mCollectionId != null) {
-      MindRpc.addRequest(req, mCollectionListener);
-    }
-  }
-
   protected BaseSearch getRequest() {
     if (mContentId != null) {
       return new ContentSearch(mContentId);
@@ -81,5 +61,21 @@ public class ExploreCommon extends Activity {
 
   protected void onContent() {
     // TODO: Should be implemented by child -- how do I represent that properly?
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    MindRpc.init(this);
+
+    Bundle bundle = getIntent().getExtras();
+    if (bundle != null) {
+      mContentId = bundle.getString("contentId");
+      mCollectionId = bundle.getString("collectionId");
+    }
+
+    setContentView(R.layout.progress);
+    BaseSearch req = getRequest();
+    MindRpc.addRequest(req, mListener);
   }
 }
