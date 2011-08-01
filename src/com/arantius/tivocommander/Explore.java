@@ -7,7 +7,6 @@ import org.codehaus.jackson.JsonNode;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -17,49 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
-import com.arantius.tivocommander.rpc.request.CollectionSearch;
-import com.arantius.tivocommander.rpc.request.ContentSearch;
 import com.arantius.tivocommander.rpc.request.RecordingUpdate;
 import com.arantius.tivocommander.rpc.request.UiNavigate;
-import com.arantius.tivocommander.rpc.response.MindRpcResponse;
-import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
-public class Explore extends Activity {
-  private String mCollectionId = null;
-  private final MindRpcResponseListener mCollectionListener =
-      new MindRpcResponseListener() {
-        public void onResponse(MindRpcResponse response) {
-          mContent = response.getBody().path("collection").path(0);
-          tweakView();
-        }
-      };
-  private JsonNode mContent = null;
-  private String mContentId = null;
-  private final MindRpcResponseListener mContentListener =
-      new MindRpcResponseListener() {
-        public void onResponse(MindRpcResponse response) {
-          if ("error".equals(response.getBody().path("type").getValueAsText())) {
-            if ("staleData".equals(response.getBody().path("code"))) {
-              Toast.makeText(getBaseContext(), "Stale data error, panicing.",
-                  Toast.LENGTH_SHORT).show();
-              finish();
-              return;
-            }
-          }
-
-          mContent = response.getBody().path("content").path(0);
-
-          for (JsonNode recording : mContent.path("recordingForContentId")) {
-            if ("cancelled".equals(recording.path("state").getTextValue())) {
-              continue;
-            }
-            mRecordingId = recording.path("recordingId").getTextValue();
-          }
-
-          tweakView();
-        }
-      };
-
+public class Explore extends ExploreCommon {
   private String mRecordingId = null;
 
   public void doDelete(View v) {
@@ -96,47 +56,14 @@ public class Explore extends Activity {
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    MindRpc.init(this);
-
-    Bundle bundle = getIntent().getExtras();
-    if (bundle != null) {
-      mContentId = bundle.getString("contentId");
-      mCollectionId = bundle.getString("collectionId");
-    }
-
-    setContentView(R.layout.progress);
-    if (mContentId != null) {
-      MindRpc.addRequest(new ContentSearch(mContentId), mContentListener);
-    } else if (mCollectionId != null) {
-      MindRpc.addRequest(new CollectionSearch(mCollectionId),
-          mCollectionListener);
-    } else {
-      final String message = "Content: Bad input!";
-      Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
-      Utils.logError(message, null);
-      finish();
-    }
-  }
-
-  private final String findImageUrl() {
-    String url = null;
-    int biggestSize = 0;
-    int size = 0;
-    for (JsonNode image : mContent.path("image")) {
-      size =
-          image.path("width").getIntValue()
-              * image.path("height").getIntValue();
-      if (size > biggestSize) {
-        biggestSize = size;
-        url = image.path("imageUrl").getTextValue();
+  protected void onContent() {
+    for (JsonNode recording : mContent.path("recordingForContentId")) {
+      if ("cancelled".equals(recording.path("state").getTextValue())) {
+        continue;
       }
+      mRecordingId = recording.path("recordingId").getTextValue();
     }
-    return url;
-  }
 
-  private void tweakView() {
     setContentView(R.layout.explore);
     if (mContentId != null && mCollectionId == null) {
       findViewById(R.id.collection_layout_btn).setVisibility(View.GONE);
@@ -207,7 +134,7 @@ public class Explore extends Activity {
     // Find and set the banner image if possible.
     ImageView imageView = (ImageView) findViewById(R.id.content_image);
     View progressView = findViewById(R.id.content_image_progress);
-    String imageUrl = findImageUrl();
+    String imageUrl = findImageUrl(mContent);
     if (imageUrl != null) {
       new DownloadImageTask(imageView, progressView).execute(imageUrl);
     } else {
