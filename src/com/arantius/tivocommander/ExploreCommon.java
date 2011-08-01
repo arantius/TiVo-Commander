@@ -14,14 +14,7 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class ExploreCommon extends Activity {
-  private final MindRpcResponseListener mCollectionListener =
-      new MindRpcResponseListener() {
-        public void onResponse(MindRpcResponse response) {
-          mContent = response.getBody().path("collection").path(0);
-          onContent();
-        }
-      };
-  private final MindRpcResponseListener mContentListener =
+  private final MindRpcResponseListener mListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           if ("error".equals(response.getBody().path("type").getValueAsText())) {
@@ -33,8 +26,18 @@ public class ExploreCommon extends Activity {
             }
           }
 
-          mContent = response.getBody().path("content").path(0);
-          mCollectionId = mContent.path("collectionId").getTextValue();
+          JsonNode body = response.getBody();
+          if (body.has("collection")) {
+            mContent = response.getBody().path("collection").path(0);
+          } else if (body.has("content")) {
+            mContent = response.getBody().path("content").path(0);
+          } else {
+            Toast.makeText(getApplicationContext(),
+                "Response missing collection and content", Toast.LENGTH_SHORT)
+                .show();
+            finish();
+            return;
+          }
           onContent();
         }
       };
