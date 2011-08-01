@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
+import com.arantius.tivocommander.rpc.request.BaseSearch;
 import com.arantius.tivocommander.rpc.request.CollectionSearch;
 import com.arantius.tivocommander.rpc.request.ContentSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
@@ -52,16 +53,25 @@ public class ExploreCommon extends Activity {
     }
 
     setContentView(R.layout.progress);
+    BaseSearch req = getRequest();
     if (mContentId != null) {
-      MindRpc.addRequest(new ContentSearch(mContentId), mContentListener);
+      MindRpc.addRequest(req, mContentListener);
     } else if (mCollectionId != null) {
-      MindRpc.addRequest(new CollectionSearch(mCollectionId),
-          mCollectionListener);
+      MindRpc.addRequest(req, mCollectionListener);
+    }
+  }
+
+  protected BaseSearch getRequest() {
+    if (mContentId != null) {
+      return new ContentSearch(mContentId);
+    } else if (mCollectionId != null) {
+      return new CollectionSearch(mCollectionId);
     } else {
       final String message = "Content: Bad input!";
       Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
       Utils.logError(message, null);
       finish();
+      return null;
     }
   }
 
@@ -82,6 +92,6 @@ public class ExploreCommon extends Activity {
   }
 
   protected void onContent() {
-    // Should be implemented by child -- how do I represent that properly?
+    // TODO: Should be implemented by child -- how do I represent that properly?
   }
 }

@@ -12,7 +12,5 @@ public class ContentSearch extends BaseSearch {
   public ContentSearch(String contentId) {
     super(null, contentId);
     addCommon(mImageRulesetJson, mNote, mResponseTemplateJson);
-    mDataMap.put("contentId", new String[] { contentId });
-    mDataMap.put("filterUnavailableContent", false);
   }
 }
