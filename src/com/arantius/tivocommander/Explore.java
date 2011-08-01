@@ -1,21 +1,12 @@
 package com.arantius.tivocommander;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 import org.codehaus.jackson.JsonNode;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -34,38 +25,6 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class Explore extends Activity {
-  private final class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-    @Override
-    protected Bitmap doInBackground(String... urls) {
-      URL url = null;
-      try {
-        url = new URL(urls[0]);
-      } catch (MalformedURLException e) {
-        Utils.logError("Parse URL; " + urls[0], e);
-        return null;
-      }
-      try {
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setDoInput(true);
-        conn.connect();
-        InputStream is = conn.getInputStream();
-        return BitmapFactory.decodeStream(is);
-      } catch (IOException e) {
-        Utils.logError("Download URL; " + urls[0], e);
-        return null;
-      }
-    }
-
-    @Override
-    protected void onPostExecute(Bitmap result) {
-      if (result != null) {
-        ImageView v = ((ImageView) findViewById(R.id.content_image));
-        v.setImageDrawable(new BitmapDrawable(result));
-      }
-      mImageProgress.setVisibility(View.GONE);
-    }
-  }
-
   private String mCollectionId = null;
   private final MindRpcResponseListener mCollectionListener =
       new MindRpcResponseListener() {
@@ -76,7 +35,6 @@ public class Explore extends Activity {
       };
   private JsonNode mContent = null;
   private String mContentId = null;
-
   private final MindRpcResponseListener mContentListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
@@ -101,8 +59,6 @@ public class Explore extends Activity {
           tweakView();
         }
       };
-
-  private View mImageProgress = null;
 
   private String mRecordingId = null;
 
@@ -188,8 +144,6 @@ public class Explore extends Activity {
       findViewById(R.id.content_layout_btn).setVisibility(View.GONE);
     }
 
-    mImageProgress = findViewById(R.id.content_image_progress);
-
     // Display titles.
     String title = mContent.path("title").getTextValue();
     String subtitle = mContent.path("subtitle").getTextValue();
@@ -251,11 +205,13 @@ public class Explore extends Activity {
     creditsView.setText(Utils.joinList(", ", credits));
 
     // Find and set the banner image if possible.
+    ImageView imageView = (ImageView) findViewById(R.id.content_image);
+    View progressView = findViewById(R.id.content_image_progress);
     String imageUrl = findImageUrl();
     if (imageUrl != null) {
-      new DownloadImageTask().execute(imageUrl);
+      new DownloadImageTask(imageView, progressView).execute(imageUrl);
     } else {
-      mImageProgress.setVisibility(View.GONE);
+      progressView.setVisibility(View.GONE);
     }
 
     // TODO: Show date recorded (?).
