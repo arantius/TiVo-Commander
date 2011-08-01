@@ -68,6 +68,9 @@ public class MyShows extends ListActivity {
             final JsonNode item = mItems.path(i);
             HashMap<String, Object> listItem = new HashMap<String, Object>();
 
+            String itemContentId =
+                item.path("recordingForChildRecordingId").path("contentId")
+                    .getTextValue();
             String title = item.path("title").getTextValue();
             if ('"' == title.charAt(0)
                 && '"' == title.charAt(title.length() - 1)) {
@@ -77,7 +80,7 @@ public class MyShows extends ListActivity {
             listItem.put("icon", getIconForItem(item));
             listItem.put("more", R.drawable.more);
             if (item.path("folderItemCount").getIntValue() == 0
-                && getContentIdForItem(item) == null) {
+                && itemContentId == null) {
               listItem.put("more", R.drawable.blank);
             }
             listItems.add(listItem);
@@ -124,7 +127,9 @@ public class MyShows extends ListActivity {
             intent.putExtra("folderName", item.path("title").getValueAsText());
             startActivity(intent);
           } else {
-            String contentId = getContentIdForItem(item);
+            JsonNode recording = item.path("recordingForChildRecordingId");
+            String contentId = recording.path("contentId").getTextValue();
+            String collectionId = recording.path("collectionId").getTextValue();
             if (contentId == null) {
               String recordingId = item.path("childRecordingId").getTextValue();
               MindRpc.addRequest(new UiNavigate(recordingId), null);
@@ -132,6 +137,7 @@ public class MyShows extends ListActivity {
               // Navigate to 'content' for this item.
               Intent intent = new Intent(MyShows.this, ExploreTabs.class);
               intent.putExtra("contentId", contentId);
+              intent.putExtra("collectionId", collectionId);
               startActivityForResult(intent, 1);
             }
           }
@@ -170,11 +176,6 @@ public class MyShows extends ListActivity {
     // Get new data.
     MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId),
         mIdSequenceCallback);
-  }
-
-  protected final String getContentIdForItem(JsonNode item) {
-    return item.path("recordingForChildRecordingId").path("contentId")
-        .getTextValue();
   }
 
   protected final int getIconForItem(JsonNode item) {
