@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.SuggestionsSearch;
@@ -103,8 +104,13 @@ public class Suggestions extends Activity {
 
     if (bundle != null) {
       collectionId = bundle.getString("collectionId");
-      SuggestionsSearch request = new SuggestionsSearch(collectionId);
-      MindRpc.addRequest(request, mSuggestionListener);
+      if (collectionId == null) {
+        Toast.makeText(getApplicationContext(), "Oops; missing collection ID",
+            Toast.LENGTH_SHORT).show();
+      } else {
+        SuggestionsSearch request = new SuggestionsSearch(collectionId);
+        MindRpc.addRequest(request, mSuggestionListener);
+      }
     }
   }
 }
