@@ -7,9 +7,10 @@ import com.arantius.tivocommander.Utils;
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public abstract class MindRpcRequest {
-  protected String mBodyId = "";
+  private String mReqType;
+
+  protected String mBodyId = "-";
   protected Map<String, Object> mDataMap = new HashMap<String, Object>();
-  protected String mReqType;
   protected String mResponseCount = "single";
   protected int mRpcId;
   protected int mSessionId = 0;
@@ -18,9 +19,7 @@ public abstract class MindRpcRequest {
   public MindRpcRequest(String type) {
     mRpcId = MindRpc.getRpcId();
     mSessionId = MindRpc.getSessionId();
-    mReqType = type;
-
-    mDataMap.put("type", mReqType);
+    setReqType(type);
   }
 
   public Map<String, Object> getDataMap() {
@@ -41,6 +40,11 @@ public abstract class MindRpcRequest {
 
   public int getRpcId() {
     return mRpcId;
+  }
+
+  public void setReqType(String type) {
+    mReqType = type;
+    mDataMap.put("type", mReqType);
   }
 
   /**
