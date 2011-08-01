@@ -24,6 +24,10 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
   @Override
   protected Bitmap doInBackground(String... urls) {
+    if (urls[0] == null) {
+      return null;
+    }
+
     URL url = null;
     try {
       url = new URL(urls[0]);
@@ -31,6 +35,7 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
       Utils.logError("Parse URL; " + urls[0], e);
       return null;
     }
+
     try {
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setDoInput(true);
