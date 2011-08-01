@@ -53,6 +53,10 @@ public class Utils {
     Log.i(LOG_TAG, message);
   }
 
+  public final static void logError(String message) {
+    Log.e(LOG_TAG, message);
+  }
+
   public final static void logError(String message, Throwable e) {
     Log.e(LOG_TAG, message, e);
   }
@@ -67,7 +71,7 @@ public class Utils {
     } catch (IOException e) {
       Log.e(LOG_TAG, "parseJson failure", e);
     }
-    Log.e(LOG_TAG, "When parsing:\n" + json);
+    logError("When parsing:\n" + json);
     return null;
   }
 

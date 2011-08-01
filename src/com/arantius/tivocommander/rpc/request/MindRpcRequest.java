@@ -3,14 +3,10 @@ package com.arantius.tivocommander.rpc.request;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.util.Log;
-
 import com.arantius.tivocommander.Utils;
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public abstract class MindRpcRequest {
-  private static final String LOG_TAG = "tivo_commander";
-
   protected String mBodyId = "";
   protected Map<String, Object> mDataMap = new HashMap<String, Object>();
   protected String mReqType;
@@ -34,7 +30,7 @@ public abstract class MindRpcRequest {
   public String getDataString() {
     String data = Utils.stringifyToJson(mDataMap);
     if (data == null) {
-      Log.e(LOG_TAG, "Stringify failure; request body");
+      Utils.logError("Stringify failure; request body");
     }
     return data;
   }
