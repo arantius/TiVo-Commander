@@ -22,12 +22,12 @@
         <action android:name="android.intent.action.MAIN" />
       </intent-filter>
     </activity>
-    <activity android:name="Remote" android:screenOrientation="portrait">
+    <activity android:name="Remote">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
       </intent-filter>
     </activity>
-    <activity android:name="Search" android:screenOrientation="portrait">
+    <activity android:name="Search">
     </activity>
     <activity android:name="Settings"></activity>
     <activity android:name="Suggestions"></activity>
