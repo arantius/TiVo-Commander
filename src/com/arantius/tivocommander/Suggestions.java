@@ -4,11 +4,13 @@ import org.codehaus.jackson.JsonNode;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -22,9 +24,9 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class Suggestions extends Activity {
   private class ShowAdapter extends ArrayAdapter<JsonNode> {
-    private final JsonNode[] mShows;
-
     private final Drawable mDrawable;
+
+    private final JsonNode[] mShows;
 
     public ShowAdapter(Context context, int resource, JsonNode[] objects) {
       super(context, resource, objects);
@@ -67,17 +69,30 @@ public class Suggestions extends Activity {
     }
   }
 
+  private final Activity mContext = this;
+  private final OnItemClickListener mOnItemClickListener =
+      new OnItemClickListener() {
+        public void onItemClick(android.widget.AdapterView<?> parent,
+            View view, int position, long id) {
+          String collectionId =
+              mShows.path(position).path("collectionId").getTextValue();
+          Intent intent = new Intent(getBaseContext(), ExploreTabs.class);
+          intent.putExtra("collectionId", collectionId);
+          startActivity(intent);
+        }
+      };
+
   private final MindRpcResponseListener mSuggestionListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           setContentView(R.layout.list_explore);
 
-          JsonNode showsNode =
+          mShows =
               response.getBody().path("collection").path(0)
                   .path("correlatedCollectionForCollectionId");
-          JsonNode[] shows = new JsonNode[showsNode.size()];
+          JsonNode[] shows = new JsonNode[mShows.size()];
           int i = 0;
-          for (JsonNode show : showsNode) {
+          for (JsonNode show : mShows) {
             shows[i++] = show;
           }
 
@@ -85,10 +100,11 @@ public class Suggestions extends Activity {
           ShowAdapter adapter =
               new ShowAdapter(mContext, R.layout.item_show, shows);
           lv.setAdapter(adapter);
+          lv.setOnItemClickListener(mOnItemClickListener);
         }
       };
 
-  private final Activity mContext = this;
+  protected JsonNode mShows;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -99,8 +115,6 @@ public class Suggestions extends Activity {
 
     Bundle bundle = getIntent().getExtras();
     String collectionId;
-
-    // TODO: On click listener!
 
     if (bundle != null) {
       collectionId = bundle.getString("collectionId");
