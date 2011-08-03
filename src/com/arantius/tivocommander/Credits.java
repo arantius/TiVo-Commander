@@ -3,10 +3,12 @@ package com.arantius.tivocommander;
 import org.codehaus.jackson.JsonNode;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -73,6 +75,21 @@ public class Credits extends ExploreCommon {
     }
   }
 
+  private final OnItemClickListener mOnItemClickListener =
+      new OnItemClickListener() {
+        public void onItemClick(android.widget.AdapterView<?> parent,
+            View view, int position, long id) {
+          JsonNode person = mCredits.path(position);
+          Intent intent = new Intent(getBaseContext(), Person.class);
+          intent.putExtra("personId", person.path("personId").getTextValue());
+          intent.putExtra("fName", person.path("first").getTextValue());
+          intent.putExtra("lName", person.path("last").getTextValue());
+          startActivity(intent);
+        }
+      };
+
+  protected JsonNode mCredits;
+
   @Override
   protected BaseSearch getRequest() {
     return new CreditsSearch(mCollectionId, mContentId);
@@ -80,10 +97,10 @@ public class Credits extends ExploreCommon {
 
   @Override
   protected void onContent() {
-    JsonNode creditsNode = mContent.path("credit");
-    JsonNode[] credits = new JsonNode[creditsNode.size()];
+    mCredits = mContent.path("credit");
+    JsonNode[] credits = new JsonNode[mCredits.size()];
     int i = 0;
-    for (JsonNode credit : creditsNode) {
+    for (JsonNode credit : mCredits) {
       credits[i++] = credit;
     }
 
@@ -92,7 +109,6 @@ public class Credits extends ExploreCommon {
     CreditsAdapter adapter =
         new CreditsAdapter(this, R.layout.item_credits, credits);
     lv.setAdapter(adapter);
-
-    // TODO: Set on click listener for exploring actors.
+    lv.setOnItemClickListener(mOnItemClickListener);
   }
 }

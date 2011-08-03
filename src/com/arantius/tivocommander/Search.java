@@ -95,9 +95,11 @@ public class Search extends ListActivity {
           mResultTitles.clear();
           for (int i = 0; i < mResults.size(); i++) {
             final JsonNode result = mResults.path(i);
-            String title = result.path("title").getTextValue();
-            if (title != null) {
-              mResultTitles.add(title);
+            if (result.has("collectionId") || result.has("contentId")) {
+              mResultTitles.add(result.path("title").getTextValue());
+            } else if (result.has("personId")) {
+              mResultTitles.add(result.path("first").getTextValue() + " "
+                  + result.path("last").getTextValue());
             } else {
               Utils.log("Could not find title!");
               Utils.log(result.toString());
@@ -112,10 +114,23 @@ public class Search extends ListActivity {
       new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position,
             long id) {
-          Intent intent = new Intent(getBaseContext(), ExploreTabs.class);
-          intent.putExtra("collectionId",
-              mResults.path(position).path("collectionId").getTextValue());
-          startActivity(intent);
+          JsonNode result = mResults.path(position);
+          if (result.has("collectionId") || result.has("contentId")) {
+            Intent intent = new Intent(getBaseContext(), ExploreTabs.class);
+            intent.putExtra("contentId", result.path("contentId")
+                .getTextValue());
+            intent.putExtra("collectionId", result.path("collectionId")
+                .getTextValue());
+            startActivity(intent);
+          } else if (result.has("personId")) {
+            Intent intent = new Intent(getBaseContext(), Person.class);
+            intent.putExtra("personId", result.path("personId").getTextValue());
+            startActivity(intent);
+          } else {
+            Utils
+                .logError("Result had neither collectionId, contentId, nor personId!\n"
+                    + Utils.stringifyToJson(result));
+          }
         }
       };
 
