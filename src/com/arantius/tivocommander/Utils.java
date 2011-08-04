@@ -44,10 +44,10 @@ public class Utils {
   }
 
   public static final String join(String glue, String... strings) {
-    return joinList(glue, Arrays.asList(strings));
+    return join(glue, Arrays.asList(strings));
   }
 
-  public static final String joinList(String glue, List<String> strings) {
+  public static final String join(String glue, List<String> strings) {
     Iterator<String> it = strings.iterator();
     StringBuilder out = new StringBuilder();
     String s;

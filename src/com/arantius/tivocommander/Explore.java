@@ -103,7 +103,7 @@ public class Explore extends ExploreCommon {
     if (year != 0) {
       detailParts.add(Integer.toString(year));
     }
-    String detail1 = "(" + Utils.joinList(", ", detailParts) + ") ";
+    String detail1 = "(" + Utils.join(", ", detailParts) + ") ";
     if ("() ".equals(detail1)) {
       detail1 = "";
     }
@@ -129,7 +129,7 @@ public class Explore extends ExploreCommon {
       }
     }
     TextView creditsView = (TextView) findViewById(R.id.content_credits);
-    creditsView.setText(Utils.joinList(", ", credits));
+    creditsView.setText(Utils.join(", ", credits));
 
     // Find and set the banner image if possible.
     ImageView imageView = (ImageView) findViewById(R.id.content_image);
