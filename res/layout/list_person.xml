@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent" android:layout_height="fill_parent"
+  android:id="@+id/linearLayout1" android:orientation="vertical"
+>
+  <LinearLayout android:id="@+id/linearLayout2"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+  >
+    <LinearLayout android:id="@+id/linearLayout3"
+      android:layout_width="wrap_content" android:orientation="vertical" android:layout_weight="1"
+    android:layout_height="wrap_content">
+      <TextView android:id="@+id/person_name"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FF9500" android:text="Name" />
+      <TextView android:id="@+id/person_role"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FF9500" android:text="Role" />
+      <TextView android:id="@+id/person_birthdate"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textColor="#6F8CAF" android:text="Birthdate" />
+      <TextView android:id="@+id/person_birthplace"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textColor="#6F8CAF" android:text="Birthplace" />
+    </LinearLayout>
+    <ImageView android:id="@+id/person_img" android:src="@drawable/person"
+      android:layout_width="wrap_content" android:layout_height="wrap_content" />
+  </LinearLayout>
+  <ListView android:id="@android:id/android:list"
+    android:layout_width="fill_parent" android:layout_height="fill_parent" />
+</LinearLayout>
