@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
@@ -61,6 +63,11 @@ public class Person extends ListActivity {
               birthplaceStr.length(), 0);
           ((TextView) findViewById(R.id.person_birthplace))
               .setText(birthplaceStr);
+
+          ImageView iv = (ImageView) findViewById(R.id.imageView1);
+          View pv = findViewById(R.id.progressBar1);
+          String imgUrl = Utils.findImageUrl(person);
+          new DownloadImageTask(iv, pv).execute(imgUrl);
         }
       };
   private String mName;

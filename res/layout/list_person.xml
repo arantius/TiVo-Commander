@@ -7,8 +7,9 @@
     android:layout_width="fill_parent" android:layout_height="wrap_content"
   >
     <LinearLayout android:id="@+id/linearLayout3"
-      android:layout_width="wrap_content" android:orientation="vertical" android:layout_weight="1"
-    android:layout_height="wrap_content">
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:orientation="vertical" android:layout_weight="1"
+    >
       <TextView android:id="@+id/person_name"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -24,8 +25,15 @@
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:textColor="#6F8CAF" android:text="Birthplace" />
     </LinearLayout>
-    <ImageView android:id="@+id/person_img" android:src="@drawable/person"
-      android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    <FrameLayout android:id="@+id/frameLayout1"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+    >
+      <ImageView android:id="@+id/imageView1" android:src="@drawable/person"
+        android:layout_width="wrap_content" android:layout_height="wrap_content" />
+      <ProgressBar android:id="@+id/progressBar1"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+    </FrameLayout>
   </LinearLayout>
   <ListView android:id="@android:id/android:list"
     android:layout_width="fill_parent" android:layout_height="fill_parent" />
