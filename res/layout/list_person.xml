@@ -16,8 +16,7 @@
         android:textColor="#FF9500" android:text="Name" />
       <TextView android:id="@+id/person_role"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#FF9500" android:text="Role" />
+        android:text="Role" />
       <TextView android:id="@+id/person_birthdate"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:textColor="#6F8CAF" android:text="Birthdate" />
