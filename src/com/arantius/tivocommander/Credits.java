@@ -68,8 +68,8 @@ public class Credits extends ExploreCommon {
         v.findViewById(R.id.textView2).setVisibility(View.GONE);
       }
       // TODO: Format roles (i.e. not "executiveProducer").
-      ((TextView) v.findViewById(R.id.textView3)).setText("("
-          + item.path("role").getTextValue() + ")");
+      ((TextView) v.findViewById(R.id.textView3)).setText(Utils.ucFirst(item
+          .path("role").getTextValue()));
 
       return v;
     }

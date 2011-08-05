@@ -36,5 +36,6 @@
     </FrameLayout>
   </LinearLayout>
   <ListView android:id="@android:id/android:list"
-    android:layout_width="fill_parent" android:layout_height="fill_parent" />
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:paddingTop="4dip" />
 </LinearLayout>

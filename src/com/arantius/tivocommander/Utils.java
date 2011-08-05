@@ -116,4 +116,11 @@ public class Utils {
   public final static String stringifyToPrettyJson(Object obj) {
     return stringifyToJson(obj, true);
   }
+
+  public final static String ucFirst(String s) {
+    if (s == null) {
+      return null;
+    }
+    return s.substring(0, 1).toUpperCase() + s.substring(1);
+  }
 }
