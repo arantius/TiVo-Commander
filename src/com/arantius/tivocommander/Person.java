@@ -32,13 +32,13 @@ public class Person extends ListActivity {
   // TODO: Refactor this to be DRY w/ Credits.
   private class CreditsAdapter extends ArrayAdapter<JsonNode> {
     private final JsonNode[] mCredits;
-    private final Drawable mPersonDrawable;
+    private final Drawable mDrawable;
     private final int mResource;
 
     public CreditsAdapter(Context context, int resource, JsonNode[] objects) {
       super(context, resource, objects);
       mCredits = objects;
-      mPersonDrawable = context.getResources().getDrawable(R.drawable.person);
+      mDrawable = context.getResources().getDrawable(R.drawable.content_banner);
       mResource = resource;
     }
 
@@ -56,7 +56,7 @@ public class Person extends ListActivity {
       View pv = v.findViewById(R.id.progressBar1);
 
       if (convertView != null) {
-        iv.setImageDrawable(mPersonDrawable);
+        iv.setImageDrawable(mDrawable);
         pv.setVisibility(View.VISIBLE);
         v.findViewById(R.id.textView2).setVisibility(View.VISIBLE);
       }
