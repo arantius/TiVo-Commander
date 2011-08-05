@@ -9,6 +9,7 @@ import org.codehaus.jackson.JsonNode;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -18,8 +19,10 @@ import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
@@ -93,10 +96,23 @@ public class Person extends ListActivity {
             credits[i++] = credit;
           }
 
+          ListView lv = getListView();
           CreditsAdapter adapter =
               new CreditsAdapter(mContext, R.layout.item_person_credits,
                   credits);
-          getListView().setAdapter(adapter);
+          lv.setAdapter(adapter);
+          lv.setOnItemClickListener(mOnItemClickListener);
+        }
+      };
+  private final OnItemClickListener mOnItemClickListener =
+      new OnItemClickListener() {
+        public void onItemClick(android.widget.AdapterView<?> parent,
+            View view, int position, long id) {
+          JsonNode person = mCredits.path(position);
+          Intent intent = new Intent(getBaseContext(), ExploreTabs.class);
+          intent.putExtra("collectionId", person.path("collectionId")
+              .getTextValue());
+          startActivity(intent);
         }
       };
   private String mPersonId;
