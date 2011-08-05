@@ -28,10 +28,10 @@ public class Person extends ListActivity {
           setContentView(R.layout.list_person);
           JsonNode person = response.getBody().path("person").path(0);
 
-          Utils.log(Utils.stringifyToPrettyJson(person));
-
+          // Name.
           ((TextView) findViewById(R.id.person_name)).setText(mName);
 
+          // Role.
           JsonNode rolesNode = person.path("roleForPersonId");
           String[] roles = new String[rolesNode.size()];
           for (int i = 0; i < rolesNode.size(); i++) {
@@ -42,6 +42,7 @@ public class Person extends ListActivity {
           ((TextView) findViewById(R.id.person_role)).setText(Utils.join(
               ", ", roles));
 
+          // Birthdate.
           SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-mm-dd");
           ParsePosition pp = new ParsePosition(0);
           Date birthdate =
