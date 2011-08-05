@@ -120,28 +120,38 @@ public class Person extends ListActivity {
               roles));
 
           // Birth date.
-          SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-mm-dd");
-          ParsePosition pp = new ParsePosition(0);
-          Date birthdate =
-              dateParser.parse(person.path("birthDate").getTextValue(), pp);
-          SimpleDateFormat dateFormatter =
-              new SimpleDateFormat("MMMMM d, yyyy");
-          Spannable birthdateStr =
-              new SpannableString("Birthdate: "
-                  + dateFormatter.format(birthdate));
-          birthdateStr.setSpan(new ForegroundColorSpan(Color.WHITE), 11,
-              birthdateStr.length(), 0);
-          ((TextView) findViewById(R.id.person_birthdate))
-              .setText(birthdateStr);
+          TextView birthdateView =
+              ((TextView) findViewById(R.id.person_birthdate));
+          if (person.has("birthDate")) {
+            SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-mm-dd");
+            ParsePosition pp = new ParsePosition(0);
+            Date birthdate =
+                dateParser.parse(person.path("birthDate").getTextValue(), pp);
+            SimpleDateFormat dateFormatter =
+                new SimpleDateFormat("MMMMM d, yyyy");
+            Spannable birthdateStr =
+                new SpannableString("Birthdate: "
+                    + dateFormatter.format(birthdate));
+            birthdateStr.setSpan(new ForegroundColorSpan(Color.WHITE), 11,
+                birthdateStr.length(), 0);
+            birthdateView.setText(birthdateStr);
+          } else {
+            birthdateView.setVisibility(View.GONE);
+          }
 
           // Birth place.
-          Spannable birthplaceStr =
-              new SpannableString("Birthplace: "
-                  + person.path("birthPlace").getTextValue());
-          birthplaceStr.setSpan(new ForegroundColorSpan(Color.WHITE), 12,
-              birthplaceStr.length(), 0);
-          ((TextView) findViewById(R.id.person_birthplace))
-              .setText(birthplaceStr);
+          TextView birthplaceView =
+              ((TextView) findViewById(R.id.person_birthplace));
+          if (person.has("birthPlace")) {
+            Spannable birthplaceStr =
+                new SpannableString("Birthplace: "
+                    + person.path("birthPlace").getTextValue());
+            birthplaceStr.setSpan(new ForegroundColorSpan(Color.WHITE), 12,
+                birthplaceStr.length(), 0);
+            birthplaceView.setText(birthplaceStr);
+          } else {
+            birthplaceView.setVisibility(View.GONE);
+          }
 
           ImageView iv = (ImageView) findViewById(R.id.imageView1);
           View pv = findViewById(R.id.progressBar1);
