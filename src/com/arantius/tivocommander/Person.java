@@ -78,6 +78,7 @@ public class Person extends ListActivity {
           .getTextValue());
       ((TextView) v.findViewById(R.id.textView2)).setText(Utils
           .ucFirst(findRole(item.path("credit"))));
+      // TODO: Can we display / sort by the year?
 
       return v;
     }
@@ -195,6 +196,7 @@ public class Person extends ListActivity {
 
     setTitle("TiVo Commander - " + mName);
     MindRpc.addRequest(new PersonSearch(mPersonId), mPersonListener);
+    // TODO: Progress indicator.
     MindRpc.addRequest(new PersonCreditsSearch(mPersonId),
         mPersonCreditsListener);
   }
