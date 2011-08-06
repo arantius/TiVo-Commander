@@ -31,6 +31,7 @@ public class Upcoming extends ListActivity {
 
           for (int i = 0; i < mShows.size(); i++) {
             final JsonNode item = mShows.path(i);
+            // TODO: Filter items in the past.
             HashMap<String, String> listItem = new HashMap<String, String>();
 
             String details =
