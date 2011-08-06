@@ -1,6 +1,9 @@
 package com.arantius.tivocommander;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,7 +37,7 @@ public class Upcoming extends ListActivity {
             listItem.put("details", String.format("(Sea %d Ep %d)  %s  %s %s",
                 item.path("seasonNumber").getIntValue(),
                 item.path("episodeNum").path(0).getIntValue(),
-                item.path("startTime").getTextValue(),
+                formatTime(item),
                 item.path("channel").path("channelNumber").getTextValue(),
                 item.path("channel").path("callSign").getTextValue()
                 ));
@@ -78,5 +81,18 @@ public class Upcoming extends ListActivity {
   protected void onResume() {
     super.onResume();
     MindRpc.init(this);
+  }
+
+  protected String formatTime(JsonNode item) {
+    String timeIn = item.path("startTime").getTextValue();
+    if (timeIn == null) {
+      return null;
+    }
+
+    SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    ParsePosition pp = new ParsePosition(0);
+    Date playTime = dateParser.parse(timeIn, pp);
+    SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE M/d hh:mm a");
+    return dateFormatter.format(playTime);
   }
 }
