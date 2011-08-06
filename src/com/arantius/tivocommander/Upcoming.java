@@ -31,7 +31,7 @@ public class Upcoming extends ListActivity {
             HashMap<String, String> listItem = new HashMap<String, String>();
 
             // @formatter:off
-            listItem.put("details", String.format("(Sea %d Ep %d) %s %s %s",
+            listItem.put("details", String.format("(Sea %d Ep %d)  %s  %s %s",
                 item.path("seasonNumber").getIntValue(),
                 item.path("episodeNum").path(0).getIntValue(),
                 item.path("startTime").getTextValue(),
