@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+TiVo Commander allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<ScrollView android:id="@+id/scrollView1"
+  android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+>
+  <LinearLayout android:id="@+id/linearLayout1"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:layout_marginLeft="6dip" android:layout_marginRight="6dip"
+    android:orientation="vertical"
+  >
+    <ImageView android:id="@+id/imageView1" android:src="@drawable/icon"
+      android:layout_width="fill_parent" android:layout_height="fill_parent"
+      android:layout_marginBottom="6dip" android:layout_marginTop="12dip"
+    ></ImageView>
+    <TextView android:id="@+id/textView1" android:text="TiVo Commander"
+      android:layout_width="wrap_content" android:layout_height="fill_parent"
+      android:textAppearance="?android:attr/textAppearanceLarge"
+      android:layout_gravity="center" android:layout_margin="8dip" />
+
+    <TextView android:id="@+id/textView2"
+      android:text="All relevant images and marks ® and ™ and © by TiVo Inc."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
+
+    <TextView android:id="@+id/textView3"
+      android:text="Contains the Jackson JSON processing library, used under the terms of the Apache (AL 2.0) license."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
+
+    <TextView android:id="@+id/textView4"
+      android:text="Otherwise all source code and resources Copyright © 2011 Anthony Lieuallen."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
+
+    <TextView android:id="@+id/textView5"
+      android:text="TiVo Commander comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; read the license (link below) for more details."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
+
+    <TextView android:id="@+id/textView6"
+      android:text="http://opensource.org/licenses/gpl-2.0.php"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" android:autoLink="web" />
+  </LinearLayout>
+</ScrollView>

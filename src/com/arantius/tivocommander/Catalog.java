@@ -36,7 +36,7 @@ public class Catalog extends ListActivity {
   // TODO: Manage
   // TODO: Now Playing
   private static final String[] mFeatures = { "Remote", "My Shows", "Search",
-      "Settings" };
+      "Settings", "About" };
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -64,6 +64,9 @@ public class Catalog extends ListActivity {
           break;
         case 3:
           intent = new Intent(getBaseContext(), Settings.class);
+          break;
+        case 4:
+          intent = new Intent(getBaseContext(), About.class);
           break;
         default:
           Toast.makeText(getApplicationContext(), "Not Implemented",
