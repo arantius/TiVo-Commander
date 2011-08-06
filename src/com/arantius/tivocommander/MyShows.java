@@ -91,7 +91,7 @@ public class MyShows extends ListActivity {
           // TODO: Show # recordings in folders.
           // TODO: Save/restore scroll position of progress/detail list.
           lv.setAdapter(new SimpleAdapter(mContext, listItems,
-              R.layout.list_my_shows, new String[] { "icon", "more", "title" },
+              R.layout.item_my_shows, new String[] { "icon", "more", "title" },
               new int[] { R.id.show_icon, R.id.show_more, R.id.show_title }));
           lv.setOnItemClickListener(mOnClickListener);
         }
