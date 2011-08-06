@@ -46,16 +46,21 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_marginBottom="6dip" />
 
     <TextView android:id="@+id/textView4"
-      android:text="Otherwise all source code and resources Copyright © 2011 Anthony Lieuallen."
+      android:text="Contains the JmDNS multi-cast DNS library, used under the terms of the Apache (AL 2.0) license."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
 
     <TextView android:id="@+id/textView5"
-      android:text="TiVo Commander comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; read the license (link below) for more details."
+      android:text="Otherwise all source code and resources Copyright © 2011 Anthony Lieuallen."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
 
     <TextView android:id="@+id/textView6"
+      android:text="TiVo Commander comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; read the license (link below) for more details."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
+
+    <TextView android:id="@+id/textView7"
       android:text="http://opensource.org/licenses/gpl-2.0.php"
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" android:autoLink="web" />
