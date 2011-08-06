@@ -33,23 +33,27 @@ public class Upcoming extends ListActivity {
             final JsonNode item = mShows.path(i);
             HashMap<String, String> listItem = new HashMap<String, String>();
 
-            // @formatter:off
-            listItem.put("details", String.format("(Sea %d Ep %d)  %s  %s %s",
-                item.path("seasonNumber").getIntValue(),
-                item.path("episodeNum").path(0).getIntValue(),
-                formatTime(item),
-                item.path("channel").path("channelNumber").getTextValue(),
-                item.path("channel").path("callSign").getTextValue()
-                ));
-            // @formatter:on
-            listItem.put("subtitle", item.path("subtitle").getTextValue());
+            String details =
+                String.format(" %s  %s %s", formatTime(item),
+                    item.path("channel").path("channelNumber").getTextValue(),
+                    item.path("channel").path("callSign").getTextValue());
+            if (item.path("episodic").getBooleanValue()) {
+              // @formatter:off
+              details = String.format("(Sea %d Ep %d)  ",
+                  item.path("seasonNumber").getIntValue(),
+                  item.path("episodeNum").path(0).getIntValue()) + details;
+              // @formatter:on
+            }
+            listItem.put("details", details);
+            listItem.put("title", item.has("subtitle") ? item.path("subtitle")
+                .getTextValue() : item.path("title").getTextValue());
             listItems.add(listItem);
           }
 
           final ListView lv = getListView();
           lv.setAdapter(new SimpleAdapter(mContext, listItems,
-              R.layout.item_upcoming, new String[] { "details", "subtitle" },
-              new int[] { R.id.upcoming_details, R.id.upcoming_subtitle }));
+              R.layout.item_upcoming, new String[] { "details", "title" },
+              new int[] { R.id.upcoming_details, R.id.upcoming_title }));
 //          lv.setOnItemClickListener(mOnClickListener);
         }
       };
