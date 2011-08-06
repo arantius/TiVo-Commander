@@ -47,8 +47,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.arantius.tivocommander.Discover;
 import com.arantius.tivocommander.R;
-import com.arantius.tivocommander.Settings;
 import com.arantius.tivocommander.rpc.request.BodyAuthenticate;
 import com.arantius.tivocommander.rpc.request.MindRpcRequest;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
@@ -256,7 +256,7 @@ public enum MindRpc {
     disconnect();
     Toast.makeText(activity.getBaseContext(), messageId, Toast.LENGTH_SHORT)
         .show();
-    Intent i = new Intent(activity.getBaseContext(), Settings.class);
+    Intent i = new Intent(activity.getBaseContext(), Discover.class);
     activity.startActivity(i);
   }
 

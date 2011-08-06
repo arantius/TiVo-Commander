@@ -63,7 +63,7 @@ public class Catalog extends ListActivity {
           intent = new Intent(getBaseContext(), Search.class);
           break;
         case 3:
-          intent = new Intent(getBaseContext(), Settings.class);
+          intent = new Intent(getBaseContext(), Discover.class);
           break;
         case 4:
           intent = new Intent(getBaseContext(), About.class);
