@@ -15,6 +15,7 @@ import com.arantius.tivocommander.rpc.MindRpc;
 
 public class Catalog extends ListActivity {
   // TODO: Manage
+  // TODO: Now Playing
   private static final String[] mFeatures = { "Remote", "My Shows", "Search",
       "Settings" };
 
