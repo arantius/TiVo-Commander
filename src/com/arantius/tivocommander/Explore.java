@@ -33,11 +33,6 @@ public class Explore extends ExploreCommon {
     finish();
   }
 
-  public void doGetFrom(View v) {
-    Toast.makeText(getBaseContext(), "Get from not implemented yet.",
-        Toast.LENGTH_SHORT).show();
-  }
-
   public void doRecord(View v) {
     Toast.makeText(getBaseContext(), "Record not implemented yet.",
         Toast.LENGTH_SHORT).show();

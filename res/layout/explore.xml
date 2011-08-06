@@ -75,9 +75,6 @@
       <Button android:id="@+id/collection_btn_upcoming"
         android:text="Upcoming" android:layout_width="fill_parent"
         android:layout_height="wrap_content" android:onClick="doUpcoming" />
-      <Button android:id="@+id/collection_btn_get_from"
-        android:text="Get From" android:layout_width="fill_parent"
-        android:layout_height="wrap_content" android:onClick="doGetFrom" />
     </LinearLayout>
   </LinearLayout>
 </LinearLayout>
