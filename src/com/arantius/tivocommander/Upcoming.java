@@ -26,13 +26,13 @@ public class Upcoming extends ListActivity {
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           mShows = response.getBody().path("offer");
-          List<HashMap<String, String>> listItems =
-              new ArrayList<HashMap<String, String>>();
+          List<HashMap<String, Object>> listItems =
+              new ArrayList<HashMap<String, Object>>();
 
           for (int i = 0; i < mShows.size(); i++) {
             final JsonNode item = mShows.path(i);
             // TODO: Filter items in the past.
-            HashMap<String, String> listItem = new HashMap<String, String>();
+            HashMap<String, Object> listItem = new HashMap<String, Object>();
 
             String details =
                 String.format(" %s  %s %s", formatTime(item),
@@ -45,6 +45,10 @@ public class Upcoming extends ListActivity {
                   item.path("episodeNum").path(0).getIntValue()) + details;
               // @formatter:on
             }
+            listItem.put("icon", R.drawable.blank);
+            if (item.has("recordingForOfferId")) {
+              listItem.put("icon", R.drawable.check);
+            }
             listItem.put("details", details);
             listItem.put("title", item.has("subtitle") ? item.path("subtitle")
                 .getTextValue() : item.path("title").getTextValue());
@@ -53,8 +57,10 @@ public class Upcoming extends ListActivity {
 
           final ListView lv = getListView();
           lv.setAdapter(new SimpleAdapter(mContext, listItems,
-              R.layout.item_upcoming, new String[] { "details", "title" },
-              new int[] { R.id.upcoming_details, R.id.upcoming_title }));
+              R.layout.item_upcoming,
+              new String[] { "details", "icon", "title" }, new int[] {
+                  R.id.upcoming_details, R.id.upcoming_icon,
+                  R.id.upcoming_title }));
 //          lv.setOnItemClickListener(mOnClickListener);
         }
       };
