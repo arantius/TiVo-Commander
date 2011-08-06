@@ -47,8 +47,9 @@ public class Explore extends ExploreCommon {
   // TODO: doStopRecording()
 
   public void doUpcoming(View v) {
-    Toast.makeText(getBaseContext(), "Upcoming not implemented yet.",
-        Toast.LENGTH_SHORT).show();
+    Intent intent = new Intent(getBaseContext(), Upcoming.class);
+    intent.putExtra("collectionId", mCollectionId);
+    startActivity(intent);
   }
 
   public void doWatch(View v) {

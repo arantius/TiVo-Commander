@@ -32,5 +32,6 @@
     </activity>
     <activity android:name="Settings"></activity>
     <activity android:name="Suggestions"></activity>
+    <activity android:name="Upcoming"></activity>
   </application>
 </manifest>
