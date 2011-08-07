@@ -38,6 +38,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -106,9 +107,13 @@ public class Person extends ListActivity {
   private Activity mContext;
   private JsonNode mCredits;
   private String mName;
+  private int mOutstandingRequests = 0;
   private final MindRpcResponseListener mPersonCreditsListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          // TODO: Guarantee serialized with mPersonListener.
+          requestFinished();
+
           mCredits = response.getBody().path("collection");
           JsonNode[] credits = new JsonNode[mCredits.size()];
           int i = 0;
@@ -139,6 +144,8 @@ public class Person extends ListActivity {
   private final MindRpcResponseListener mPersonListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          requestFinished();
+
           setContentView(R.layout.list_person);
           JsonNode person = response.getBody().path("person").path(0);
 
@@ -201,6 +208,9 @@ public class Person extends ListActivity {
     super.onCreate(savedInstanceState);
     MindRpc.init(this);
 
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    setContentView(R.layout.list);
+
     Bundle bundle = getIntent().getExtras();
     if (bundle == null) {
       finish();
@@ -215,15 +225,24 @@ public class Person extends ListActivity {
 
     setTitle("TiVo Commander - " + mName);
     MindRpc.addRequest(new PersonSearch(mPersonId), mPersonListener);
-    // TODO: Progress indicator.
+    mOutstandingRequests++;
     MindRpc.addRequest(new PersonCreditsSearch(mPersonId),
         mPersonCreditsListener);
+    mOutstandingRequests++;
+
+    setProgressBarIndeterminateVisibility(true);
   }
 
   @Override
   public void onResume() {
     super.onResume();
     MindRpc.init(this);
+  }
+
+  private void requestFinished() {
+    if (--mOutstandingRequests == 0) {
+      setProgressBarIndeterminateVisibility(false);
+    }
   }
 
   private String findRole(JsonNode credits) {
