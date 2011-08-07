@@ -37,6 +37,7 @@ import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter;
@@ -118,6 +119,9 @@ public class Discover extends ListActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    setContentView(R.layout.list);
+
     mHosts.clear();
     mHostAdapter =
         new SimpleAdapter(this, mHosts, android.R.layout.simple_list_item_1,
@@ -138,6 +142,7 @@ public class Discover extends ListActivity {
     mMulticastLock.setReferenceCounted(false);
     mMulticastLock.acquire();
 
+    setProgressBarIndeterminateVisibility(true);
     new Thread(new Runnable() {
       public void run() {
         try {
@@ -149,6 +154,11 @@ public class Discover extends ListActivity {
         mJmdns.addServiceListener(mServiceName, mServiceListener);
         mJmdns.requestServiceInfo(mServiceName, "", mTimeout);
         stopQuery();
+        runOnUiThread(new Runnable() {
+          public void run() {
+            setProgressBarIndeterminateVisibility(false);
+          }
+        });
       }
     }).start();
   }
