@@ -37,19 +37,30 @@ import android.widget.Toast;
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.RecordingUpdate;
 import com.arantius.tivocommander.rpc.request.UiNavigate;
+import com.arantius.tivocommander.rpc.response.MindRpcResponse;
+import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class Explore extends ExploreCommon {
   private String mRecordingId = null;
 
   public void doDelete(View v) {
+    getParent().setProgressBarIndeterminateVisibility(true);
     // Delete the recording ...
-    MindRpc.addRequest(new RecordingUpdate(mRecordingId, "deleted"), null);
-
-    // .. and tell the show list to refresh itself.
-    Intent resultIntent = new Intent();
-    resultIntent.putExtra("refresh", true);
-    setResult(Activity.RESULT_OK, resultIntent);
-    finish();
+    MindRpc.addRequest(new RecordingUpdate(mRecordingId, "deleted"),
+        new MindRpcResponseListener() {
+          public void onResponse(MindRpcResponse response) {
+            getParent().setProgressBarIndeterminateVisibility(false);
+            if (!("success".equals(response.getRespType()))) {
+              // TODO: Toast or something about the error.
+              return;
+            }
+            // .. and tell the show list to refresh itself.
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("refresh", true);
+            getParent().setResult(Activity.RESULT_OK, resultIntent);
+            finish();
+          }
+        });
   }
 
   public void doRecord(View v) {

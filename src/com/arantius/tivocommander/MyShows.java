@@ -43,6 +43,8 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class MyShows extends ListActivity {
+  private final static int EXPLORE_INTENT_ID = 1;
+
   private final Context mContext = this;
   private final MindRpcResponseListener mDetailCallback =
       new MindRpcResponseListener() {
@@ -114,7 +116,7 @@ public class MyShows extends ListActivity {
               Intent intent = new Intent(MyShows.this, ExploreTabs.class);
               intent.putExtra("contentId", contentId);
               intent.putExtra("collectionId", collectionId);
-              startActivityForResult(intent, 1);
+              startActivityForResult(intent, EXPLORE_INTENT_ID);
             }
           }
         }
@@ -216,11 +218,15 @@ public class MyShows extends ListActivity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (resultCode != Activity.RESULT_OK) {
+      Utils.logError("MyShows.onActivityResult(): resultCode was not OK!");
       return;
     }
 
-    if (data.getBooleanExtra("refresh", false)) {
-      startRequest();
+    if (EXPLORE_INTENT_ID == requestCode) {
+      if (data.getBooleanExtra("refresh", false)) {
+        Utils.log("do refresh");
+        startRequest();
+      }
     }
   }
 }
