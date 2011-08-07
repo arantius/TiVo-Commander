@@ -105,22 +105,27 @@ public class Suggestions extends Activity {
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           getParent().setProgressBarIndeterminateVisibility(false);
-          // TODO: "No results" view.
-
           mShows =
               response.getBody().path("collection").path(0)
                   .path("correlatedCollectionForCollectionId");
-          JsonNode[] shows = new JsonNode[mShows.size()];
-          int i = 0;
-          for (JsonNode show : mShows) {
-            shows[i++] = show;
-          }
 
-          ListView lv = (ListView) findViewById(R.id.listView1);
-          ShowAdapter adapter =
-              new ShowAdapter(mContext, R.layout.item_show, shows);
-          lv.setAdapter(adapter);
-          lv.setOnItemClickListener(mOnItemClickListener);
+          if (mShows.size() == 0) {
+            setContentView(R.layout.no_results);
+          } else {
+            setContentView(R.layout.list_explore);
+
+            JsonNode[] shows = new JsonNode[mShows.size()];
+            int i = 0;
+            for (JsonNode show : mShows) {
+              shows[i++] = show;
+            }
+
+            ListView lv = (ListView) findViewById(R.id.listView1);
+            ShowAdapter adapter =
+                new ShowAdapter(mContext, R.layout.item_show, shows);
+            lv.setAdapter(adapter);
+            lv.setOnItemClickListener(mOnItemClickListener);
+          }
         }
       };
 
@@ -129,9 +134,8 @@ public class Suggestions extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    MindRpc.init(this);
 
-    setContentView(R.layout.list_explore);
+    MindRpc.init(this);
 
     Bundle bundle = getIntent().getExtras();
     String collectionId;

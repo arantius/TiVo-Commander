@@ -119,17 +119,24 @@ public class Credits extends ExploreCommon {
     getParent().setProgressBarIndeterminateVisibility(false);
 
     mCredits = mContent.path("credit");
-    JsonNode[] credits = new JsonNode[mCredits.size()];
-    int i = 0;
-    for (JsonNode credit : mCredits) {
-      credits[i++] = credit;
-    }
 
-    setContentView(R.layout.list_explore);
-    ListView lv = (ListView) findViewById(R.id.listView1);
-    CreditsAdapter adapter =
-        new CreditsAdapter(this, R.layout.item_credits, credits);
-    lv.setAdapter(adapter);
-    lv.setOnItemClickListener(mOnItemClickListener);
+    if (mCredits.size() == 0) {
+      setContentView(R.layout.no_results);
+    } else {
+      setContentView(R.layout.list_explore);
+
+      JsonNode[] credits = new JsonNode[mCredits.size()];
+      int i = 0;
+      for (JsonNode credit : mCredits) {
+        credits[i++] = credit;
+      }
+
+      setContentView(R.layout.list_explore);
+      ListView lv = (ListView) findViewById(R.id.listView1);
+      CreditsAdapter adapter =
+          new CreditsAdapter(this, R.layout.item_credits, credits);
+      lv.setAdapter(adapter);
+      lv.setOnItemClickListener(mOnItemClickListener);
+    }
   }
 }

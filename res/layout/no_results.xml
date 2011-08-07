@@ -22,4 +22,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   android:layout_width="fill_parent" android:layout_height="wrap_content"
   android:textAppearance="?android:attr/textAppearanceMedium"
   android:minHeight="?android:attr/listPreferredItemHeight"
-  android:visibility="gone" android:gravity="center" />
+  android:gravity="center" />
