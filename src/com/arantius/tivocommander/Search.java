@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -71,8 +72,14 @@ public class Search extends ListActivity {
       if (mRequest != null) {
         MindRpc.addRequest(new CancelRpc(mRequest.getRpcId()), null);
       }
+
+      runOnUiThread(new Runnable() {
+        public void run() {
+          setProgressBarIndeterminateVisibility(true);
+        }
+      });
+
       mRequest = new UnifiedItemSearch(params[0] + "*");
-      // TODO: Progress indicator.
       MindRpc.addRequest(mRequest, mSearchListener);
       return null;
     }
@@ -126,6 +133,8 @@ public class Search extends ListActivity {
           }
 
           mAdapter.notifyDataSetChanged();
+
+          setProgressBarIndeterminateVisibility(false);
         }
       };
 
@@ -157,6 +166,7 @@ public class Search extends ListActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setTitle("TiVo Commander - Search");
     setContentView(R.layout.search);
 
