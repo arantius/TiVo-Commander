@@ -51,7 +51,9 @@ public class Explore extends ExploreCommon {
           public void onResponse(MindRpcResponse response) {
             getParent().setProgressBarIndeterminateVisibility(false);
             if (!("success".equals(response.getRespType()))) {
-              // TODO: Toast or something about the error.
+              Utils.logError("Delete attempt failed!");
+              Toast.makeText(getBaseContext(), "Delete failed!.",
+                  Toast.LENGTH_SHORT).show();
               return;
             }
             // .. and tell the show list to refresh itself.
