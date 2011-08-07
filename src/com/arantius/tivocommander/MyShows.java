@@ -30,13 +30,10 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.arantius.tivocommander.rpc.MindRpc;
@@ -46,42 +43,11 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class MyShows extends ListActivity {
-  private class ProgressAdapter extends BaseAdapter {
-    private final LayoutInflater mInflater;
-    private final int mSize;
-
-    public ProgressAdapter(Context context, int size) {
-      mInflater =
-          (LayoutInflater) context
-              .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-      mSize = size;
-    }
-
-    public int getCount() {
-      return mSize;
-    }
-
-    public Object getItem(int position) {
-      return null;
-    }
-
-    public long getItemId(int position) {
-      return 0;
-    }
-
-    public View getView(int position, View convertView, ViewGroup parent) {
-      return mInflater.inflate(R.layout.progress, parent, false);
-    }
-  }
-
   private final Context mContext = this;
-
   private final MindRpcResponseListener mDetailCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           mItems = response.getBody().path("recordingFolderItem");
-          List<HashMap<String, Object>> listItems =
-              new ArrayList<HashMap<String, Object>>();
 
           for (int i = 0; i < mItems.size(); i++) {
             final JsonNode item = mItems.path(i);
@@ -102,36 +68,27 @@ public class MyShows extends ListActivity {
                 && itemContentId == null) {
               listItem.put("more", R.drawable.blank);
             }
-            listItems.add(listItem);
+            mListItems.add(listItem);
           }
 
-          final ListView lv = getListView();
-          // TODO: Show date recorded.
-          // TODO: Show # recordings in folders.
-          // TODO: Save/restore scroll position of progress/detail list.
-          lv.setAdapter(new SimpleAdapter(mContext, listItems,
-              R.layout.item_my_shows, new String[] { "icon", "more", "title" },
-              new int[] { R.id.show_icon, R.id.show_more, R.id.show_title }));
-          lv.setOnItemClickListener(mOnClickListener);
+          mListAdapter.notifyDataSetChanged();
+          setProgressBarIndeterminateVisibility(false);
         }
       };
-
   private String mFolderId;
-
   private final MindRpcResponseListener mIdSequenceCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           JsonNode ids = response.getBody().findValue("objectIdAndType");
           MindRpc.addRequest(new RecordingFolderItemSearch(ids),
               mDetailCallback);
-
           // TODO: Incremental detail loading.
-          // Show the right number of progress throbbers while loading details.
-          setListAdapter(new ProgressAdapter(mContext, ids.size()));
         }
       };
   private JsonNode mItems;
-
+  private SimpleAdapter mListAdapter;
+  private final List<HashMap<String, Object>> mListItems =
+      new ArrayList<HashMap<String, Object>>();
   private final OnItemClickListener mOnClickListener =
       new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -170,6 +127,18 @@ public class MyShows extends ListActivity {
 
     // TODO: Sorting.
     // TODO: Show disk usage.
+    // TODO: Show date recorded.
+    // TODO: Show # recordings in folders.
+
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    setContentView(R.layout.list);
+
+    mListAdapter =
+        new SimpleAdapter(mContext, mListItems, R.layout.item_my_shows,
+            new String[] { "icon", "more", "title" }, new int[] {
+                R.id.show_icon, R.id.show_more, R.id.show_title });
+    getListView().setAdapter(mListAdapter);
+    getListView().setOnItemClickListener(mOnClickListener);
 
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
@@ -190,8 +159,11 @@ public class MyShows extends ListActivity {
   }
 
   private void startRequest() {
-    // Replace any old data that might exist with a progress throbber.
-    setListAdapter(new ProgressAdapter(mContext, 0));
+    setProgressBarIndeterminateVisibility(true);
+
+    // Clear any possible old data.
+    mListItems.clear();
+    mListAdapter.notifyDataSetChanged();
     // Get new data.
     MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId),
         mIdSequenceCallback);
