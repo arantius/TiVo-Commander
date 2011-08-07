@@ -80,6 +80,8 @@ public class Remote extends Activity implements OnClickListener {
     mEditText.addTextChangedListener(mTextWatcher);
     mInputManager =
         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+    // TODO: Do not open keyboard on launch.
   }
 
   @Override

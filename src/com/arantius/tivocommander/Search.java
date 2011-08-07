@@ -152,6 +152,7 @@ public class Search extends ListActivity {
             startActivity(intent);
           } else if (result.has("personId")) {
             Intent intent = new Intent(getBaseContext(), Person.class);
+            // TODO: Set first/last name.
             intent.putExtra("personId", result.path("personId").getTextValue());
             startActivity(intent);
           } else {
