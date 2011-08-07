@@ -126,6 +126,7 @@ public class Search extends ListActivity {
             if (result.has("collectionId") || result.has("contentId")) {
               mResultTitles.add(result.path("title").getTextValue());
             } else if (result.has("personId")) {
+              // TODO: Handle missing last name (e.g. Oprah).
               mResultTitles.add(result.path("first").getTextValue() + " "
                   + result.path("last").getTextValue());
             } else {
