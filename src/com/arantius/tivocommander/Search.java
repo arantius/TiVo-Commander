@@ -65,6 +65,7 @@ public class Search extends ListActivity {
             mResults = null;
             mResultTitles.clear();
             mAdapter.notifyDataSetChanged();
+            mEmptyView.setVisibility(View.INVISIBLE);
           }
         });
       }
@@ -86,6 +87,7 @@ public class Search extends ListActivity {
   }
 
   private ArrayAdapter<String> mAdapter;
+  private View mEmptyView;
   private UnifiedItemSearch mRequest = null;
   private JsonNode mResults = null;
   private AsyncTask<String, Void, Void> mSearchTask = null;
@@ -116,7 +118,7 @@ public class Search extends ListActivity {
           mRequest = null;
           mResults = response.getBody().path("unifiedItem");
 
-          // TODO: Handle zero results.
+          mEmptyView.setVisibility(View.VISIBLE);
 
           mResultTitles.clear();
           for (int i = 0; i < mResults.size(); i++) {
@@ -181,6 +183,9 @@ public class Search extends ListActivity {
 
     final ListView lv = getListView();
     lv.setOnItemClickListener(mOnClickListener);
+
+    mEmptyView = findViewById(android.R.id.empty);
+    mEmptyView.setVisibility(View.INVISIBLE);
   }
 
   @Override
