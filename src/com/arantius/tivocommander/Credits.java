@@ -116,6 +116,8 @@ public class Credits extends ExploreCommon {
 
   @Override
   protected void onContent() {
+    getParent().setProgressBarIndeterminateVisibility(false);
+
     mCredits = mContent.path("credit");
     JsonNode[] credits = new JsonNode[mCredits.size()];
     int i = 0;

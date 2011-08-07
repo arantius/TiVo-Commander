@@ -72,6 +72,8 @@ public class Explore extends ExploreCommon {
 
   @Override
   protected void onContent() {
+    getParent().setProgressBarIndeterminateVisibility(false);
+
     for (JsonNode recording : mContent.path("recordingForContentId")) {
       if ("cancelled".equals(recording.path("state").getTextValue())) {
         continue;

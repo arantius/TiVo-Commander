@@ -93,7 +93,7 @@ public class ExploreCommon extends Activity {
       mCollectionId = bundle.getString("collectionId");
     }
 
-    setContentView(R.layout.progress);
+    getParent().setProgressBarIndeterminateVisibility(true);
     BaseSearch req = getRequest();
     MindRpc.addRequest(req, mListener);
   }

@@ -104,7 +104,8 @@ public class Suggestions extends Activity {
   private final MindRpcResponseListener mSuggestionListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          setContentView(R.layout.list_explore);
+          getParent().setProgressBarIndeterminateVisibility(false);
+          // TODO: "No results" view.
 
           mShows =
               response.getBody().path("collection").path(0)
@@ -130,7 +131,7 @@ public class Suggestions extends Activity {
     super.onCreate(savedInstanceState);
     MindRpc.init(this);
 
-    setContentView(R.layout.progress);
+    setContentView(R.layout.list_explore);
 
     Bundle bundle = getIntent().getExtras();
     String collectionId;
@@ -141,6 +142,7 @@ public class Suggestions extends Activity {
         Toast.makeText(getApplicationContext(), "Oops; missing collection ID",
             Toast.LENGTH_SHORT).show();
       } else {
+        getParent().setProgressBarIndeterminateVisibility(true);
         SuggestionsSearch request = new SuggestionsSearch(collectionId);
         MindRpc.addRequest(request, mSuggestionListener);
       }

@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Window;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
@@ -54,6 +55,7 @@ public class ExploreTabs extends TabActivity {
     super.onCreate(savedInstanceState);
     MindRpc.init(this);
 
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.explore_tabs);
     mTabHost = getTabHost();
     Bundle bundle = getIntent().getExtras();
