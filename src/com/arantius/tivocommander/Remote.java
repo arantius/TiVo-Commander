@@ -46,8 +46,8 @@ public class Remote extends Activity implements OnClickListener {
     }
 
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-      if (count == 0) {
-        return;
+      if (s.length() == 0) {
+        MindRpc.addRequest(new KeyEventSend("clear"), null);
       } else if (before > count) {
         while (before > count) {
           MindRpc.addRequest(viewIdToEvent(R.id.remote_reverse), null);
@@ -55,6 +55,7 @@ public class Remote extends Activity implements OnClickListener {
         }
       } else {
         for (int i = start + before; i < start + count; i++) {
+          // TODO: Only send legal characters.
           MindRpc.addRequest(new KeyEventSend(s.charAt(i)), null);
         }
       }
