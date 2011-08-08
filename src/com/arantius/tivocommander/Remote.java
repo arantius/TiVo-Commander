@@ -26,6 +26,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -76,12 +77,14 @@ public class Remote extends Activity implements OnClickListener {
     setTitle("TiVo Commander - Remote Control");
     setContentView(R.layout.remote);
 
+    // It says always, but it only suppresses the open-on-launch.
+    getWindow().setSoftInputMode(
+        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
     mEditText = (EditText) findViewById(R.id.keyboard_activator);
     mEditText.addTextChangedListener(mTextWatcher);
     mInputManager =
         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-
-    // TODO: Do not open keyboard on launch.
   }
 
   @Override
@@ -91,8 +94,6 @@ public class Remote extends Activity implements OnClickListener {
   }
 
   public void toggleKeyboard(View v) {
-    Utils.log("clicked keyboard");
-
     mEditText.setText("");
     mEditText.requestFocus();
     mInputManager.toggleSoftInputFromWindow(mEditText.getWindowToken(), 0, 0);
