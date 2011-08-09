@@ -92,6 +92,8 @@ public class Upcoming extends ListActivity {
     MindRpc.init(this);
     mContext = this;
 
+    // TODO: Progress throbber.
+
     Bundle bundle = getIntent().getExtras();
     String collectionId;
 
