@@ -20,7 +20,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package com.arantius.tivocommander.rpc.request;
 
 public class CreditsSearch extends BaseSearch {
-  // TODO: Make this format less verbose about all the image choices.
   private static final String mImageRulesetJson =
       "[{\"type\": \"imageRuleset\", \"name\": \"personPortrait\", \"rule\": [{\"width\": 113, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"person\"], \"height\": 150}]}]";
   private static final String[] mNote = new String[] {};
