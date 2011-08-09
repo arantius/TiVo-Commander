@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UiNavigate extends MindRpcRequest {
-  /** Playback for a given item. */
   public UiNavigate(String recordingId) {
     super("uiNavigate");
 
