@@ -45,6 +45,9 @@ public class Upcoming extends ListActivity {
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           mShows = response.getBody().path("offer");
+
+          // TODO: No results.
+
           List<HashMap<String, Object>> listItems =
               new ArrayList<HashMap<String, Object>>();
 
