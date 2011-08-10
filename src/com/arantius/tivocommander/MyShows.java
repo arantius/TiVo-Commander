@@ -218,7 +218,6 @@ public class MyShows extends ListActivity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (resultCode != Activity.RESULT_OK) {
-      Utils.logError("MyShows.onActivityResult(): resultCode was not OK!");
       return;
     }
 
