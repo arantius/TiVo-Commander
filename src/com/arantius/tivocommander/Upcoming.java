@@ -83,6 +83,7 @@ public class Upcoming extends ListActivity {
               new String[] { "details", "icon", "title" }, new int[] {
                   R.id.upcoming_details, R.id.upcoming_icon,
                   R.id.upcoming_title }));
+          // TODO: Item click listener.
 //          lv.setOnItemClickListener(mOnClickListener);
         }
       };
