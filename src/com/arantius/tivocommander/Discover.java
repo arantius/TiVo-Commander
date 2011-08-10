@@ -70,7 +70,7 @@ public class Discover extends ListActivity {
       new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position,
             long id) {
-          if (position >= 0) {
+          if (position > 0) {
             HashMap<String, String> item = mHosts.get(position);
             SharedPreferences prefs =
                 PreferenceManager.getDefaultSharedPreferences(Discover.this
