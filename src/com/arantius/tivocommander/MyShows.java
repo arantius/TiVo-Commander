@@ -63,11 +63,16 @@ public class MyShows extends ListActivity {
                 && '"' == title.charAt(title.length() - 1)) {
               title = title.substring(1, title.length() - 1);
             }
-            listItem.put("title", title);
+            listItem.put("folder_num", "");
             listItem.put("icon", getIconForItem(item));
             listItem.put("more", R.drawable.more);
-            if (item.path("folderItemCount").getIntValue() == 0
-                && itemContentId == null) {
+            listItem.put("title", title);
+            Integer folderItemCount =
+                item.path("folderItemCount").getIntValue();
+            if (folderItemCount > 0) {
+              listItem.put("folder_num", folderItemCount.toString());
+            }
+            if (folderItemCount == 0 && itemContentId == null) {
               listItem.put("more", R.drawable.blank);
             }
             mListItems.add(listItem);
@@ -130,15 +135,15 @@ public class MyShows extends ListActivity {
     // TODO: Sorting.
     // TODO: Show disk usage.
     // TODO: Show date recorded.
-    // TODO: Show # recordings in folders.
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.list);
 
     mListAdapter =
         new SimpleAdapter(mContext, mListItems, R.layout.item_my_shows,
-            new String[] { "icon", "more", "title" }, new int[] {
-                R.id.show_icon, R.id.show_more, R.id.show_title });
+            new String[] { "folder_num", "icon", "more", "title" }, new int[] {
+                R.id.folder_num, R.id.show_icon, R.id.show_more,
+                R.id.show_title });
     getListView().setAdapter(mListAdapter);
     getListView().setOnItemClickListener(mOnClickListener);
 
