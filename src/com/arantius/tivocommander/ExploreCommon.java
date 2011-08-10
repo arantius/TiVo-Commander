@@ -32,7 +32,7 @@ import com.arantius.tivocommander.rpc.request.ContentSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
-public class ExploreCommon extends Activity {
+abstract public class ExploreCommon extends Activity {
   private final MindRpcResponseListener mListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
@@ -78,9 +78,7 @@ public class ExploreCommon extends Activity {
     }
   }
 
-  protected void onContent() {
-    // TODO: Should be implemented by child -- how do I represent that properly?
-  }
+  abstract protected void onContent();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
