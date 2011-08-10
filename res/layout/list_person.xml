@@ -46,7 +46,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_width="wrap_content" android:layout_height="wrap_content"
     >
       <ImageView android:id="@+id/imageView1" android:src="@drawable/person"
-        android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        android:layout_width="75dip" android:layout_height="100dip" />
       <ProgressBar android:id="@+id/progressBar1"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_gravity="center" />
