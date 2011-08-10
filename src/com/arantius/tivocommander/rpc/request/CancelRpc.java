@@ -19,12 +19,26 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc.request;
 
+import com.arantius.tivocommander.Utils;
 
 public class CancelRpc extends MindRpcRequest {
-  protected final String mType = "cancel";
+  protected Integer mCancelRpcId;
 
   public CancelRpc(int rpcId) {
-    super("");
-    mRpcId = rpcId;
+    super("cancel");
+    mCancelRpcId = rpcId;
+  }
+
+  @Override
+  public String toString() {
+    // @formatter:off
+    String headers = Utils.join("\r\n",
+        "Type: cancel",
+        "RpcId: " + mCancelRpcId.toString(),
+        "SchemaVersion:7");
+    // @formatter:on
+    // "+ 2" is the "\r\n" we'll add next.
+    String reqLine = String.format("MRPC/2 %d 0", headers.length() + 2);
+    return Utils.join("\r\n", reqLine, headers, "");
   }
 }

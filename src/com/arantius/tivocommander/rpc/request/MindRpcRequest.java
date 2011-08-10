@@ -33,7 +33,6 @@ public abstract class MindRpcRequest {
   protected String mResponseCount = "single";
   protected int mRpcId;
   protected int mSessionId = 0;
-  protected final String mType = "request";
 
   public MindRpcRequest(String type) {
     mRpcId = MindRpc.getRpcId();
@@ -75,7 +74,7 @@ public abstract class MindRpcRequest {
   public String toString() {
     // @formatter:off
     String headers = Utils.join("\r\n",
-        "Type: " + mType,
+        "Type: request",
         "RpcId: " + getRpcId(),
         "SchemaVersion:7",
         "Content-Type: application/json",

@@ -58,22 +58,6 @@ public class Search extends ListActivity {
       if (isCancelled()) {
         return null;
       }
-
-      if ("".equals(params[0])) {
-        runOnUiThread(new Runnable() {
-          public void run() {
-            mResults = null;
-            mResultTitles.clear();
-            mAdapter.notifyDataSetChanged();
-            mEmptyView.setVisibility(View.INVISIBLE);
-          }
-        });
-      }
-
-      if (mRequest != null) {
-        MindRpc.addRequest(new CancelRpc(mRequest.getRpcId()), null);
-      }
-
       runOnUiThread(new Runnable() {
         public void run() {
           setProgressBarIndeterminateVisibility(true);
@@ -102,11 +86,28 @@ public class Search extends ListActivity {
     }
 
     public void onTextChanged(CharSequence s, int start, int before, int count) {
+      // Cancel any previous request.
       if (mSearchTask != null) {
         mSearchTask.cancel(true);
+        mSearchTask = null;
+      }
+      if (mRequest != null) {
+        MindRpc.addRequest(new CancelRpc(mRequest.getRpcId()), null);
+        mRequest = null;
       }
 
-      // TODO: Handle empty query.
+      // Handle empty input.
+      if ("".equals(s.toString())) {
+        mResults = null;
+        mResultTitles.clear();
+        runOnUiThread(new Runnable() {
+          public void run() {
+            mAdapter.notifyDataSetChanged();
+            mEmptyView.setVisibility(View.INVISIBLE);
+          }
+        });
+        return;
+      }
 
       mSearchTask = new SearchTask().execute(s.toString());
     }
@@ -115,6 +116,12 @@ public class Search extends ListActivity {
   private final MindRpcResponseListener mSearchListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          if (mRequest != null) {
+            if (response.getRpcId() != mRequest.getRpcId()) {
+              Utils.log("Got response for non-current search request!");
+              return;
+            }
+          }
           mRequest = null;
           mResults = response.getBody().path("unifiedItem");
 
