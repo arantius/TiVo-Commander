@@ -105,28 +105,14 @@ public class Person extends ListActivity {
   }
 
   private Activity mContext;
-  private JsonNode mCredits;
+  private JsonNode mCredits = null;
   private String mName;
   private int mOutstandingRequests = 0;
   private final MindRpcResponseListener mPersonCreditsListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          // TODO: Guarantee serialized with mPersonListener.
-          requestFinished();
-
           mCredits = response.getBody().path("collection");
-          JsonNode[] credits = new JsonNode[mCredits.size()];
-          int i = 0;
-          for (JsonNode credit : mCredits) {
-            credits[i++] = credit;
-          }
-
-          ListView lv = getListView();
-          CreditsAdapter adapter =
-              new CreditsAdapter(mContext, R.layout.item_person_credits,
-                  credits);
-          lv.setAdapter(adapter);
-          lv.setOnItemClickListener(mOnItemClickListener);
+          requestFinished();
         }
       };
   private final OnItemClickListener mOnItemClickListener =
@@ -140,66 +126,13 @@ public class Person extends ListActivity {
           startActivity(intent);
         }
       };
+  private JsonNode mPerson = null;
   private String mPersonId;
   private final MindRpcResponseListener mPersonListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          mPerson = response.getBody().path("person").path(0);
           requestFinished();
-
-          setContentView(R.layout.list_person);
-          JsonNode person = response.getBody().path("person").path(0);
-
-          // Name.
-          ((TextView) findViewById(R.id.person_name)).setText(mName);
-
-          // Role.
-          JsonNode rolesNode = person.path("roleForPersonId");
-          String[] roles = new String[rolesNode.size()];
-          for (int i = 0; i < rolesNode.size(); i++) {
-            roles[i] = rolesNode.path(i).getTextValue();
-            roles[i] = Utils.ucFirst(roles[i]);
-          }
-          ((TextView) findViewById(R.id.person_role)).setText(Utils.join(", ",
-              roles));
-
-          // Birth date.
-          TextView birthdateView =
-              ((TextView) findViewById(R.id.person_birthdate));
-          if (person.has("birthDate")) {
-            SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-mm-dd");
-            ParsePosition pp = new ParsePosition(0);
-            Date birthdate =
-                dateParser.parse(person.path("birthDate").getTextValue(), pp);
-            SimpleDateFormat dateFormatter =
-                new SimpleDateFormat("MMMMM d, yyyy");
-            Spannable birthdateStr =
-                new SpannableString("Birthdate: "
-                    + dateFormatter.format(birthdate));
-            birthdateStr.setSpan(new ForegroundColorSpan(Color.WHITE), 11,
-                birthdateStr.length(), 0);
-            birthdateView.setText(birthdateStr);
-          } else {
-            birthdateView.setVisibility(View.GONE);
-          }
-
-          // Birth place.
-          TextView birthplaceView =
-              ((TextView) findViewById(R.id.person_birthplace));
-          if (person.has("birthPlace")) {
-            Spannable birthplaceStr =
-                new SpannableString("Birthplace: "
-                    + person.path("birthPlace").getTextValue());
-            birthplaceStr.setSpan(new ForegroundColorSpan(Color.WHITE), 12,
-                birthplaceStr.length(), 0);
-            birthplaceView.setText(birthplaceStr);
-          } else {
-            birthplaceView.setVisibility(View.GONE);
-          }
-
-          ImageView iv = (ImageView) findViewById(R.id.imageView1);
-          View pv = findViewById(R.id.progressBar1);
-          String imgUrl = Utils.findImageUrl(person);
-          new DownloadImageTask(iv, pv).execute(imgUrl);
         }
       };
 
@@ -240,10 +173,79 @@ public class Person extends ListActivity {
   }
 
   private void requestFinished() {
-    if (--mOutstandingRequests == 0) {
-      setProgressBarIndeterminateVisibility(false);
+    if (--mOutstandingRequests > 0) {
+      return;
     }
-  }
+    setProgressBarIndeterminateVisibility(false);
+
+    if (mPerson == null || mCredits == null) {
+      setContentView(R.layout.no_results);
+      return;
+    }
+
+    setContentView(R.layout.list_person);
+
+    // Credits.
+    JsonNode[] credits = new JsonNode[mCredits.size()];
+    int i = 0;
+    for (JsonNode credit : mCredits) {
+      credits[i++] = credit;
+    }
+
+    ListView lv = getListView();
+    CreditsAdapter adapter =
+        new CreditsAdapter(mContext, R.layout.item_person_credits, credits);
+    lv.setAdapter(adapter);
+    lv.setOnItemClickListener(mOnItemClickListener);
+
+    // Name.
+    ((TextView) findViewById(R.id.person_name)).setText(mName);
+
+    // Role.
+    JsonNode rolesNode = mPerson.path("roleForPersonId");
+    String[] roles = new String[rolesNode.size()];
+    for (i = 0; i < rolesNode.size(); i++) {
+      roles[i] = rolesNode.path(i).getTextValue();
+      roles[i] = Utils.ucFirst(roles[i]);
+    }
+    ((TextView) findViewById(R.id.person_role))
+        .setText(Utils.join(", ", roles));
+
+    // Birth date.
+    TextView birthdateView = ((TextView) findViewById(R.id.person_birthdate));
+    if (mPerson.has("birthDate")) {
+      SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-mm-dd");
+      ParsePosition pp = new ParsePosition(0);
+      Date birthdate =
+          dateParser.parse(mPerson.path("birthDate").getTextValue(), pp);
+      SimpleDateFormat dateFormatter = new SimpleDateFormat("MMMMM d, yyyy");
+      Spannable birthdateStr =
+          new SpannableString("Birthdate: " + dateFormatter.format(birthdate));
+      birthdateStr.setSpan(new ForegroundColorSpan(Color.WHITE), 11,
+          birthdateStr.length(), 0);
+      birthdateView.setText(birthdateStr);
+    } else {
+      birthdateView.setVisibility(View.GONE);
+    }
+
+    // Birth place.
+    TextView birthplaceView = ((TextView) findViewById(R.id.person_birthplace));
+    if (mPerson.has("birthPlace")) {
+      Spannable birthplaceStr =
+          new SpannableString("Birthplace: "
+              + mPerson.path("birthPlace").getTextValue());
+      birthplaceStr.setSpan(new ForegroundColorSpan(Color.WHITE), 12,
+          birthplaceStr.length(), 0);
+      birthplaceView.setText(birthplaceStr);
+    } else {
+      birthplaceView.setVisibility(View.GONE);
+    }
+
+    ImageView iv = (ImageView) findViewById(R.id.imageView1);
+    View pv = findViewById(R.id.progressBar1);
+    String imgUrl = Utils.findImageUrl(mPerson);
+    new DownloadImageTask(iv, pv).execute(imgUrl);
+  };
 
   private String findRole(JsonNode credits) {
     for (JsonNode credit : credits) {
