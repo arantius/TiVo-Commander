@@ -19,15 +19,21 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc.request;
 
+import org.codehaus.jackson.JsonNode;
+
+import com.arantius.tivocommander.Utils;
+
 public class CollectionSearch extends BaseSearch {
-  protected static final String mImageRulesetJson =
-      "[{\"type\":\"imageRuleset\",\"name\":\"movie\",\"rule\":[{\"type\":\"imageRule\",\"width\":133,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"moviePoster\"],\"height\":200}]},{\"type\":\"imageRuleset\",\"name\":\"tvLandscape\",\"rule\":[{\"type\":\"imageRule\",\"width\":139,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"showcaseBanner\"],\"height\":104}]}]}]";
+  protected static final JsonNode mImageRuleset =
+      Utils
+          .parseJson("[{\"type\":\"imageRuleset\",\"name\":\"movie\",\"rule\":[{\"type\":\"imageRule\",\"width\":133,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"moviePoster\"],\"height\":200}]},{\"type\":\"imageRuleset\",\"name\":\"tvLandscape\",\"rule\":[{\"type\":\"imageRule\",\"width\":139,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"showcaseBanner\"],\"height\":104}]}]}]");
   protected static final String[] mNote = new String[] {};
-  protected static final String mResponseTemplateJson =
-      "[{\"type\":\"responseTemplate\",\"fieldName\":[\"collection\"],\"typeName\":\"collectionList\"},{\"type\":\"responseTemplate\",\"fieldInfo\":[{\"type\":\"responseTemplateFieldInfo\",\"maxArity\":[50],\"fieldName\":[\"credit\"]},{\"type\":\"responseTemplateFieldInfo\",\"maxArity\":[2],\"fieldName\":[\"category\"]}],\"fieldName\":[\"collectionId\",\"hdtv\",\"title\",\"episodic\",\"image\"],\"typeName\":\"collection\"}]";
+  protected static final JsonNode mResponseTemplate =
+      Utils
+          .parseJson("[{\"type\":\"responseTemplate\",\"fieldName\":[\"collection\"],\"typeName\":\"collectionList\"},{\"type\":\"responseTemplate\",\"fieldInfo\":[{\"type\":\"responseTemplateFieldInfo\",\"maxArity\":[50],\"fieldName\":[\"credit\"]},{\"type\":\"responseTemplateFieldInfo\",\"maxArity\":[2],\"fieldName\":[\"category\"]}],\"fieldName\":[\"collectionId\",\"hdtv\",\"title\",\"episodic\",\"image\"],\"typeName\":\"collection\"}]");
 
   public CollectionSearch(String collectionId) {
     super(collectionId, null);
-    addCommon(mImageRulesetJson, mNote, mResponseTemplateJson);
+    addCommon(mImageRuleset, mNote, mResponseTemplate);
   }
 }

@@ -24,8 +24,9 @@ import org.codehaus.jackson.JsonNode;
 import com.arantius.tivocommander.Utils;
 
 public class RecordingFolderItemSearch extends MindRpcRequest {
-  private static final String mResponseTemplateJson =
-      "[{\"type\":\"responseTemplate\",\"fieldName\":[\"recordingFolderItem\"],\"typeName\":\"recordingFolderItemList\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"folderTransportType\",\"folderType\",\"recordingFolderItemId\",\"recordingForChildRecordingId\",\"folderItemCount\",\"recordingStatusType\",\"startTime\",\"title\",\"childRecordingId\"],\"typeName\":\"recordingFolderItem\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"contentId\",\"collectionId\",\"hdtv\",\"startTime\"],\"typeName\":\"recording\"}]";
+  private static final JsonNode mResponseTemplate =
+      Utils
+          .parseJson("[{\"type\":\"responseTemplate\",\"fieldName\":[\"recordingFolderItem\"],\"typeName\":\"recordingFolderItemList\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"folderTransportType\",\"folderType\",\"recordingFolderItemId\",\"recordingForChildRecordingId\",\"folderItemCount\",\"recordingStatusType\",\"startTime\",\"title\",\"childRecordingId\"],\"typeName\":\"recordingFolderItem\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"contentId\",\"collectionId\",\"hdtv\",\"startTime\"],\"typeName\":\"recording\"}]");
 
   /** Produces an idSequence of shows for the given folder, all if null. */
   public RecordingFolderItemSearch(String folderId) {
@@ -50,6 +51,6 @@ public class RecordingFolderItemSearch extends MindRpcRequest {
     mDataMap.put("orderBy", new String[] { "startTime" });
     mDataMap.put("bodyId", "-");
     mDataMap.put("note", new String[] { "recordingForChildRecordingId" });
-    mDataMap.put("responseTemplate", Utils.parseJson(mResponseTemplateJson));
+    mDataMap.put("responseTemplate", mResponseTemplate);
   }
 }

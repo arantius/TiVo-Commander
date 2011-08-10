@@ -19,21 +19,25 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc.request;
 
+import org.codehaus.jackson.JsonNode;
+
 import com.arantius.tivocommander.Utils;
 
 public class SuggestionsSearch extends CollectionSearch {
-  private static final String mImageRulsetJson =
-      "[{\"type\": \"imageRuleset\", \"name\": \"movie\", \"rule\": [{\"width\": 100, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"moviePoster\"], \"height\": 150}]}, {\"type\": \"imageRuleset\", \"name\": \"tvPortrait\", \"rule\": [{\"width\": 120, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"showcaseBanner\"], \"height\": 90}]}]";
+  private static final JsonNode mImageRulset =
+      Utils
+          .parseJson("[{\"type\": \"imageRuleset\", \"name\": \"movie\", \"rule\": [{\"width\": 100, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"moviePoster\"], \"height\": 150}]}, {\"type\": \"imageRuleset\", \"name\": \"tvPortrait\", \"rule\": [{\"width\": 120, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"showcaseBanner\"], \"height\": 90}]}]");
   private static final String[] mNote =
       new String[] { "bodyLineupCorrelatedCollectionForCollectionId" };
-  private static final String mResponseTemplateJson =
-      "[{\"type\": \"responseTemplate\", \"fieldName\": [\"collection\"], \"typeName\": \"collectionList\"}, {\"fieldInfo\": [{\"maxArity\": [2], \"fieldName\": [\"category\"], \"type\": \"responseTemplateFieldInfo\"}], \"fieldName\": [\"image\", \"title\", \"collectionId\", \"collectionType\", \"correlatedCollectionForCollectionId\"], \"typeName\": \"collection\", \"type\": \"responseTemplate\"}, {\"type\": \"responseTemplate\", \"fieldName\": [\"displayRank\", \"image\"], \"typeName\": \"category\"}] ";
+  private static final JsonNode mResponseTemplate =
+      Utils
+          .parseJson("[{\"type\": \"responseTemplate\", \"fieldName\": [\"collection\"], \"typeName\": \"collectionList\"}, {\"fieldInfo\": [{\"maxArity\": [2], \"fieldName\": [\"category\"], \"type\": \"responseTemplateFieldInfo\"}], \"fieldName\": [\"image\", \"title\", \"collectionId\", \"collectionType\", \"correlatedCollectionForCollectionId\"], \"typeName\": \"collection\", \"type\": \"responseTemplate\"}, {\"type\": \"responseTemplate\", \"fieldName\": [\"displayRank\", \"image\"], \"typeName\": \"category\"}] ");
 
   public SuggestionsSearch(String collectionId) {
     super(collectionId);
 
-    mDataMap.put("imageRuleset", Utils.parseJson(mImageRulsetJson));
+    mDataMap.put("imageRuleset", mImageRulset);
     mDataMap.put("note", mNote);
-    mDataMap.put("responseTemplate", Utils.parseJson(mResponseTemplateJson));
+    mDataMap.put("responseTemplate", mResponseTemplate);
   }
 }

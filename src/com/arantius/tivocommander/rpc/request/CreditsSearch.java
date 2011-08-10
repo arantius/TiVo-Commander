@@ -19,19 +19,25 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc.request;
 
+import org.codehaus.jackson.JsonNode;
+
+import com.arantius.tivocommander.Utils;
+
 public class CreditsSearch extends BaseSearch {
-  private static final String mImageRulesetJson =
-      "[{\"type\": \"imageRuleset\", \"name\": \"personPortrait\", \"rule\": [{\"width\": 113, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"person\"], \"height\": 150}]}]";
+  private static final JsonNode mImageRuleset =
+      Utils
+          .parseJson("[{\"type\": \"imageRuleset\", \"name\": \"personPortrait\", \"rule\": [{\"width\": 113, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"person\"], \"height\": 150}]}]");
   private static final String[] mNote = new String[] {};
-  private static final String mResponseTemplateCollJson =
-      "[{\"type\": \"responseTemplate\", \"fieldName\": [\"collection\"], \"typeName\": \"collectionList\"}, {\"fieldInfo\": [{\"maxArity\": [50], \"fieldName\": [\"credit\"], \"type\": \"responseTemplateFieldInfo\"}], \"fieldName\": [               \"collectionId\", \"collectionType\", \"credit\", \"title\"], \"typeName\": \"collection\", \"type\": \"responseTemplate\"}, {\"type\": \"responseTemplate\", \"fieldName\": [\"first\", \"last\", \"role\", \"image\", \"personId\", \"characterName\"], \"typeName\": \"credit\"}]";
-  private static final String mResponseTemplateContJson =
-      "[{\"type\": \"responseTemplate\", \"fieldName\": [\"content\"],    \"typeName\": \"contentList\"   }, {\"fieldInfo\": [{\"maxArity\": [50], \"fieldName\": [\"credit\"], \"type\": \"responseTemplateFieldInfo\"}], \"fieldName\": [\"contentId\", \"collectionId\", \"collectionType\", \"credit\", \"title\"], \"typeName\": \"content\",    \"type\": \"responseTemplate\"}, {\"type\": \"responseTemplate\", \"fieldName\": [\"first\", \"last\", \"role\", \"image\", \"personId\", \"characterName\"], \"typeName\": \"credit\"}]";
+  private static final JsonNode mResponseTemplateColl =
+      Utils
+          .parseJson("[{\"type\": \"responseTemplate\", \"fieldName\": [\"collection\"], \"typeName\": \"collectionList\"}, {\"fieldInfo\": [{\"maxArity\": [50], \"fieldName\": [\"credit\"], \"type\": \"responseTemplateFieldInfo\"}], \"fieldName\": [               \"collectionId\", \"collectionType\", \"credit\", \"title\"], \"typeName\": \"collection\", \"type\": \"responseTemplate\"}, {\"type\": \"responseTemplate\", \"fieldName\": [\"first\", \"last\", \"role\", \"image\", \"personId\", \"characterName\"], \"typeName\": \"credit\"}]");
+  private static final JsonNode mResponseTemplateCont =
+      Utils
+          .parseJson("[{\"type\": \"responseTemplate\", \"fieldName\": [\"content\"],    \"typeName\": \"contentList\"   }, {\"fieldInfo\": [{\"maxArity\": [50], \"fieldName\": [\"credit\"], \"type\": \"responseTemplateFieldInfo\"}], \"fieldName\": [\"contentId\", \"collectionId\", \"collectionType\", \"credit\", \"title\"], \"typeName\": \"content\",    \"type\": \"responseTemplate\"}, {\"type\": \"responseTemplate\", \"fieldName\": [\"first\", \"last\", \"role\", \"image\", \"personId\", \"characterName\"], \"typeName\": \"credit\"}]");
 
   public CreditsSearch(String collectionId, String contentId) {
     super(collectionId, contentId);
-    addCommon(mImageRulesetJson, mNote,
-        collectionId != null ? mResponseTemplateCollJson
-            : mResponseTemplateContJson);
+    addCommon(mImageRuleset, mNote,
+        collectionId != null ? mResponseTemplateColl : mResponseTemplateCont);
   }
 }

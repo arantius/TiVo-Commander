@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc.request;
 
-import com.arantius.tivocommander.Utils;
+import org.codehaus.jackson.JsonNode;
 
 public class BaseSearch extends MindRpcRequest {
   public BaseSearch(String collectionId, String contentId) {
@@ -39,10 +39,10 @@ public class BaseSearch extends MindRpcRequest {
     mDataMap.put("levelOfDetail", "high");
   }
 
-  protected void addCommon(String imageRulesetJson, String[] note,
-      String responseTemplateJson) {
-    mDataMap.put("imageRuleset", Utils.parseJson(imageRulesetJson));
+  protected void addCommon(JsonNode imageRuleset, String[] note,
+      JsonNode responseTemplate) {
+    mDataMap.put("imageRuleset", imageRuleset);
     mDataMap.put("note", note);
-    mDataMap.put("responseTemplate", Utils.parseJson(responseTemplateJson));
+    mDataMap.put("responseTemplate", responseTemplate);
   }
 }

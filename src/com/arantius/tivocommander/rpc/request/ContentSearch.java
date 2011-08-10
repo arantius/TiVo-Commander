@@ -19,16 +19,22 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc.request;
 
+import org.codehaus.jackson.JsonNode;
+
+import com.arantius.tivocommander.Utils;
+
 public class ContentSearch extends BaseSearch {
-  private static final String mImageRulesetJson =
-      "[{\"type\":\"imageRuleset\",\"name\":\"movie\",\"rule\":[{\"type\":\"imageRule\",\"width\":133,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"moviePoster\"],\"height\":200}]},{\"type\":\"imageRuleset\",\"name\":\"tvLandscape\",\"rule\":[{\"type\":\"imageRule\",\"width\":139,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"showcaseBanner\"],\"height\":104}]},{\"type\":\"imageRuleset\",\"name\":\"tvPortrait\",\"rule\":[{\"type\":\"imageRule\",\"width\":200,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"showcaseBanner\"],\"height\":150}]}]";
+  private static final JsonNode mImageRuleset =
+      Utils
+          .parseJson("[{\"type\":\"imageRuleset\",\"name\":\"movie\",\"rule\":[{\"type\":\"imageRule\",\"width\":133,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"moviePoster\"],\"height\":200}]},{\"type\":\"imageRuleset\",\"name\":\"tvLandscape\",\"rule\":[{\"type\":\"imageRule\",\"width\":139,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"showcaseBanner\"],\"height\":104}]},{\"type\":\"imageRuleset\",\"name\":\"tvPortrait\",\"rule\":[{\"type\":\"imageRule\",\"width\":200,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"showcaseBanner\"],\"height\":150}]}]");
   private static final String[] mNote =
       new String[] { "recordingForContentId" };
-  private static final String mResponseTemplateJson =
-      "[{\"type\":\"responseTemplate\",\"fieldName\":[\"state\",\"recordingId\"],\"typeName\":\"recording\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"partnerId\",\"contentId\"],\"typeName\":\"offer\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"content\"],\"typeName\":\"contentList\"},{\"type\":\"responseTemplate\",\"fieldInfo\":[{\"type\":\"responseTemplateFieldInfo\",\"maxArity\":[50],\"fieldName\":[\"credit\"]},{\"type\":\"responseTemplateFieldInfo\",\"maxArity\":[2],\"fieldName\":[\"category\"]}],\"fieldName\":[\"contentId\",\"broadbandOfferGroupForContentId\",\"recordingForContentId\",\"hdtv\",\"title\",\"movieYear\",\"subtitle\",\"seasonNumber\",\"episodeNum\",\"episodic\",\"starRating\",\"description\",\"tvRating\",\"mpaaRating\",\"tvAdvisory\",\"category\",\"credit\",\"originalAirYear\",\"image\"],\"typeName\":\"content\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"first\",\"last\",\"role\"],\"typeName\":\"credit\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"displayRank\",\"image\"],\"typeName\":\"category\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"thumbsRating\"],\"typeName\":\"userContent\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"channelNumber\",\"sourceType\",\"logoIndex\",\"callSign\",\"isDigital\"],\"typeName\":\"channel\"}]";
+  private static final JsonNode mResponseTemplate =
+      Utils
+          .parseJson("[{\"type\":\"responseTemplate\",\"fieldName\":[\"state\",\"recordingId\"],\"typeName\":\"recording\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"partnerId\",\"contentId\"],\"typeName\":\"offer\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"content\"],\"typeName\":\"contentList\"},{\"type\":\"responseTemplate\",\"fieldInfo\":[{\"type\":\"responseTemplateFieldInfo\",\"maxArity\":[50],\"fieldName\":[\"credit\"]},{\"type\":\"responseTemplateFieldInfo\",\"maxArity\":[2],\"fieldName\":[\"category\"]}],\"fieldName\":[\"contentId\",\"broadbandOfferGroupForContentId\",\"recordingForContentId\",\"hdtv\",\"title\",\"movieYear\",\"subtitle\",\"seasonNumber\",\"episodeNum\",\"episodic\",\"starRating\",\"description\",\"tvRating\",\"mpaaRating\",\"tvAdvisory\",\"category\",\"credit\",\"originalAirYear\",\"image\"],\"typeName\":\"content\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"first\",\"last\",\"role\"],\"typeName\":\"credit\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"displayRank\",\"image\"],\"typeName\":\"category\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"thumbsRating\"],\"typeName\":\"userContent\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"channelNumber\",\"sourceType\",\"logoIndex\",\"callSign\",\"isDigital\"],\"typeName\":\"channel\"}]");
 
   public ContentSearch(String contentId) {
     super(null, contentId);
-    addCommon(mImageRulesetJson, mNote, mResponseTemplateJson);
+    addCommon(mImageRuleset, mNote, mResponseTemplate);
   }
 }
