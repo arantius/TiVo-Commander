@@ -78,6 +78,7 @@ public class Upcoming extends ListActivity {
                     item.path("channel").path("channelNumber").getTextValue(),
                     item.path("channel").path("callSign").getTextValue());
             if (item.path("episodic").getBooleanValue()) {
+              // TODO: Not if season & episode 0 (e.g. Nova).
               // @formatter:off
               details = String.format("(Sea %d Ep %d)  ",
                   item.path("seasonNumber").getIntValue(),
