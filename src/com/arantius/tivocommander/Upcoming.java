@@ -30,7 +30,11 @@ import org.codehaus.jackson.JsonNode;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
@@ -41,6 +45,19 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class Upcoming extends ListActivity {
+  private final OnItemClickListener mOnClickListener =
+      new OnItemClickListener() {
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id) {
+          JsonNode show = mShows.path(position);
+
+          Intent intent = new Intent(Upcoming.this, ExploreTabs.class);
+          intent.putExtra("contentId", show.path("contentId").getTextValue());
+          intent.putExtra("collectionId", show.path("collectionId")
+              .getTextValue());
+          startActivity(intent);
+        }
+      };
   private final MindRpcResponseListener mUpcomingListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
@@ -83,11 +100,11 @@ public class Upcoming extends ListActivity {
               new String[] { "details", "icon", "title" }, new int[] {
                   R.id.upcoming_details, R.id.upcoming_icon,
                   R.id.upcoming_title }));
-          // TODO: Item click listener.
-//          lv.setOnItemClickListener(mOnClickListener);
+          lv.setOnItemClickListener(mOnClickListener);
         }
       };
   private Activity mContext;
+
   protected JsonNode mShows;
 
   @Override
