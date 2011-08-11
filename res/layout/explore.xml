@@ -62,37 +62,22 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       </LinearLayout>
     </ScrollView>
   </LinearLayout>
-  <LinearLayout android:id="@+id/all_layout_btn"
+  <LinearLayout android:id="@+id/layout_btn"
     android:layout_height="wrap_content" android:layout_width="230dip"
     android:layout_marginTop="3dip" android:layout_weight="1"
     android:orientation="vertical"
   >
-    <LinearLayout android:id="@+id/collection_layout_btn"
-      android:layout_height="wrap_content" android:layout_width="fill_parent"
-      android:layout_weight="1" android:orientation="vertical"
-    >
-      <Button android:id="@+id/collection_btn_record"
-        android:text="Record" android:layout_width="fill_parent"
-        android:layout_height="wrap_content" android:onClick="doRecord" />
-    </LinearLayout>
-    <LinearLayout android:id="@+id/content_layout_btn"
-      android:layout_height="wrap_content" android:layout_width="fill_parent"
-      android:layout_weight="1" android:orientation="vertical"
-    >
-      <Button android:id="@+id/content_btn_watch" android:text="Watch Now"
-        android:layout_width="fill_parent" android:layout_height="wrap_content"
-        android:onClick="doWatch" />
-      <Button android:id="@+id/content_btn_delete" android:text="Delete"
-        android:layout_width="fill_parent" android:layout_height="wrap_content"
-        android:onClick="doDelete" />
-    </LinearLayout>
-    <LinearLayout android:id="@+id/common_layout_btn"
-      android:layout_height="wrap_content" android:layout_width="fill_parent"
-      android:layout_weight="1" android:orientation="vertical"
-    >
-      <Button android:id="@+id/collection_btn_upcoming"
-        android:text="Upcoming" android:layout_width="fill_parent"
-        android:layout_height="wrap_content" android:onClick="doUpcoming" />
-    </LinearLayout>
+    <Button android:id="@+id/explore_btn_watch" android:text="Watch Now"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:onClick="doWatch" />
+    <Button android:id="@+id/explore_btn_record" android:text="Record"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:onClick="doRecord" />
+    <Button android:id="@+id/explore_btn_delete" android:text="Delete"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:onClick="doDelete" />
+    <Button android:id="@+id/explore_btn_upcoming"
+      android:text="Upcoming" android:layout_width="fill_parent"
+      android:layout_height="wrap_content" android:onClick="doUpcoming" />
   </LinearLayout>
 </LinearLayout>

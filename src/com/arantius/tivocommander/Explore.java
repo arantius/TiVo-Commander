@@ -88,18 +88,18 @@ public class Explore extends ExploreCommon {
     getParent().setProgressBarIndeterminateVisibility(false);
 
     for (JsonNode recording : mContent.path("recordingForContentId")) {
-      if ("cancelled".equals(recording.path("state").getTextValue())) {
-        continue;
+      if ("inProgress".equals(recording.path("state").getTextValue())) {
+        mRecordingId = recording.path("recordingId").getTextValue();
+        break;
       }
-      mRecordingId = recording.path("recordingId").getTextValue();
     }
 
     setContentView(R.layout.explore);
-    if (mContentId != null && mCollectionId == null) {
-      findViewById(R.id.collection_layout_btn).setVisibility(View.GONE);
-    } else if (mContentId == null && mCollectionId != null) {
-      findViewById(R.id.content_layout_btn).setVisibility(View.GONE);
-    }
+
+    // Show only appropriate buttons.
+    hideViewIfNull(R.id.explore_btn_watch, mRecordingId);
+    hideViewIfNull(R.id.explore_btn_delete, mRecordingId);
+    hideViewIfNull(R.id.explore_btn_upcoming, mContentId);
 
     // Display titles.
     String title = mContent.path("title").getTextValue();
@@ -168,5 +168,11 @@ public class Explore extends ExploreCommon {
     new DownloadImageTask(imageView, progressView).execute(imageUrl);
 
     // TODO: Show date recorded (?).
+  }
+
+  private void hideViewIfNull(int viewId, Object condition) {
+    if (condition != null)
+      return;
+    findViewById(viewId).setVisibility(View.GONE);
   }
 }
