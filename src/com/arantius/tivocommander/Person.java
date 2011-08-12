@@ -90,7 +90,7 @@ public class Person extends ListActivity {
 
       if (iv != null) {
         String imgUrl = Utils.findImageUrl(item);
-        new DownloadImageTask(iv, pv).execute(imgUrl);
+        new DownloadImageTask(Person.this, iv, pv).execute(imgUrl);
       }
 
       ((TextView) v.findViewById(R.id.textView1)).setText(item.path("title")
@@ -241,7 +241,7 @@ public class Person extends ListActivity {
     ImageView iv = (ImageView) findViewById(R.id.imageView1);
     View pv = findViewById(R.id.progressBar1);
     String imgUrl = Utils.findImageUrl(mPerson);
-    new DownloadImageTask(iv, pv).execute(imgUrl);
+    new DownloadImageTask(this, iv, pv).execute(imgUrl);
   };
 
   private String findRole(JsonNode credits) {

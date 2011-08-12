@@ -78,7 +78,7 @@ public class Suggestions extends Activity {
 
       if (iv != null) {
         String imgUrl = Utils.findImageUrl(item);
-        new DownloadImageTask(iv, pv).execute(imgUrl);
+        new DownloadImageTask(Suggestions.this, iv, pv).execute(imgUrl);
       }
 
       ((TextView) v.findViewById(R.id.textView1)).setText(item.path("title")

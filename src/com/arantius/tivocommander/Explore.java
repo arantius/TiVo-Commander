@@ -179,7 +179,7 @@ public class Explore extends ExploreCommon {
     ImageView imageView = (ImageView) findViewById(R.id.content_image);
     View progressView = findViewById(R.id.content_image_progress);
     String imageUrl = Utils.findImageUrl(mContent);
-    new DownloadImageTask(imageView, progressView).execute(imageUrl);
+    new DownloadImageTask(this, imageView, progressView).execute(imageUrl);
 
     // TODO: Show date recorded (?).
   }

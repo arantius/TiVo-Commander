@@ -75,7 +75,7 @@ public class Credits extends ExploreCommon {
 
       if (iv != null) {
         String imgUrl = Utils.findImageUrl(item);
-        new DownloadImageTask(iv, pv).execute(imgUrl);
+        new DownloadImageTask(Credits.this, iv, pv).execute(imgUrl);
       }
 
       ((TextView) v.findViewById(R.id.textView1)).setText(item.path("first")
