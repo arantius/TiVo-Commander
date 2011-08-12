@@ -32,6 +32,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -61,6 +62,8 @@ public class Upcoming extends ListActivity {
   private final MindRpcResponseListener mUpcomingListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          setProgressBarIndeterminateVisibility(false);
+
           mShows = response.getBody().path("offer");
 
           // TODO: No results.
@@ -113,7 +116,8 @@ public class Upcoming extends ListActivity {
     super.onCreate(savedInstanceState);
     MindRpc.init(this);
 
-    // TODO: Progress throbber.
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    setContentView(R.layout.list);
 
     Bundle bundle = getIntent().getExtras();
     String collectionId;
@@ -124,6 +128,7 @@ public class Upcoming extends ListActivity {
         Toast.makeText(getApplicationContext(), "Oops; missing collection ID",
             Toast.LENGTH_SHORT).show();
       } else {
+        setProgressBarIndeterminateVisibility(true);
         UpcomingSearch request = new UpcomingSearch(collectionId);
         MindRpc.addRequest(request, mUpcomingListener);
       }
