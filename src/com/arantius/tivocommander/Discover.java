@@ -28,7 +28,6 @@ import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -107,7 +106,6 @@ public class Discover extends ListActivity {
     }
   };
 
-  protected final Activity mActivity = this;
   protected SimpleAdapter mHostAdapter;
   protected ArrayList<HashMap<String, String>> mHosts =
       new ArrayList<HashMap<String, String>>();

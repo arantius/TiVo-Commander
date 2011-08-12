@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -97,7 +96,7 @@ public class Upcoming extends ListActivity {
           }
 
           final ListView lv = getListView();
-          lv.setAdapter(new SimpleAdapter(mContext, listItems,
+          lv.setAdapter(new SimpleAdapter(Upcoming.this, listItems,
               R.layout.item_upcoming,
               new String[] { "details", "icon", "title" }, new int[] {
                   R.id.upcoming_details, R.id.upcoming_icon,
@@ -105,7 +104,6 @@ public class Upcoming extends ListActivity {
           lv.setOnItemClickListener(mOnClickListener);
         }
       };
-  private Activity mContext;
 
   protected JsonNode mShows;
 
@@ -113,7 +111,6 @@ public class Upcoming extends ListActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     MindRpc.init(this);
-    mContext = this;
 
     // TODO: Progress throbber.
 

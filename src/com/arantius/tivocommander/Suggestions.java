@@ -88,7 +88,6 @@ public class Suggestions extends Activity {
     }
   }
 
-  private final Activity mContext = this;
   private final OnItemClickListener mOnItemClickListener =
       new OnItemClickListener() {
         public void onItemClick(android.widget.AdapterView<?> parent,
@@ -122,7 +121,7 @@ public class Suggestions extends Activity {
 
             ListView lv = (ListView) findViewById(R.id.listView1);
             ShowAdapter adapter =
-                new ShowAdapter(mContext, R.layout.item_show, shows);
+                new ShowAdapter(Suggestions.this, R.layout.item_show, shows);
             lv.setAdapter(adapter);
             lv.setOnItemClickListener(mOnItemClickListener);
           }

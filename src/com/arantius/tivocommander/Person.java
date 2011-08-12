@@ -25,7 +25,6 @@ import java.util.Date;
 
 import org.codehaus.jackson.JsonNode;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -104,7 +103,6 @@ public class Person extends ListActivity {
     }
   }
 
-  private Activity mContext;
   private JsonNode mCredits = null;
   private String mName;
   private int mOutstandingRequests = 0;
@@ -150,7 +148,6 @@ public class Person extends ListActivity {
       return;
     }
 
-    mContext = this;
     mName =
         String.format("%s %s", bundle.getString("fName"),
             bundle.getString("lName"));
@@ -194,7 +191,7 @@ public class Person extends ListActivity {
 
     ListView lv = getListView();
     CreditsAdapter adapter =
-        new CreditsAdapter(mContext, R.layout.item_person_credits, credits);
+        new CreditsAdapter(Person.this, R.layout.item_person_credits, credits);
     lv.setAdapter(adapter);
     lv.setOnItemClickListener(mOnItemClickListener);
 

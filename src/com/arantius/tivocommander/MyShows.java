@@ -27,7 +27,6 @@ import org.codehaus.jackson.JsonNode;
 
 import android.app.Activity;
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -45,7 +44,6 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 public class MyShows extends ListActivity {
   private final static int EXPLORE_INTENT_ID = 1;
 
-  private final Context mContext = this;
   private final MindRpcResponseListener mDetailCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
@@ -140,7 +138,7 @@ public class MyShows extends ListActivity {
     setContentView(R.layout.list);
 
     mListAdapter =
-        new SimpleAdapter(mContext, mListItems, R.layout.item_my_shows,
+        new SimpleAdapter(MyShows.this, mListItems, R.layout.item_my_shows,
             new String[] { "folder_num", "icon", "more", "title" }, new int[] {
                 R.id.folder_num, R.id.show_icon, R.id.show_more,
                 R.id.show_title });
