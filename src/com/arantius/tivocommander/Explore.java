@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import org.codehaus.jackson.JsonNode;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.text.Spannable;
@@ -36,6 +39,7 @@ import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.RecordingUpdate;
+import com.arantius.tivocommander.rpc.request.Subscribe;
 import com.arantius.tivocommander.rpc.request.UiNavigate;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
@@ -66,8 +70,18 @@ public class Explore extends ExploreCommon {
   }
 
   public void doRecord(View v) {
-    Toast.makeText(getBaseContext(), "Record not implemented yet.",
-        Toast.LENGTH_SHORT).show();
+    final String[] choices = new String[] { "Record this episode" };
+
+    Builder dialogBuilder = new AlertDialog.Builder(this);
+    dialogBuilder.setTitle("Operation?");
+    dialogBuilder.setItems(choices, new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int position) {
+        // TODO: When there's more than one choice, pick appropriate action.
+        MindRpc.addRequest(new Subscribe(mOfferId, mContentId), null);
+      }
+    });
+    AlertDialog dialog = dialogBuilder.create();
+    dialog.show();
   }
 
   // TODO: doSeasonPass()
