@@ -74,11 +74,12 @@ public class Upcoming extends ListActivity {
             HashMap<String, Object> listItem = new HashMap<String, Object>();
 
             String details =
-                String.format(" %s  %s %s", formatTime(item),
+                String.format("%s  %s %s", formatTime(item),
                     item.path("channel").path("channelNumber").getTextValue(),
                     item.path("channel").path("callSign").getTextValue());
-            if (item.path("episodic").getBooleanValue()) {
-              // TODO: Not if season & episode 0 (e.g. Nova).
+            if (item.path("episodic").getBooleanValue()
+                && item.path("episodeNumber").path(0).getIntValue() > 0
+                && item.path("seasonNumber").getIntValue() > 0) {
               // @formatter:off
               details = String.format("(Sea %d Ep %d)  ",
                   item.path("seasonNumber").getIntValue(),
