@@ -32,6 +32,7 @@ import com.arantius.tivocommander.rpc.MindRpc;
 public class ExploreTabs extends TabActivity {
   private String mCollectionId;
   private String mContentId;
+  private String mOfferId;
   private TabHost mTabHost;
 
   private TabSpec makeTab(String name, Class<? extends Activity> cls) {
@@ -44,6 +45,9 @@ public class ExploreTabs extends TabActivity {
     }
     if (mContentId != null) {
       intent.putExtra("contentId", mContentId);
+    }
+    if (mOfferId != null) {
+      intent.putExtra("offerId", mOfferId);
     }
     tab.setContent(intent);
 
@@ -68,6 +72,11 @@ public class ExploreTabs extends TabActivity {
       mContentId = bundle.getString("contentId");
     } catch (NullPointerException e) {
       mContentId = null;
+    }
+    try {
+      mOfferId = bundle.getString("offerId");
+    } catch (NullPointerException e) {
+      mOfferId = null;
     }
 
     mTabHost.addTab(makeTab("Explore", Explore.class));

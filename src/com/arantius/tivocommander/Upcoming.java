@@ -55,6 +55,7 @@ public class Upcoming extends ListActivity {
           intent.putExtra("contentId", show.path("contentId").getTextValue());
           intent.putExtra("collectionId", show.path("collectionId")
               .getTextValue());
+          intent.putExtra("offerId", show.path("offerId").getTextValue());
           startActivity(intent);
         }
       };

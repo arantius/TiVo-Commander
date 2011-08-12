@@ -63,6 +63,7 @@ abstract public class ExploreCommon extends Activity {
   protected String mCollectionId = null;
   protected JsonNode mContent = null;
   protected String mContentId = null;
+  protected String mOfferId = null;
 
   protected BaseSearch getRequest() {
     if (mContentId != null) {
@@ -87,8 +88,9 @@ abstract public class ExploreCommon extends Activity {
 
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
-      mContentId = bundle.getString("contentId");
       mCollectionId = bundle.getString("collectionId");
+      mContentId = bundle.getString("contentId");
+      mOfferId = bundle.getString("offerId");
     }
 
     getParent().setProgressBarIndeterminateVisibility(true);
