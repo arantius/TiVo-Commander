@@ -43,6 +43,7 @@ import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.RecordingUpdate;
 import com.arantius.tivocommander.rpc.request.SubscriptionSearch;
 import com.arantius.tivocommander.rpc.request.UiNavigate;
+import com.arantius.tivocommander.rpc.request.Unsubscribe;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
@@ -135,7 +136,16 @@ public class Explore extends ExploreCommon {
                   new Intent(getBaseContext(), SubscribeCollection.class);
               intent.putExtra("collectionId", mCollectionId);
               startActivity(intent);
+              // TODO: Start for result, get subscription ID.
             } else if (RecordActions.SP_CANCEL.toString().equals(label)) {
+              getParent().setProgressBarIndeterminateVisibility(true);
+              MindRpc.addRequest(new Unsubscribe(mSubscriptionId),
+                  new MindRpcResponseListener() {
+                    public void onResponse(MindRpcResponse response) {
+                      getParent().setProgressBarIndeterminateVisibility(false);
+                      mSubscriptionId = null;
+                    }
+                  });
             } else if (RecordActions.SP_MODIFY.toString().equals(label)) {
             }
           }
