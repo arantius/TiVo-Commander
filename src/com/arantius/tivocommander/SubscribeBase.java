@@ -6,10 +6,7 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.Subscribe;
-import com.arantius.tivocommander.rpc.response.MindRpcResponse;
-import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class SubscribeBase extends Activity {
   protected final static String[] mKeepBehaviors = new String[] { "fifo",
@@ -56,12 +53,5 @@ public class SubscribeBase extends Activity {
         ((Spinner) findViewById(R.id.start)).getSelectedItemPosition();
     int stopPos = ((Spinner) findViewById(R.id.stop)).getSelectedItemPosition();
     request.setPadding(mStartStopValues[startPos], mStartStopValues[stopPos]);
-
-    setProgressBarIndeterminateVisibility(true);
-    MindRpc.addRequest(request, new MindRpcResponseListener() {
-      public void onResponse(MindRpcResponse response) {
-        finish();
-      }
-    });
   }
 }

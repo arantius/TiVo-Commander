@@ -15,6 +15,7 @@ public class SubscribeOffer extends SubscribeBase {
     Subscribe request = new Subscribe();
     request
         .setOffer(bundle.getString("offerId"), bundle.getString("contentId"));
+
     subscribeRequestCommon(request);
 
     setProgressBarIndeterminateVisibility(true);

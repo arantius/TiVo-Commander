@@ -2,6 +2,8 @@ package com.arantius.tivocommander.rpc.request;
 
 import java.util.HashMap;
 
+import org.codehaus.jackson.JsonNode;
+
 public class Subscribe extends MindRpcRequest {
   public Subscribe() {
     super("subscribe");
@@ -17,9 +19,19 @@ public class Subscribe extends MindRpcRequest {
     }
   }
 
+  public void setCollection(String collectionId, JsonNode channel, int max,
+      String which) {
+    HashMap<String, Object> idSetSource = new HashMap<String, Object>();
+    idSetSource.put("channel", channel);
+    idSetSource.put("collectionId", collectionId);
+    idSetSource.put("type", "seasonPassSource");
+    mDataMap.put("idSetSource", idSetSource);
+    mDataMap.put("maxRecordings", max);
+    mDataMap.put("showStatus", which);
+  }
+
   public void setOffer(String offerId, String contentId) {
     HashMap<String, String> idSetSource = new HashMap<String, String>();
-    // Channel necessary?
     idSetSource.put("contentId", contentId);
     idSetSource.put("offerId", offerId);
     idSetSource.put("type", "singleOfferSource");

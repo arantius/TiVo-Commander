@@ -133,8 +133,7 @@ public class Explore extends ExploreCommon {
             } else if (RecordActions.SP_ADD.toString().equals(label)) {
               Intent intent =
                   new Intent(getBaseContext(), SubscribeCollection.class);
-              intent.putExtra("contentId", mContentId);
-              intent.putExtra("offerId", mOfferId);
+              intent.putExtra("collectionId", mCollectionId);
               startActivity(intent);
             } else if (RecordActions.SP_CANCEL.toString().equals(label)) {
             } else if (RecordActions.SP_MODIFY.toString().equals(label)) {
