@@ -29,6 +29,7 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -40,12 +41,24 @@ import android.widget.Toast;
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.RecordingUpdate;
 import com.arantius.tivocommander.rpc.request.Subscribe;
+import com.arantius.tivocommander.rpc.request.SubscriptionSearch;
 import com.arantius.tivocommander.rpc.request.UiNavigate;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class Explore extends ExploreCommon {
   private String mRecordingId = null;
+  private int mRequestCount = 0;
+  private String mSubscriptionId = null;
+  private final MindRpcResponseListener mSubscriptionListener =
+      new MindRpcResponseListener() {
+        public void onResponse(MindRpcResponse response) {
+          mSubscriptionId =
+              response.getBody().path("subscription").path(0)
+                  .path("subscriptionId").getTextValue();
+          finishRequest();
+        }
+      };
 
   public void doDelete(View v) {
     getParent().setProgressBarIndeterminateVisibility(true);
@@ -97,8 +110,17 @@ public class Explore extends ExploreCommon {
     MindRpc.addRequest(new UiNavigate(mRecordingId), null);
   }
 
-  @Override
-  protected void onContent() {
+  private void hideViewIfNull(int viewId, Object condition) {
+    if (condition != null)
+      return;
+    findViewById(viewId).setVisibility(View.GONE);
+  }
+
+  protected void finishRequest() {
+    if (--mRequestCount != 0) {
+      return;
+    }
+
     getParent().setProgressBarIndeterminateVisibility(false);
 
     for (JsonNode recording : mContent.path("recordingForContentId")) {
@@ -184,9 +206,19 @@ public class Explore extends ExploreCommon {
     // TODO: Show date recorded (?).
   }
 
-  private void hideViewIfNull(int viewId, Object condition) {
-    if (condition != null)
-      return;
-    findViewById(viewId).setVisibility(View.GONE);
+  @Override
+  protected void onContent() {
+    finishRequest();
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    // The one from ExploreCommon, plus this one.
+    mRequestCount = 2;
+
+    MindRpc.addRequest(new SubscriptionSearch(mCollectionId),
+        mSubscriptionListener);
   }
 }
