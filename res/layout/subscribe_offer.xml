@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/linearLayout1" android:orientation="vertical"
+  android:layout_width="fill_parent" android:layout_height="fill_parent"
+>
+  <ScrollView android:id="@+id/scrollView1"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:layout_weight="1"
+  >
+    <LinearLayout android:id="@+id/linearLayout2"
+      android:layout_width="fill_parent" android:layout_height="fill_parent"
+      android:orientation="vertical"
+    >
+      <TextView android:id="@+id/label_duration" android:text="@string/keep_until"
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_marginBottom="4dip" />
+      <Spinner android:id="@+id/duration" android:prompt="@string/keep_until"
+        android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+      <TextView android:id="@+id/label_start" android:text="@string/start_recording"
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_marginBottom="4dip" />
+      <Spinner android:id="@+id/start" android:prompt="@string/start_recording"
+        android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+      <TextView android:id="@+id/label_stop" android:text="@string/stop_recording"
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_marginBottom="4dip" />
+      <Spinner android:id="@+id/stop" android:prompt="@string/stop_recording"
+        android:layout_width="fill_parent" android:layout_height="wrap_content" />
+    </LinearLayout>
+  </ScrollView>
+  <Button android:id="@+id/button1" android:text="OK"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:onClick="doSubscribe"/>
+</LinearLayout>

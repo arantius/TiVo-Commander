@@ -34,19 +34,35 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.RecordingUpdate;
-import com.arantius.tivocommander.rpc.request.Subscribe;
 import com.arantius.tivocommander.rpc.request.SubscriptionSearch;
 import com.arantius.tivocommander.rpc.request.UiNavigate;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class Explore extends ExploreCommon {
+  enum RecordActions {
+    RECORD("Record this episode"), SP_ADD("Add season pass"), SP_CANCEL(
+        "Cancel season pass"), SP_MODIFY("Modify season pass");
+
+    private final String mText;
+
+    private RecordActions(String text) {
+      mText = text;
+    }
+
+    @Override
+    public String toString() {
+      return mText;
+    }
+  }
+
   private String mRecordingId = null;
   private int mRequestCount = 0;
   private String mSubscriptionId = null;
@@ -83,16 +99,31 @@ public class Explore extends ExploreCommon {
   }
 
   public void doRecord(View v) {
-    final String[] choices = new String[] { "Record this episode" };
+    final ArrayList<String> choices = new ArrayList<String>();
 
+    if (mOfferId != null) {
+      choices.add(RecordActions.RECORD.toString());
+    }
+
+    ArrayAdapter<String> choicesAdapter =
+        new ArrayAdapter<String>(this, android.R.layout.select_dialog_item,
+            choices);
     Builder dialogBuilder = new AlertDialog.Builder(this);
     dialogBuilder.setTitle("Operation?");
-    dialogBuilder.setItems(choices, new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int position) {
-        // TODO: When there's more than one choice, pick appropriate action.
-        MindRpc.addRequest(new Subscribe(mOfferId, mContentId), null);
-      }
-    });
+    dialogBuilder.setAdapter(choicesAdapter,
+        new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int position) {
+            String label = choices.get(position);
+            if (RecordActions.RECORD.toString().equals(label)) {
+              Intent intent =
+                  new Intent(getBaseContext(), SubscribeOffer.class);
+              intent.putExtra("contentId", mContentId);
+              intent.putExtra("offerId", mOfferId);
+              startActivity(intent);
+            } else if (RecordActions.SP_ADD.toString().equals(label)) {
+            }
+          }
+        });
     AlertDialog dialog = dialogBuilder.create();
     dialog.show();
   }
