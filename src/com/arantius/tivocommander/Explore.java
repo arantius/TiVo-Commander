@@ -104,6 +104,9 @@ public class Explore extends ExploreCommon {
     if (mOfferId != null) {
       choices.add(RecordActions.RECORD.toString());
     }
+    if (mContentId != null) {
+      choices.add(RecordActions.SP_ADD.toString());
+    }
 
     ArrayAdapter<String> choicesAdapter =
         new ArrayAdapter<String>(this, android.R.layout.select_dialog_item,
@@ -166,7 +169,7 @@ public class Explore extends ExploreCommon {
     // Show only appropriate buttons.
     hideViewIfNull(R.id.explore_btn_watch, mRecordingId);
     hideViewIfNull(R.id.explore_btn_delete, mRecordingId);
-    hideViewIfNull(R.id.explore_btn_upcoming, mContentId);
+    hideViewIfNull(R.id.explore_btn_upcoming, mCollectionId);
 
     // Display titles.
     String title = mContent.path("title").getTextValue();
