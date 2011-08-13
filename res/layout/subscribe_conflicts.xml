@@ -34,9 +34,9 @@
   >
     <Button android:id="@+id/button1" android:text="Get as is"
       android:layout_width="fill_parent" android:layout_height="wrap_content"
-      android:layout_weight="1" />
+      android:layout_weight="1" android:onClick="doSubscribeAsIs" />
     <Button android:id="@+id/button2" android:text="Get all"
       android:layout_width="fill_parent" android:layout_height="wrap_content"
-      android:layout_weight="1" />
+      android:layout_weight="1" android:onClick="doSubscribeAll" />
   </LinearLayout>
 </LinearLayout>

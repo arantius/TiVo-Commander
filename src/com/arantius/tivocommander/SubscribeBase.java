@@ -21,11 +21,15 @@ public class SubscribeBase extends Activity {
   protected final static String[] mStartLabels = new String[] { "On time",
       "1 minute early", "2 minutes early", "3 minutes early",
       "4 minutes early", "5 minutes early", "10 minutes early" };
-  protected final static Integer[] mStartStopValues = new Integer[] { null,
+  protected final static Integer[] mStartStopValues = new Integer[] { 0,
       60 * 1, 60 * 2, 60 * 3, 60 * 4, 60 * 5, 60 * 10 };
   protected final static String[] mStopLabels = new String[] { "On time",
       "1 minute late", "2 minutes late", "3 minutes late", "4 minutes late",
       "5 minutes late", "10 minutes late" };
+  protected String mKeepBehavior = null;
+  protected Integer mKeepDuration = null;
+  protected Integer mPaddingStart = null;
+  protected Integer mPaddingStop = null;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +49,22 @@ public class SubscribeBase extends Activity {
   }
 
   protected void subscribeRequestCommon(Subscribe request) {
-    int keepPos =
-        ((Spinner) findViewById(R.id.duration)).getSelectedItemPosition();
-    request.setKeep(mKeepBehaviors[keepPos], mKeepDurations[keepPos]);
+    if (mKeepBehavior == null) {
+      int keepPos =
+          ((Spinner) findViewById(R.id.duration)).getSelectedItemPosition();
+      mKeepBehavior = mKeepBehaviors[keepPos];
+      mKeepDuration = mKeepDurations[keepPos];
+    }
+    request.setKeep(mKeepBehavior, mKeepDuration);
 
-    int startPos =
-        ((Spinner) findViewById(R.id.start)).getSelectedItemPosition();
-    int stopPos = ((Spinner) findViewById(R.id.stop)).getSelectedItemPosition();
-    request.setPadding(mStartStopValues[startPos], mStartStopValues[stopPos]);
+    if (mPaddingStart == null) {
+      int startPos =
+          ((Spinner) findViewById(R.id.start)).getSelectedItemPosition();
+      int stopPos =
+          ((Spinner) findViewById(R.id.stop)).getSelectedItemPosition();
+      mPaddingStart = mStartStopValues[startPos];
+      mPaddingStop = mStartStopValues[stopPos];
+    }
+    request.setPadding(mPaddingStart, mPaddingStop);
   }
 }

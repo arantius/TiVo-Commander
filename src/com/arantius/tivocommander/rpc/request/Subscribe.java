@@ -23,6 +23,10 @@ public class Subscribe extends MindRpcRequest {
     mDataMap.put("showStatus", which);
   }
 
+  public void setIgnoreConflicts(boolean ignoreConflicts) {
+    mDataMap.put("ignoreConflicts", ignoreConflicts);
+  }
+
   public void setKeep(String behavior, Integer duration) {
     mDataMap.put("keepBehavior", behavior);
     if ("duration".equals(behavior)) {
@@ -39,10 +43,10 @@ public class Subscribe extends MindRpcRequest {
   }
 
   public void setPadding(Integer start, Integer stop) {
-    if (start != null) {
+    if (start != 0) {
       mDataMap.put("startTimePadding", start);
     }
-    if (stop != null) {
+    if (stop != 0) {
       mDataMap.put("endTimePadding", stop);
     }
   }
@@ -50,9 +54,6 @@ public class Subscribe extends MindRpcRequest {
   public void setPriority(Integer priority) {
     if (priority > 0) {
       mDataMap.put("priority", 1);
-    }
-    if (priority > 1) {
-      mDataMap.put("ignoreConflicts", true);
     }
   }
 }

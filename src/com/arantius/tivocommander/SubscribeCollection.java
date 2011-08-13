@@ -32,6 +32,7 @@ public class SubscribeCollection extends SubscribeBase {
       "Repeats & first-run", "First-run only", "All (with duplicates)" };
   private final static String[] mWhichValues = new String[] { "rerunsAllowed",
       "firstRunOnly", "everyEpisode" };
+  private JsonNode mChannel;
   private String[] mChannelNames;
   private final ArrayList<JsonNode> mChannelNodes = new ArrayList<JsonNode>();
   private final MindRpcResponseListener mChannelsListener =
@@ -60,24 +61,78 @@ public class SubscribeCollection extends SubscribeBase {
         }
       };
   private String mCollectionId;
-  private final int mPriority = 0;
+  private int mMax;
+  private int mPriority = 0;
+  private String mWhich;
 
   public void doSubscribe(View v) {
-    Subscribe request = new Subscribe();
-
+    // Main dialog, get the details and ...
     int channelPos =
         ((Spinner) findViewById(R.id.channel)).getSelectedItemPosition();
+    mChannel = mChannelNodes.get(channelPos);
     int maxPos =
         ((Spinner) findViewById(R.id.record_max)).getSelectedItemPosition();
+    mMax = mMaxValues[maxPos];
     int whichPos =
         ((Spinner) findViewById(R.id.record_which)).getSelectedItemPosition();
-    request.setCollection(mCollectionId, mChannelNodes.get(channelPos),
-        mMaxValues[maxPos], mWhichValues[whichPos]);
+    mWhich = mWhichValues[whichPos];
 
+    // ... use them.
+    doSubscribe(false);
+  }
+
+  public void doSubscribeAll(View v) {
+    // Conflict dialog. Either boost priority or, if we already did that, also
+    // ignore conflicts.
+    if (mPriority == 1) {
+      doSubscribe(true);
+    } else {
+      mPriority++;
+      doSubscribe(false);
+    }
+  }
+
+  public void doSubscribeAsIs(View v) {
+    // Conflict dialog, do a ignore-conflicts subscribe.
+    doSubscribe(true);
+  }
+
+  private HashMap<String, String> conflictListItem(JsonNode conflict,
+      String prefix, boolean fullDate, String titleField) {
+    HashMap<String, String> listItem = new HashMap<String, String>();
+    listItem
+        .put(prefix + "show_name", conflict.path(titleField).getTextValue());
+    listItem.put(prefix + "channel",
+        conflict.path("channel").path("channelNumber").getTextValue() + " "
+            + conflict.path("channel").path("callSign").getTextValue());
+
+    // TODO: UTC -> local.
+    SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    ParsePosition pp = new ParsePosition(0);
+    Date startTime =
+        dateParser.parse(conflict.path("startTime").getTextValue(), pp);
+    SimpleDateFormat dateFormatter1 =
+        new SimpleDateFormat(fullDate ? "MMM dd  h:mm - " : "h:mm - ");
+    String showTime = dateFormatter1.format(startTime);
+    Calendar endTime = Calendar.getInstance();
+    endTime.setTime(startTime);
+    endTime.add(Calendar.SECOND, conflict.path("duration").getIntValue());
+    SimpleDateFormat dateFormatter2 = new SimpleDateFormat("h:mm a");
+    showTime += dateFormatter2.format(endTime.getTime());
+    listItem.put(prefix + "show_time", showTime);
+
+    return listItem;
+  }
+
+  private void doSubscribe(Boolean ignoreConflicts) {
+    Subscribe request = new Subscribe();
+
+    request.setCollection(mCollectionId, mChannel, mMax, mWhich);
     request.setPriority(mPriority);
-
+    request.setIgnoreConflicts(ignoreConflicts);
     subscribeRequestCommon(request);
 
+    // TODO: Use dialog for progress (to prevent double-button-presses).
     setProgressBarIndeterminateVisibility(true);
     MindRpc.addRequest(request, new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
@@ -97,11 +152,16 @@ public class SubscribeCollection extends SubscribeBase {
     setProgressBarIndeterminateVisibility(false);
     setContentView(R.layout.subscribe_conflicts);
 
+    if (mPriority == 1) {
+      findViewById(R.id.button2).setVisibility(View.GONE);
+    }
+
     // "Will Record" list.
     ArrayList<HashMap<String, String>> willRecord =
         new ArrayList<HashMap<String, String>>();
     for (JsonNode conflict : conflicts.path("willGet")) {
-      HashMap<String, String> listItem = conflictListItem(conflict, false);
+      HashMap<String, String> listItem =
+          conflictListItem(conflict, "", true, "subtitle");
       willRecord.add(listItem);
     }
     LinearListView willLv = (LinearListView) findViewById(R.id.will_record);
@@ -115,9 +175,25 @@ public class SubscribeCollection extends SubscribeBase {
         new ArrayList<HashMap<String, String>>();
     for (JsonNode conflict : conflicts.path("wontGet")) {
       HashMap<String, String> listItem =
-          conflictListItem(conflict.path("losingOffer").path(0), false);
+          conflictListItem(conflict.path("losingOffer").path(0), "", true,
+              "subtitle");
       listItem.putAll(conflictListItem(conflict.path("winningOffer").path(0),
-          true));
+          "overlap_", false, "title"));
+      listItem.put("overlap_show_name",
+          "Overlaps with: " + listItem.get("overlap_show_name"));
+      willNotRecord.add(listItem);
+    }
+    // TODO: This title/subtitle policy is not quite right.
+    // Sometimes, a third show is winning over the loser, because this
+    // one bumped the other two down.
+    for (JsonNode conflict : conflicts.path("willCancel")) {
+      HashMap<String, String> listItem =
+          conflictListItem(conflict.path("losingOffer").path(0), "", true,
+              "title");
+      listItem.putAll(conflictListItem(conflict.path("winningOffer").path(0),
+          "overlap_", false, "subtitle"));
+      listItem.put("overlap_show_name",
+          "Overlaps with: " + listItem.get("overlap_show_name"));
       willNotRecord.add(listItem);
     }
     LinearListView willNotLv = (LinearListView) findViewById(R.id.wont_record);
@@ -126,34 +202,6 @@ public class SubscribeCollection extends SubscribeBase {
             "overlap_show_time", "show_name", "show_time" }, new int[] {
             R.id.channel, R.id.overlap_show_name, R.id.overlap_show_time,
             R.id.show_name, R.id.show_time }));
-  }
-
-  private HashMap<String, String> conflictListItem(JsonNode conflict,
-      boolean overlapMode) {
-    String prefix = overlapMode ? "overlap_" : "";
-    HashMap<String, String> listItem = new HashMap<String, String>();
-    listItem.put(prefix + "show_name",
-        conflict.path(overlapMode ? "title" : "subtitle").getTextValue());
-    listItem.put(prefix + "channel",
-        conflict.path("channel").path("channelNumber").getTextValue() + " "
-            + conflict.path("channel").path("callSign").getTextValue());
-
-    // TODO: UTC -> local.
-    SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    ParsePosition pp = new ParsePosition(0);
-    Date startTime =
-        dateParser.parse(conflict.path("startTime").getTextValue(), pp);
-    SimpleDateFormat dateFormatter1 =
-        new SimpleDateFormat(overlapMode ? "hh:mm - " : "MMM dd  hh:mm - ");
-    String showTime = dateFormatter1.format(startTime);
-    Calendar endTime = Calendar.getInstance();
-    endTime.setTime(startTime);
-    endTime.add(Calendar.SECOND, conflict.path("duration").getIntValue());
-    SimpleDateFormat dateFormatter2 = new SimpleDateFormat("hh:mm a");
-    showTime += dateFormatter2.format(endTime.getTime());
-    listItem.put(prefix + "show_time", showTime);
-
-    return listItem;
   }
 
   @Override
