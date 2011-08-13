@@ -249,6 +249,10 @@ public class Explore extends ExploreCommon {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    Utils.log(String.format(
+        "Exploring contentId %s, collectionId %s, offerId %s", mContentId,
+        mCollectionId, mOfferId));
+
     // The one from ExploreCommon, plus this one.
     mRequestCount = 2;
 
