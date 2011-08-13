@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/linearLayout1" android:orientation="vertical"
+  android:layout_width="fill_parent" android:layout_height="fill_parent"
+>
+  <ScrollView android:id="@+id/scrollView1"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:layout_weight="1"
+  >
+    <LinearLayout android:id="@+id/linearLayout2"
+      android:layout_width="fill_parent" android:layout_height="fill_parent"
+      android:orientation="vertical"
+    >
+      <TextView android:id="@+id/label_channel" android:text="@string/channel"
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_marginBottom="4dip" />
+      <!-- This TextView is to display the channel, for existing SPs. -->
+      <TextView android:id="@+id/channel_text" android:text="Channel"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:visibility="gone"
+      />
+      <Spinner android:id="@+id/channel" android:prompt="@string/channel"
+        android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+      <TextView android:id="@+id/label_record_which" android:text="@string/record_which"
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_marginBottom="4dip" />
+      <Spinner android:id="@+id/record_which" android:prompt="@string/record_which"
+        android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+      <TextView android:id="@+id/label_record_max" android:text="@string/record_max"
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_marginBottom="4dip" />
+      <Spinner android:id="@+id/record_max" android:prompt="@string/record_max"
+        android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+      <include layout="@layout/subscribe_base" />
+    </LinearLayout>
+  </ScrollView>
+  <Button android:id="@+id/button1" android:text="OK"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:onClick="doSubscribe" />
+</LinearLayout>

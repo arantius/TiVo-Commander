@@ -104,9 +104,16 @@ public class Explore extends ExploreCommon {
     if (mOfferId != null) {
       choices.add(RecordActions.RECORD.toString());
     }
-    if (mContentId != null) {
+
+    if (mSubscriptionId != null) {
+      choices.add(RecordActions.SP_MODIFY.toString());
+      choices.add(RecordActions.SP_CANCEL.toString());
+    } else if (mCollectionId != null) {
       choices.add(RecordActions.SP_ADD.toString());
     }
+
+    // TODO: Stop active recording.
+    // TODO: Cancel future recording.
 
     ArrayAdapter<String> choicesAdapter =
         new ArrayAdapter<String>(this, android.R.layout.select_dialog_item,
@@ -124,6 +131,13 @@ public class Explore extends ExploreCommon {
               intent.putExtra("offerId", mOfferId);
               startActivity(intent);
             } else if (RecordActions.SP_ADD.toString().equals(label)) {
+              Intent intent =
+                  new Intent(getBaseContext(), SubscribeCollection.class);
+              intent.putExtra("contentId", mContentId);
+              intent.putExtra("offerId", mOfferId);
+              startActivity(intent);
+            } else if (RecordActions.SP_CANCEL.toString().equals(label)) {
+            } else if (RecordActions.SP_MODIFY.toString().equals(label)) {
             }
           }
         });
