@@ -181,7 +181,8 @@ public class Explore extends ExploreCommon {
     getParent().setProgressBarIndeterminateVisibility(false);
 
     for (JsonNode recording : mContent.path("recordingForContentId")) {
-      if ("inProgress".equals(recording.path("state").getTextValue())) {
+      String state = recording.path("state").getTextValue();
+      if ("inProgress".equals(state) || "complete".equals(state)) {
         mRecordingId = recording.path("recordingId").getTextValue();
         break;
       }
