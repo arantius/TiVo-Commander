@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/linearLayout1" android:orientation="vertical"
+  android:layout_width="fill_parent" android:layout_height="fill_parent"
+>
+  <ScrollView android:id="@+id/scrollView1"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:layout_weight="1"
+  >
+    <LinearLayout android:id="@+id/linearLayout2"
+      android:layout_width="fill_parent" android:layout_height="fill_parent"
+      android:orientation="vertical" android:layout_gravity="fill"
+    >
+      <TextView android:id="@+id/textView1" android:text="Will Record:"
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_width="fill_parent" android:layout_height="fill_parent"
+        android:layout_marginBottom="4dip" />
+      <view class="com.arantius.tivocommander.LinearListView"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:layout_weight="1"
+        android:id="@+id/will_record" />
+      <TextView android:id="@+id/textView2" android:text="Will NOT Record:"
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_width="fill_parent" android:layout_height="fill_parent"
+        android:layout_marginBottom="4dip" android:layout_marginTop="3dip" />
+      <view class="com.arantius.tivocommander.LinearListView"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:layout_weight="1"
+        android:id="@+id/wont_record" />
+    </LinearLayout>
+  </ScrollView>
+  <LinearLayout android:id="@+id/linearLayout3"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+  >
+    <Button android:id="@+id/button1" android:text="Get as is"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_weight="1" />
+    <Button android:id="@+id/button2" android:text="Get all"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_weight="1" />
+  </LinearLayout>
+</LinearLayout>

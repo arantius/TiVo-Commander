@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent" android:id="@+id/linearLayout1"
+  android:orientation="vertical" android:layout_height="wrap_content"
+>
+  <include layout="@layout/item_sub_base" />
+  <LinearLayout android:id="@+id/linearLayout4"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+  >
+    <TextView android:id="@+id/textView1" android:text="Overlaps with: "
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:textAppearance="?android:attr/textAppearanceSmall" />
+    <TextView android:id="@+id/overlap_show_name" android:text="*Show name"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:textAppearance="?android:attr/textAppearanceSmall" />
+    <TextView android:id="@+id/overlap_show_time" android:text="11:00 - 1:00 PM"
+      android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceSmall"
+      android:gravity="right" android:layout_width="fill_parent" />
+  </LinearLayout>
+</LinearLayout>

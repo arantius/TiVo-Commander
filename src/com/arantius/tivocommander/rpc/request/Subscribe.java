@@ -12,13 +12,6 @@ public class Subscribe extends MindRpcRequest {
     mDataMap.put("recordingQuality", "best");
   }
 
-  public void setKeep(String behavior, Integer duration) {
-    mDataMap.put("keepBehavior", behavior);
-    if ("duration".equals(behavior)) {
-      mDataMap.put("keepDuration", duration);
-    }
-  }
-
   public void setCollection(String collectionId, JsonNode channel, int max,
       String which) {
     HashMap<String, Object> idSetSource = new HashMap<String, Object>();
@@ -28,6 +21,13 @@ public class Subscribe extends MindRpcRequest {
     mDataMap.put("idSetSource", idSetSource);
     mDataMap.put("maxRecordings", max);
     mDataMap.put("showStatus", which);
+  }
+
+  public void setKeep(String behavior, Integer duration) {
+    mDataMap.put("keepBehavior", behavior);
+    if ("duration".equals(behavior)) {
+      mDataMap.put("keepDuration", duration);
+    }
   }
 
   public void setOffer(String offerId, String contentId) {
@@ -44,6 +44,15 @@ public class Subscribe extends MindRpcRequest {
     }
     if (stop != null) {
       mDataMap.put("endTimePadding", stop);
+    }
+  }
+
+  public void setPriority(Integer priority) {
+    if (priority > 0) {
+      mDataMap.put("priority", 1);
+    }
+    if (priority > 1) {
+      mDataMap.put("ignoreConflicts", true);
     }
   }
 }
