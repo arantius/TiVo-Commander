@@ -147,6 +147,7 @@ public class Upcoming extends ListActivity {
       return null;
     }
 
+    // TODO: UTC -> local.
     SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     ParsePosition pp = new ParsePosition(0);
     Date playTime = dateParser.parse(timeIn, pp);
