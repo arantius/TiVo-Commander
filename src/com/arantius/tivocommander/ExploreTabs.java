@@ -79,6 +79,7 @@ public class ExploreTabs extends TabActivity {
       mOfferId = null;
     }
 
+    // TODO: Icons for the tabs.
     mTabHost.addTab(makeTab("Explore", Explore.class));
     mTabHost.addTab(makeTab("Credits", Credits.class));
     mTabHost.addTab(makeTab("Also", Suggestions.class));
