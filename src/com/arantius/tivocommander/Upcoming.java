@@ -45,6 +45,10 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class Upcoming extends ListActivity {
+  private class DateInPast extends Throwable {
+    private static final long serialVersionUID = -4184008452910054505L;
+  }
+
   private final OnItemClickListener mOnClickListener =
       new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -73,30 +77,37 @@ public class Upcoming extends ListActivity {
 
           for (int i = 0; i < mShows.size(); i++) {
             final JsonNode item = mShows.path(i);
-            // TODO: Filter items in the past.
-            HashMap<String, Object> listItem = new HashMap<String, Object>();
+            try {
+              HashMap<String, Object> listItem = new HashMap<String, Object>();
 
-            String details =
-                String.format("%s  %s %s", formatTime(item),
-                    item.path("channel").path("channelNumber").getTextValue(),
-                    item.path("channel").path("callSign").getTextValue());
-            if (item.path("episodic").getBooleanValue()
-                && item.path("episodeNumber").path(0).getIntValue() > 0
-                && item.path("seasonNumber").getIntValue() > 0) {
-              // @formatter:off
-              details = String.format("(Sea %d Ep %d)  ",
-                  item.path("seasonNumber").getIntValue(),
-                  item.path("episodeNum").path(0).getIntValue()) + details;
-              // @formatter:on
+              String channelNum =
+                  item.path("channel").path("channelNumber").getTextValue();
+              String callSign =
+                  item.path("channel").path("callSign").getTextValue();
+              String details =
+                  String.format("%s  %s %s", formatTime(item), channelNum,
+                      callSign);
+              if (item.path("episodic").getBooleanValue()
+                  && item.path("episodeNumber").path(0).getIntValue() > 0
+                  && item.path("seasonNumber").getIntValue() > 0) {
+                details =
+                    String.format("(Sea %d Ep %d)  ", item.path("seasonNumber")
+                        .getIntValue(), item.path("episodeNum").path(0)
+                        .getIntValue())
+                        + details;
+              }
+              listItem.put("icon", R.drawable.blank);
+              if (item.has("recordingForOfferId")) {
+                listItem.put("icon", R.drawable.check);
+              }
+              listItem.put("details", details);
+              listItem.put("title", item.has("subtitle") ? item
+                  .path("subtitle").getTextValue() : item.path("title")
+                  .getTextValue());
+              listItems.add(listItem);
+            } catch (DateInPast e) {
+              // No-op. Just don't show past items.
             }
-            listItem.put("icon", R.drawable.blank);
-            if (item.has("recordingForOfferId")) {
-              listItem.put("icon", R.drawable.check);
-            }
-            listItem.put("details", details);
-            listItem.put("title", item.has("subtitle") ? item.path("subtitle")
-                .getTextValue() : item.path("title").getTextValue());
-            listItems.add(listItem);
           }
 
           final ListView lv = getListView();
@@ -141,13 +152,16 @@ public class Upcoming extends ListActivity {
     MindRpc.init(this);
   }
 
-  protected String formatTime(JsonNode item) {
+  protected String formatTime(JsonNode item) throws DateInPast {
     String timeIn = item.path("startTime").getTextValue();
     if (timeIn == null) {
       return null;
     }
 
     Date playTime = Utils.parseDateStr(timeIn);
+    if (playTime.before(new Date())) {
+      throw new DateInPast();
+    }
     SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE M/d hh:mm a");
     dateFormatter.setTimeZone(TimeZone.getDefault());
     return dateFormatter.format(playTime);
