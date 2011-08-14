@@ -67,10 +67,9 @@ public class Upcoming extends ListActivity {
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           setProgressBarIndeterminateVisibility(false);
+          findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
 
           mShows = response.getBody().path("offer");
-
-          // TODO: No results.
 
           List<HashMap<String, Object>> listItems =
               new ArrayList<HashMap<String, Object>>();
@@ -128,7 +127,8 @@ public class Upcoming extends ListActivity {
     MindRpc.init(this);
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.list);
+    setContentView(R.layout.list_empty);
+    findViewById(android.R.id.empty).setVisibility(View.GONE);
 
     Bundle bundle = getIntent().getExtras();
     String collectionId;
