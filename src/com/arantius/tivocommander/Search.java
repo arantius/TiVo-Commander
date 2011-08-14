@@ -101,7 +101,6 @@ public class Search extends ListActivity {
       if (item.has("collectionId") || item.has("contentId")) {
         title = item.path("title").getTextValue();
       } else if (item.has("personId")) {
-        // TODO: Handle missing last name (e.g. Oprah).
         title = item.path("first").getTextValue();
         if (item.has("last")) {
           // Some people only have one (thus first) name.

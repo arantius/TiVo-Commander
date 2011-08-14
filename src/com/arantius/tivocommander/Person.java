@@ -148,9 +148,10 @@ public class Person extends ListActivity {
       return;
     }
 
-    mName =
-        String.format("%s %s", bundle.getString("fName"),
-            bundle.getString("lName"));
+    mName = bundle.getString("fName");
+    if (bundle.getString("lName") != null) {
+      mName += " " + bundle.getString("lName");
+    }
     mPersonId = bundle.getString("personId");
 
     MindRpc.addRequest(new PersonSearch(mPersonId), mPersonListener);
