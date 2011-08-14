@@ -52,9 +52,6 @@ public class MyShows extends ListActivity {
             final JsonNode item = mItems.path(i);
             HashMap<String, Object> listItem = new HashMap<String, Object>();
 
-            String itemContentId =
-                item.path("recordingForChildRecordingId").path("contentId")
-                    .getTextValue();
             String title = item.path("title").getTextValue();
             if ('"' == title.charAt(0)
                 && '"' == title.charAt(title.length() - 1)) {
