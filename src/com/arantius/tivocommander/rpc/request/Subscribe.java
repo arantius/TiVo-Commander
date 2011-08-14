@@ -27,11 +27,8 @@ public class Subscribe extends MindRpcRequest {
     mDataMap.put("ignoreConflicts", ignoreConflicts);
   }
 
-  public void setKeep(String behavior, Integer duration) {
+  public void setKeepUntil(String behavior) {
     mDataMap.put("keepBehavior", behavior);
-    if ("duration".equals(behavior)) {
-      mDataMap.put("keepDuration", duration);
-    }
   }
 
   public void setOffer(String offerId, String contentId) {

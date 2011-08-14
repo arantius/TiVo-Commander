@@ -3,6 +3,7 @@ package com.arantius.tivocommander;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.OfferSearch;
@@ -55,14 +57,52 @@ public class SubscribeCollection extends SubscribeBase {
           setUpSpinner(R.id.channel, mChannelNames);
           setUpSpinner(R.id.record_which, mWhichLabels);
           setUpSpinner(R.id.record_max, mMaxLabels);
-          setUpSpinner(R.id.duration, mKeepLabels);
+          setUpSpinner(R.id.until, mUntilLabels);
           setUpSpinner(R.id.start, mStartLabels);
           setUpSpinner(R.id.stop, mStopLabels);
+
+          // Set defaults.
+          ((Spinner) findViewById(R.id.record_max)).setSelection(4);
+
+          // If known, set values from existing subscription.
+          if (mSubscription != null) {
+            String thatChannelId =
+                mSubscription.path("idSetSource").path("channel")
+                    .path("stationId").getTextValue();
+            i = 0;
+            for (JsonNode offer : offers) {
+              if (thatChannelId.equals(offer.path("example").path("channel")
+                  .path("stationId").getTextValue())) {
+                // Set spinner so it will save properly, then hide.
+                Spinner s = ((Spinner) findViewById(R.id.channel));
+                s.setSelection(i);
+                s.setVisibility(View.GONE);
+                // Set text view to display immutable (?) channel.
+                TextView tv = ((TextView) findViewById(R.id.channel_text));
+                tv.setText(mChannelNames[i]);
+                tv.setVisibility(View.VISIBLE);
+                break;
+              }
+              i++;
+            }
+
+            setSpinner(R.id.record_which, mWhichValues,
+                mSubscription.path("showStatus").getTextValue());
+            setSpinner(R.id.record_max, mMaxValues,
+                mSubscription.path("maxRecordings").getIntValue());
+            setSpinner(R.id.until, mUntilValues,
+                mSubscription.path("keepBehavior").getTextValue());
+            setSpinner(R.id.start, mStartStopValues,
+                mSubscription.path("startTimePadding").getIntValue());
+            setSpinner(R.id.stop, mStartStopValues,
+                mSubscription.path("endTimePadding").getIntValue());
+          }
         }
       };
   private String mCollectionId;
   private int mMax;
   private int mPriority = 0;
+  private JsonNode mSubscription = null;
   private String mWhich;
 
   public void doSubscribe(View v) {
@@ -204,6 +244,13 @@ public class SubscribeCollection extends SubscribeBase {
             R.id.show_name, R.id.show_time }));
   }
 
+  private void setSpinner(int spinnerId, Object[] values, Object value) {
+    int i = Arrays.asList(values).indexOf(value);
+    if (i != -1) {
+      ((Spinner) findViewById(spinnerId)).setSelection(i);
+    }
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -214,5 +261,10 @@ public class SubscribeCollection extends SubscribeBase {
     OfferSearch request = new OfferSearch();
     request.setChannelsForCollection(mCollectionId);
     MindRpc.addRequest(request, mChannelsListener);
+
+    String subscriptionJson = bundle.getString("subscriptionJson");
+    if (subscriptionJson != null) {
+      mSubscription = Utils.parseJson(subscriptionJson);
+    }
   }
 }

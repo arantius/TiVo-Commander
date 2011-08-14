@@ -65,13 +65,13 @@ public class Explore extends ExploreCommon {
   }
 
   private int mRequestCount = 0;
+  private JsonNode mSubscription = null;
   private String mSubscriptionId = null;
   private final MindRpcResponseListener mSubscriptionListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          mSubscriptionId =
-              response.getBody().path("subscription").path(0)
-                  .path("subscriptionId").getTextValue();
+          mSubscription = response.getBody().path("subscription").path(0);
+          mSubscriptionId = mSubscription.path("subscriptionId").getTextValue();
           finishRequest();
         }
       };
@@ -146,6 +146,13 @@ public class Explore extends ExploreCommon {
                     }
                   });
             } else if (RecordActions.SP_MODIFY.toString().equals(label)) {
+              Intent intent =
+                  new Intent(getBaseContext(), SubscribeCollection.class);
+              intent.putExtra("collectionId", mCollectionId);
+              intent.putExtra("subscriptionId", mSubscriptionId);
+              intent.putExtra("subscriptionJson",
+                  Utils.stringifyToJson(mSubscription));
+              startActivity(intent);
             }
           }
         });
@@ -153,7 +160,6 @@ public class Explore extends ExploreCommon {
     dialog.show();
   }
 
-  // TODO: doSeasonPass()
   // TODO: doStopRecording()
 
   public void doUpcoming(View v) {

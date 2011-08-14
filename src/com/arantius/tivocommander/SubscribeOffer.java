@@ -31,7 +31,7 @@ public class SubscribeOffer extends SubscribeBase {
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.subscribe_offer);
-    setUpSpinner(R.id.duration, mKeepLabels);
+    setUpSpinner(R.id.until, mUntilLabels);
     setUpSpinner(R.id.start, mStartLabels);
     setUpSpinner(R.id.stop, mStopLabels);
   }
