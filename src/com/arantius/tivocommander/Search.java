@@ -24,18 +24,24 @@ import java.util.ArrayList;
 import org.codehaus.jackson.JsonNode;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.CancelRpc;
@@ -47,6 +53,72 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 // TODO: What happened to people results?
 
 public class Search extends ListActivity {
+  private class SearchAdapter extends ArrayAdapter<JsonNode> {
+    // TODO: Make this class DRY vs. Suggestions.ShowAdapter
+    private final Drawable mDrawable;
+
+    private final ArrayList<JsonNode> mItems;
+
+    public SearchAdapter(Context context, int resource,
+        ArrayList<JsonNode> objects) {
+      super(context, resource, objects);
+      mItems = objects;
+      mDrawable = context.getResources().getDrawable(R.drawable.content_banner);
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+      View v = convertView;
+
+      if (v == null) {
+        LayoutInflater vi =
+            (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        v = vi.inflate(R.layout.item_show, null);
+      }
+
+      ImageView iv = (ImageView) v.findViewById(R.id.imageView1);
+      View pv = v.findViewById(R.id.progressBar1);
+
+      if (convertView != null) {
+        iv.setImageDrawable(mDrawable);
+        pv.setVisibility(View.VISIBLE);
+      }
+
+      JsonNode item = mItems.get(position);
+      if (item == null) {
+        return null;
+      }
+
+      if (iv != null) {
+        String imgUrl = Utils.findImageUrl(item);
+        if (item.has("personId")) {
+          iv.setImageResource(R.drawable.person);
+        }
+        new DownloadImageTask(Search.this, iv, pv).execute(imgUrl);
+      }
+
+      String title = null;
+      if (item.has("collectionId") || item.has("contentId")) {
+        title = item.path("title").getTextValue();
+      } else if (item.has("personId")) {
+        // TODO: Handle missing last name (e.g. Oprah).
+        title = item.path("first").getTextValue();
+        if (item.has("last")) {
+          // Some people only have one (thus first) name.
+          title += " " + item.path("last").getTextValue();
+        }
+      } else {
+        Utils.log("Could not find title!");
+        Utils.log(item.toString());
+        return v;
+      }
+
+      ((TextView) v.findViewById(R.id.textView1)).setText(title);
+
+      return v;
+    }
+  }
+
   private final class SearchTask extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... params) {
@@ -73,12 +145,60 @@ public class Search extends ListActivity {
     }
   }
 
-  private ArrayAdapter<String> mAdapter;
+  private SearchAdapter mAdapter;
   private View mEmptyView;
+  private final OnItemClickListener mOnClickListener =
+      new OnItemClickListener() {
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id) {
+          JsonNode result = mResults.get(position);
+          if (result.has("collectionId") || result.has("contentId")) {
+            Intent intent = new Intent(getBaseContext(), ExploreTabs.class);
+            intent.putExtra("contentId", result.path("contentId")
+                .getTextValue());
+            intent.putExtra("collectionId", result.path("collectionId")
+                .getTextValue());
+            startActivity(intent);
+          } else if (result.has("personId")) {
+            Intent intent = new Intent(getBaseContext(), Person.class);
+            intent.putExtra("fName", result.path("first").getTextValue());
+            intent.putExtra("lName", result.path("last").getTextValue());
+            intent.putExtra("personId", result.path("personId").getTextValue());
+            startActivity(intent);
+          } else {
+            Utils
+                .logError("Result had neither collectionId, contentId, nor personId!\n"
+                    + Utils.stringifyToJson(result));
+          }
+        }
+      };
   private UnifiedItemSearch mRequest = null;
-  private JsonNode mResults = null;
+  private final ArrayList<JsonNode> mResults = new ArrayList<JsonNode>();
+
+  private final MindRpcResponseListener mSearchListener =
+      new MindRpcResponseListener() {
+        public void onResponse(MindRpcResponse response) {
+          if (mRequest != null) {
+            if (response.getRpcId() != mRequest.getRpcId()) {
+              Utils.log("Got response for non-current search request!");
+              return;
+            }
+          }
+          mRequest = null;
+          mEmptyView.setVisibility(View.VISIBLE);
+
+          JsonNode resultsNode = response.getBody().path("unifiedItem");
+          mResults.clear();
+          for (JsonNode result : resultsNode) {
+            mResults.add(result);
+          }
+          mAdapter.notifyDataSetChanged();
+
+          setProgressBarIndeterminateVisibility(false);
+        }
+      };
+
   private AsyncTask<String, Void, Void> mSearchTask = null;
-  private final ArrayList<String> mResultTitles = new ArrayList<String>();
 
   private final TextWatcher mTextWatcher = new TextWatcher() {
     public void afterTextChanged(Editable s) {
@@ -101,8 +221,7 @@ public class Search extends ListActivity {
 
       // Handle empty input.
       if ("".equals(s.toString())) {
-        mResults = null;
-        mResultTitles.clear();
+        mResults.clear();
         runOnUiThread(new Runnable() {
           public void run() {
             mAdapter.notifyDataSetChanged();
@@ -116,67 +235,6 @@ public class Search extends ListActivity {
     }
   };
 
-  private final MindRpcResponseListener mSearchListener =
-      new MindRpcResponseListener() {
-        public void onResponse(MindRpcResponse response) {
-          if (mRequest != null) {
-            if (response.getRpcId() != mRequest.getRpcId()) {
-              Utils.log("Got response for non-current search request!");
-              return;
-            }
-          }
-          mRequest = null;
-          mResults = response.getBody().path("unifiedItem");
-
-          mEmptyView.setVisibility(View.VISIBLE);
-
-          mResultTitles.clear();
-          for (int i = 0; i < mResults.size(); i++) {
-            final JsonNode result = mResults.path(i);
-            if (result.has("collectionId") || result.has("contentId")) {
-              mResultTitles.add(result.path("title").getTextValue());
-            } else if (result.has("personId")) {
-              // TODO: Handle missing last name (e.g. Oprah).
-              mResultTitles.add(result.path("first").getTextValue() + " "
-                  + result.path("last").getTextValue());
-            } else {
-              Utils.log("Could not find title!");
-              Utils.log(result.toString());
-            }
-          }
-
-          mAdapter.notifyDataSetChanged();
-
-          setProgressBarIndeterminateVisibility(false);
-        }
-      };
-
-  private final OnItemClickListener mOnClickListener =
-      new OnItemClickListener() {
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-            long id) {
-          JsonNode result = mResults.path(position);
-          if (result.has("collectionId") || result.has("contentId")) {
-            Intent intent = new Intent(getBaseContext(), ExploreTabs.class);
-            intent.putExtra("contentId", result.path("contentId")
-                .getTextValue());
-            intent.putExtra("collectionId", result.path("collectionId")
-                .getTextValue());
-            startActivity(intent);
-          } else if (result.has("personId")) {
-            Intent intent = new Intent(getBaseContext(), Person.class);
-            intent.putExtra("fName", result.path("first").getTextValue());
-            intent.putExtra("lName", result.path("last").getTextValue());
-            intent.putExtra("personId", result.path("personId").getTextValue());
-            startActivity(intent);
-          } else {
-            Utils
-                .logError("Result had neither collectionId, contentId, nor personId!\n"
-                    + Utils.stringifyToJson(result));
-          }
-        }
-      };
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -186,9 +244,7 @@ public class Search extends ListActivity {
     setContentView(R.layout.search);
 
     final EditText searchBox = (EditText) findViewById(R.id.search_box);
-    mAdapter =
-        new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-            mResultTitles);
+    mAdapter = new SearchAdapter(this, R.layout.item_show, mResults);
 
     setListAdapter(mAdapter);
     searchBox.addTextChangedListener(mTextWatcher);
