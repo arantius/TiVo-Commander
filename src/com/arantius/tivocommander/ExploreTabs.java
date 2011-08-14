@@ -33,6 +33,7 @@ public class ExploreTabs extends TabActivity {
   private String mCollectionId;
   private String mContentId;
   private String mOfferId;
+  private String mRecordingId;
   private TabHost mTabHost;
 
   private TabSpec makeTab(String name, Class<? extends Activity> cls) {
@@ -48,6 +49,9 @@ public class ExploreTabs extends TabActivity {
     }
     if (mOfferId != null) {
       intent.putExtra("offerId", mOfferId);
+    }
+    if (mRecordingId != null) {
+      intent.putExtra("recordingId", mRecordingId);
     }
     tab.setContent(intent);
 
@@ -65,6 +69,9 @@ public class ExploreTabs extends TabActivity {
     Bundle bundle = getIntent().getExtras();
     try {
       mCollectionId = bundle.getString("collectionId");
+      if ("tivo:cl.0".equals(mCollectionId)) {
+        mCollectionId = null;
+      }
     } catch (NullPointerException e) {
       mCollectionId = null;
     }
@@ -78,10 +85,17 @@ public class ExploreTabs extends TabActivity {
     } catch (NullPointerException e) {
       mOfferId = null;
     }
+    try {
+      mRecordingId = bundle.getString("recordingId");
+    } catch (NullPointerException e) {
+      mRecordingId = null;
+    }
 
     // TODO: Icons for the tabs.
     mTabHost.addTab(makeTab("Explore", Explore.class));
-    mTabHost.addTab(makeTab("Credits", Credits.class));
-    mTabHost.addTab(makeTab("Also", Suggestions.class));
+    if (mCollectionId != null) {
+      mTabHost.addTab(makeTab("Credits", Credits.class));
+      mTabHost.addTab(makeTab("Also", Suggestions.class));
+    }
   }
 }

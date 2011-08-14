@@ -64,7 +64,6 @@ public class Explore extends ExploreCommon {
     }
   }
 
-  private String mRecordingId = null;
   private int mRequestCount = 0;
   private String mSubscriptionId = null;
   private final MindRpcResponseListener mSubscriptionListener =
@@ -180,11 +179,13 @@ public class Explore extends ExploreCommon {
 
     getParent().setProgressBarIndeterminateVisibility(false);
 
-    for (JsonNode recording : mContent.path("recordingForContentId")) {
-      String state = recording.path("state").getTextValue();
-      if ("inProgress".equals(state) || "complete".equals(state)) {
-        mRecordingId = recording.path("recordingId").getTextValue();
-        break;
+    if (mRecordingId == null) {
+      for (JsonNode recording : mContent.path("recordingForContentId")) {
+        String state = recording.path("state").getTextValue();
+        if ("inProgress".equals(state) || "complete".equals(state)) {
+          mRecordingId = recording.path("recordingId").getTextValue();
+          break;
+        }
       }
     }
 
@@ -274,13 +275,16 @@ public class Explore extends ExploreCommon {
     super.onCreate(savedInstanceState);
 
     Utils.log(String.format(
-        "Exploring contentId %s, collectionId %s, offerId %s", mContentId,
-        mCollectionId, mOfferId));
+        "Exploring contentId %s, collectionId %s, offerId %s, recordingId %s",
+        mContentId, mCollectionId, mOfferId, mRecordingId));
 
-    // The one from ExploreCommon, plus this one.
-    mRequestCount = 2;
+    // The one from ExploreCommon.
+    mRequestCount = 1;
 
-    MindRpc.addRequest(new SubscriptionSearch(mCollectionId),
-        mSubscriptionListener);
+    if (mCollectionId != null) {
+      mRequestCount++;
+      MindRpc.addRequest(new SubscriptionSearch(mCollectionId),
+          mSubscriptionListener);
+    }
   }
 }

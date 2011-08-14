@@ -42,9 +42,5 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:textAppearance="?android:attr/textAppearanceLarge"
     android:gravity="center_vertical" android:layout_weight="1"
-    android:paddingLeft="6dip" android:paddingRight="6dip" />
-  <ImageView android:id="@+id/show_more" android:src="@drawable/more"
-    android:focusable="false" android:focusableInTouchMode="false"
-    android:layout_width="wrap_content" android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical" android:paddingRight="6dip" />
+    android:paddingLeft="6dip"/>
 </LinearLayout>

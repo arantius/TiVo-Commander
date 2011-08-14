@@ -37,7 +37,6 @@ import android.widget.SimpleAdapter;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.RecordingFolderItemSearch;
-import com.arantius.tivocommander.rpc.request.UiNavigate;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
@@ -63,15 +62,11 @@ public class MyShows extends ListActivity {
             }
             listItem.put("folder_num", "");
             listItem.put("icon", getIconForItem(item));
-            listItem.put("more", R.drawable.more);
             listItem.put("title", title);
             Integer folderItemCount =
                 item.path("folderItemCount").getIntValue();
             if (folderItemCount > 0) {
               listItem.put("folder_num", folderItemCount.toString());
-            }
-            if (folderItemCount == 0 && itemContentId == null) {
-              listItem.put("more", R.drawable.blank);
             }
             mListItems.add(listItem);
           }
@@ -109,18 +104,15 @@ public class MyShows extends ListActivity {
             startActivity(intent);
           } else {
             JsonNode recording = item.path("recordingForChildRecordingId");
-            String contentId = recording.path("contentId").getTextValue();
-            String collectionId = recording.path("collectionId").getTextValue();
-            if (contentId == null) {
-              String recordingId = item.path("childRecordingId").getTextValue();
-              MindRpc.addRequest(new UiNavigate(recordingId), null);
-            } else {
-              // Navigate to 'content' for this item.
-              Intent intent = new Intent(MyShows.this, ExploreTabs.class);
-              intent.putExtra("contentId", contentId);
-              intent.putExtra("collectionId", collectionId);
-              startActivityForResult(intent, EXPLORE_INTENT_ID);
-            }
+
+            Intent intent = new Intent(MyShows.this, ExploreTabs.class);
+            intent.putExtra("contentId", recording.path("contentId")
+                .getTextValue());
+            intent.putExtra("collectionId", recording.path("collectionId")
+                .getTextValue());
+            intent.putExtra("recordingId", item.path("childRecordingId")
+                .getTextValue());
+            startActivityForResult(intent, EXPLORE_INTENT_ID);
           }
         }
       };
@@ -139,9 +131,8 @@ public class MyShows extends ListActivity {
 
     mListAdapter =
         new SimpleAdapter(MyShows.this, mListItems, R.layout.item_my_shows,
-            new String[] { "folder_num", "icon", "more", "title" }, new int[] {
-                R.id.folder_num, R.id.show_icon, R.id.show_more,
-                R.id.show_title });
+            new String[] { "folder_num", "icon", "title" }, new int[] {
+                R.id.folder_num, R.id.show_icon, R.id.show_title });
     getListView().setAdapter(mListAdapter);
     getListView().setOnItemClickListener(mOnClickListener);
 

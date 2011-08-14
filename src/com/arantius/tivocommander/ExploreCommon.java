@@ -26,9 +26,10 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
-import com.arantius.tivocommander.rpc.request.BaseSearch;
 import com.arantius.tivocommander.rpc.request.CollectionSearch;
 import com.arantius.tivocommander.rpc.request.ContentSearch;
+import com.arantius.tivocommander.rpc.request.MindRpcRequest;
+import com.arantius.tivocommander.rpc.request.RecordingSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
@@ -48,12 +49,13 @@ abstract public class ExploreCommon extends Activity {
           JsonNode body = response.getBody();
           if (body.has("collection")) {
             mContent = response.getBody().path("collection").path(0);
+          } else if (body.has("recording")) {
+            mContent = response.getBody().path("recording").path(0);
           } else if (body.has("content")) {
             mContent = response.getBody().path("content").path(0);
           } else {
-            Toast.makeText(getApplicationContext(),
-                "Response missing collection and content", Toast.LENGTH_SHORT)
-                .show();
+            Toast.makeText(getApplicationContext(), "Response missing content",
+                Toast.LENGTH_SHORT).show();
             finish();
             return;
           }
@@ -64,12 +66,15 @@ abstract public class ExploreCommon extends Activity {
   protected JsonNode mContent = null;
   protected String mContentId = null;
   protected String mOfferId = null;
+  protected String mRecordingId = null;
 
-  protected BaseSearch getRequest() {
+  protected MindRpcRequest getRequest() {
     if (mContentId != null) {
       return new ContentSearch(mContentId);
     } else if (mCollectionId != null) {
       return new CollectionSearch(mCollectionId);
+    } else if (mRecordingId != null) {
+      return new RecordingSearch(mRecordingId);
     } else {
       final String message = "Content: Bad input!";
       Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
@@ -91,10 +96,11 @@ abstract public class ExploreCommon extends Activity {
       mCollectionId = bundle.getString("collectionId");
       mContentId = bundle.getString("contentId");
       mOfferId = bundle.getString("offerId");
+      mRecordingId = bundle.getString("recordingId");
     }
 
     getParent().setProgressBarIndeterminateVisibility(true);
-    BaseSearch req = getRequest();
+    MindRpcRequest req = getRequest();
     MindRpc.addRequest(req, mListener);
   }
 }
