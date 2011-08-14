@@ -24,26 +24,28 @@ import org.codehaus.jackson.JsonNode;
 import com.arantius.tivocommander.Utils;
 
 public class UnifiedItemSearch extends MindRpcRequest {
-  private static final JsonNode imageRuleset =
+  private static final int NUM_RESULTS = 25;
+  private static final JsonNode mImageRuleset =
       Utils
-          .parseJson("[{\"type\":\"imageRuleset\",\"name\":\"movie\",\"rule\":[{\"type\":\"imageRule\",\"width\":100,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"moviePoster\"],\"height\":150}]},{\"type\":\"imageRuleset\",\"name\":\"tvLandscape\",\"rule\":[{\"type\":\"imageRule\",\"width\":139,\"ruleType\":\"exactMatchDimension\",\"imageType\":[\"showcaseBanner\"],\"height\":104}]}]");
-  private static final String[] mNote = new String[] { "collection" };
-  private static final JsonNode responseTemplate =
+          .parseJson("[{\"type\": \"imageRuleset\", \"name\": \"movie\", \"rule\": [{\"width\": 100, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"moviePoster\"], \"height\": 150}]}, {\"type\": \"imageRuleset\", \"name\": \"tvLandscape\", \"rule\": [{\"width\": 139, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"showcaseBanner\"], \"height\": 104}]}, {\"type\": \"imageRuleset\", \"name\": \"tvPortrait\", \"rule\": [{\"width\": 120, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"showcaseBanner\"], \"height\": 90}]}, {\"type\": \"imageRuleset\", \"name\": \"personLandscape\", \"rule\": [{\"width\": 104, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"person\"], \"height\": 78}]}, {\"type\": \"imageRuleset\", \"name\": \"personPortrait\", \"rule\": [{\"width\": 113, \"ruleType\": \"exactMatchDimension\", \"type\": \"imageRule\", \"imageType\": [\"person\"], \"height\": 150}]}]");
+  private static final JsonNode mResponseTemplate =
       Utils
-          .parseJson("[{\"type\":\"responseTemplate\",\"fieldName\":[\"image\",\"title\",\"collectionId\"],\"typeName\":\"collection\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"image\",\"title\",\"collectionId\"],\"typeName\":\"content\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"unifiedItem\"],\"typeName\":\"unifiedItemList\"}]");
+          .parseJson("[{\"fieldInfo\": [{\"maxArity\": [2], \"fieldName\": [\"category\"], \"type\": \"responseTemplateFieldInfo\"}], \"fieldName\": [\"image\", \"title\", \"collectionId\", \"collectionType\", \"movieYear\", \"starRating\", \"tvRating\", \"mpaaRating\"], \"typeName\": \"collection\", \"type\": \"responseTemplate\"}, {\"fieldInfo\": [{\"maxArity\": [2], \"fieldName\": [\"category\"], \"type\": \"responseTemplateFieldInfo\"}], \"fieldName\": [\"image\", \"title\", \"subtitle\", \"collectionId\", \"collectionType\", \"contentId\", \"movieYear\", \"starRating\", \"tvRating\", \"mpaaRating\"], \"typeName\": \"content\", \"type\": \"responseTemplate\"}, {\"type\": \"responseTemplate\", \"fieldName\": [\"displayRank\", \"image\"], \"typeName\": \"category\"}, {\"type\": \"responseTemplate\", \"fieldName\": [\"first\", \"last\", \"image\", \"personId\"], \"typeName\": \"person\"}, {\"type\": \"responseTemplate\", \"fieldName\": [\"unifiedItem\"], \"typeName\": \"unifiedItemList\"}]");
 
   public UnifiedItemSearch(String keyword) {
     super("unifiedItemSearch");
 
     mDataMap.put("bodyId", "-");
-    mDataMap.put("count", 5);
-    mDataMap.put("responseTemplate", imageRuleset);
-    mDataMap.put("includeUnifiedItemType", mNote);
+    mDataMap.put("count", NUM_RESULTS);
+    mDataMap.put("imageRuleset", mImageRuleset);
+    mDataMap.put("includeUnifiedItemType", new String[] { "collection",
+        "content", "person" });
     mDataMap.put("keyword", keyword);
     mDataMap.put("levelOfDetail", "medium");
-    mDataMap.put("numRelevantItems", 50);
+    mDataMap.put("mergeOverridingCollections", true);
+    mDataMap.put("numRelevantItems", NUM_RESULTS);
     mDataMap.put("orderBy", new String[] { "relevance" });
-    mDataMap.put("responseTemplate", responseTemplate);
+    mDataMap.put("responseTemplate", mResponseTemplate);
     mDataMap.put("searchable", true);
   }
 }
