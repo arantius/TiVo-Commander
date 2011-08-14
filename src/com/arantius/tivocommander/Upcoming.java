@@ -19,12 +19,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.codehaus.jackson.JsonNode;
 
@@ -147,11 +147,9 @@ public class Upcoming extends ListActivity {
       return null;
     }
 
-    // TODO: UTC -> local.
-    SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    ParsePosition pp = new ParsePosition(0);
-    Date playTime = dateParser.parse(timeIn, pp);
+    Date playTime = Utils.parseDateStr(timeIn);
     SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE M/d hh:mm a");
+    dateFormatter.setTimeZone(TimeZone.getDefault());
     return dateFormatter.format(playTime);
   }
 }

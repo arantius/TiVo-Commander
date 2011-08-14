@@ -1,12 +1,12 @@
 package com.arantius.tivocommander;
 
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import org.codehaus.jackson.JsonNode;
 
@@ -146,18 +146,17 @@ public class SubscribeCollection extends SubscribeBase {
         conflict.path("channel").path("channelNumber").getTextValue() + " "
             + conflict.path("channel").path("callSign").getTextValue());
 
-    // TODO: UTC -> local.
-    SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    ParsePosition pp = new ParsePosition(0);
     Date startTime =
-        dateParser.parse(conflict.path("startTime").getTextValue(), pp);
+        Utils.parseDateStr(conflict.path("startTime").getTextValue());
     SimpleDateFormat dateFormatter1 =
         new SimpleDateFormat(fullDate ? "MMM dd  h:mm - " : "h:mm - ");
+    dateFormatter1.setTimeZone(TimeZone.getDefault());
     String showTime = dateFormatter1.format(startTime);
     Calendar endTime = Calendar.getInstance();
     endTime.setTime(startTime);
     endTime.add(Calendar.SECOND, conflict.path("duration").getIntValue());
     SimpleDateFormat dateFormatter2 = new SimpleDateFormat("h:mm a");
+    dateFormatter2.setTimeZone(TimeZone.getDefault());
     showTime += dateFormatter2.format(endTime.getTime());
     listItem.put(prefix + "show_time", showTime);
 

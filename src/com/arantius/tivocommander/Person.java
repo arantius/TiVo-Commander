@@ -19,9 +19,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.codehaus.jackson.JsonNode;
 
@@ -211,11 +211,10 @@ public class Person extends ListActivity {
     // Birth date.
     TextView birthdateView = ((TextView) findViewById(R.id.person_birthdate));
     if (mPerson.has("birthDate")) {
-      SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-mm-dd");
-      ParsePosition pp = new ParsePosition(0);
       Date birthdate =
-          dateParser.parse(mPerson.path("birthDate").getTextValue(), pp);
+          Utils.parseDateStr(mPerson.path("birthDate").getTextValue());
       SimpleDateFormat dateFormatter = new SimpleDateFormat("MMMMM d, yyyy");
+      dateFormatter.setTimeZone(TimeZone.getDefault());
       Spannable birthdateStr =
           new SpannableString("Birthdate: " + dateFormatter.format(birthdate));
       birthdateStr.setSpan(new ForegroundColorSpan(Color.WHITE), 11,

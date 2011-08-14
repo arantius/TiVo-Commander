@@ -20,9 +20,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package com.arantius.tivocommander;
 
 import java.io.IOException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
@@ -141,5 +145,13 @@ public class Utils {
       return null;
     }
     return s.substring(0, 1).toUpperCase() + s.substring(1);
+  }
+
+  public final static Date parseDateStr(String dateStr) {
+    SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    TimeZone tz = TimeZone.getTimeZone("UTC");
+    dateParser.setTimeZone(tz);
+    ParsePosition pp = new ParsePosition(0);
+    return dateParser.parse(dateStr, pp);
   }
 }
