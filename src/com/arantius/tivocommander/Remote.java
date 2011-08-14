@@ -75,7 +75,6 @@ public class Remote extends Activity implements OnClickListener {
     super.onCreate(savedInstanceState);
     MindRpc.init(this);
 
-    setTitle("TiVo Commander - Remote Control");
     setContentView(R.layout.remote);
 
     // It says always, but it only suppresses the open-on-launch.

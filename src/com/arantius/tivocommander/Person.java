@@ -153,7 +153,6 @@ public class Person extends ListActivity {
             bundle.getString("lName"));
     mPersonId = bundle.getString("personId");
 
-    setTitle("TiVo Commander - " + mName);
     MindRpc.addRequest(new PersonSearch(mPersonId), mPersonListener);
     mOutstandingRequests++;
     MindRpc.addRequest(new PersonCreditsSearch(mPersonId),

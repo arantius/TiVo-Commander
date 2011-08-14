@@ -240,7 +240,6 @@ public class Search extends ListActivity {
     super.onCreate(savedInstanceState);
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setTitle("TiVo Commander - Search");
     setContentView(R.layout.search);
 
     final EditText searchBox = (EditText) findViewById(R.id.search_box);

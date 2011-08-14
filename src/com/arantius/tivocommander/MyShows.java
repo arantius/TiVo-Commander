@@ -139,7 +139,6 @@ public class MyShows extends ListActivity {
       setTitle("TiVo Commander - " + bundle.getString("folderName"));
     } else {
       mFolderId = null;
-      setTitle("TiVo Commander - My Shows");
     }
 
     startRequest();

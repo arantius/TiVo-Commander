@@ -202,10 +202,8 @@ public class Explore extends ExploreCommon {
     ((TextView) findViewById(R.id.content_title)).setText(title);
     TextView subtitleView = ((TextView) findViewById(R.id.content_subtitle));
     if (subtitle == null) {
-      setTitle(title);
       subtitleView.setVisibility(View.GONE);
     } else {
-      setTitle(title + " - " + subtitle);
       subtitleView.setText(subtitle);
     }
 
