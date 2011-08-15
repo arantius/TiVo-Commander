@@ -66,10 +66,6 @@ public class Utils {
     return url;
   }
 
-  public static final String join(String glue, String... strings) {
-    return join(glue, Arrays.asList(strings));
-  }
-
   public static final String join(String glue, List<String> strings) {
     Iterator<String> it = strings.iterator();
     StringBuilder out = new StringBuilder();
@@ -88,6 +84,10 @@ public class Utils {
     return out.toString();
   }
 
+  public static final String join(String glue, String... strings) {
+    return join(glue, Arrays.asList(strings));
+  }
+
   public final static void log(String message) {
     Log.i(LOG_TAG, message);
   }
@@ -98,6 +98,14 @@ public class Utils {
 
   public final static void logError(String message, Throwable e) {
     Log.e(LOG_TAG, message, e);
+  }
+
+  public final static Date parseDateStr(String dateStr) {
+    SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    TimeZone tz = TimeZone.getTimeZone("UTC");
+    dateParser.setTimeZone(tz);
+    ParsePosition pp = new ParsePosition(0);
+    return dateParser.parse(dateStr, pp);
   }
 
   public final static JsonNode parseJson(String json) {
@@ -119,7 +127,18 @@ public class Utils {
     return stringifyToJson(obj, false);
   }
 
-  public final static String stringifyToJson(Object obj, boolean pretty) {
+  public final static String stringifyToPrettyJson(Object obj) {
+    return stringifyToJson(obj, true);
+  }
+
+  public final static String ucFirst(String s) {
+    if (s == null) {
+      return null;
+    }
+    return s.substring(0, 1).toUpperCase() + s.substring(1);
+  }
+
+  private final static String stringifyToJson(Object obj, boolean pretty) {
     try {
       if (pretty) {
         return mMapperPretty.writeValueAsString(obj);
@@ -134,24 +153,5 @@ public class Utils {
       Log.e(LOG_TAG, "stringifyToJson failure", e);
     }
     return null;
-  }
-
-  public final static String stringifyToPrettyJson(Object obj) {
-    return stringifyToJson(obj, true);
-  }
-
-  public final static String ucFirst(String s) {
-    if (s == null) {
-      return null;
-    }
-    return s.substring(0, 1).toUpperCase() + s.substring(1);
-  }
-
-  public final static Date parseDateStr(String dateStr) {
-    SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    TimeZone tz = TimeZone.getTimeZone("UTC");
-    dateParser.setTimeZone(tz);
-    ParsePosition pp = new ParsePosition(0);
-    return dateParser.parse(dateStr, pp);
   }
 }
