@@ -28,7 +28,7 @@ public class SubscribeCollection extends SubscribeBase {
           "4 recorded shows", "5 recorded shows", "10 recorded shows",
           "25 recorded shows", "All shows" };
   private final static Integer[] mMaxValues = new Integer[] { 1, 2, 3, 4, 5,
-      10, 25, null };
+      10, 25, 0 };
 
   private final static String[] mWhichLabels = new String[] {
       "Repeats & first-run", "First-run only", "All (with duplicates)" };
