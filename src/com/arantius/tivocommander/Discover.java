@@ -44,6 +44,8 @@ import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
+// TODO: Need 3.4.1 for upstream bug fix?  See http://goo.gl/TdffF
+
 public class Discover extends ListActivity {
   protected final class AddHost implements Runnable {
     private final String mAddr;
