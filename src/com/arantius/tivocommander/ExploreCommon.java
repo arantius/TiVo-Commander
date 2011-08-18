@@ -101,6 +101,8 @@ abstract public class ExploreCommon extends Activity {
 
     getParent().setProgressBarIndeterminateVisibility(true);
     MindRpcRequest req = getRequest();
-    MindRpc.addRequest(req, mListener);
+    if (req != null) { // Because of bad input?
+      MindRpc.addRequest(req, mListener);
+    }
   }
 }
