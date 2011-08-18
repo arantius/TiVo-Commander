@@ -101,11 +101,13 @@ public class Utils {
   }
 
   public final static Date parseDateStr(String dateStr) {
+    SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd");
+    return parseDateTimeStr(dateParser, dateStr);
+  }
+
+  public final static Date parseDateTimeStr(String dateStr) {
     SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    TimeZone tz = TimeZone.getTimeZone("UTC");
-    dateParser.setTimeZone(tz);
-    ParsePosition pp = new ParsePosition(0);
-    return dateParser.parse(dateStr, pp);
+    return parseDateTimeStr(dateParser, dateStr);
   }
 
   public final static JsonNode parseJson(String json) {
@@ -136,6 +138,14 @@ public class Utils {
       return null;
     }
     return s.substring(0, 1).toUpperCase() + s.substring(1);
+  }
+
+  private final static Date parseDateTimeStr(SimpleDateFormat dateParser,
+      String dateStr) {
+    TimeZone tz = TimeZone.getTimeZone("UTC");
+    dateParser.setTimeZone(tz);
+    ParsePosition pp = new ParsePosition(0);
+    return dateParser.parse(dateStr, pp);
   }
 
   private final static String stringifyToJson(Object obj, boolean pretty) {

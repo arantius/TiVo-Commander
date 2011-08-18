@@ -158,7 +158,7 @@ public class Upcoming extends ListActivity {
       return null;
     }
 
-    Date playTime = Utils.parseDateStr(timeIn);
+    Date playTime = Utils.parseDateTimeStr(timeIn);
     if (playTime.before(new Date())) {
       throw new DateInPast();
     }

@@ -147,7 +147,7 @@ public class SubscribeCollection extends SubscribeBase {
             + conflict.path("channel").path("callSign").getTextValue());
 
     Date startTime =
-        Utils.parseDateStr(conflict.path("startTime").getTextValue());
+        Utils.parseDateTimeStr(conflict.path("startTime").getTextValue());
     SimpleDateFormat dateFormatter1 =
         new SimpleDateFormat(fullDate ? "MMM dd  h:mm - " : "h:mm - ");
     dateFormatter1.setTimeZone(TimeZone.getDefault());
