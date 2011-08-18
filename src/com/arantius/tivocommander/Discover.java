@@ -42,6 +42,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.arantius.tivocommander.rpc.MindRpc;
+
 public class Discover extends ListActivity {
   protected final class AddHost implements Runnable {
     private final String mAddr;
@@ -116,6 +118,7 @@ public class Discover extends ListActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    MindRpc.disconnect();
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.list);

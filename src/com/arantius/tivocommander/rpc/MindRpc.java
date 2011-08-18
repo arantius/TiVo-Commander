@@ -103,6 +103,31 @@ public enum MindRpc {
     }
   }
 
+  public static void disconnect() {
+    // TODO: Do disconnect on close (after N idle seconds?).
+    if (mSocket != null) {
+      try {
+        mSocket.close();
+      } catch (IOException e) {
+        Log.e(LOG_TAG, "disconnect()", e);
+      }
+    }
+    if (mInputStream != null) {
+      try {
+        mInputStream.close();
+      } catch (IOException e) {
+        Log.e(LOG_TAG, "disconnect()", e);
+      }
+    }
+    if (mOutputStream != null) {
+      try {
+        mOutputStream.close();
+      } catch (IOException e) {
+        Log.e(LOG_TAG, "disconnect()", e);
+      }
+    }
+  }
+
   public static int getRpcId() {
     return mRpcId++;
   }
@@ -228,31 +253,6 @@ public enum MindRpc {
     }
 
     return true;
-  }
-
-  private static void disconnect() {
-    // TODO: Do disconnect on close (after N idle seconds?).
-    if (mSocket != null) {
-      try {
-        mSocket.close();
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "disconnect()", e);
-      }
-    }
-    if (mInputStream != null) {
-      try {
-        mInputStream.close();
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "disconnect()", e);
-      }
-    }
-    if (mOutputStream != null) {
-      try {
-        mOutputStream.close();
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "disconnect()", e);
-      }
-    }
   }
 
   private static void settingsError(Activity activity, int messageId) {

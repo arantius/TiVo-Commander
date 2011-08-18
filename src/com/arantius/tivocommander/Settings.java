@@ -22,10 +22,13 @@ package com.arantius.tivocommander;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
+import com.arantius.tivocommander.rpc.MindRpc;
+
 public class Settings extends PreferenceActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    MindRpc.disconnect();
     addPreferencesFromResource(R.xml.preferences);
   }
 }
