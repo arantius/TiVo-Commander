@@ -24,6 +24,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
@@ -72,6 +73,7 @@ public enum MindRpc {
   }
 
   private static final int BUFFER_SIZE = 1024;
+  private static final int TIMEOUT_CONNECT = 2500;
   private static final String LOG_TAG = "tivo_commander";
   private static BufferedReader mInputStream;
   private static MindRpcInput mInputThread;
@@ -208,7 +210,9 @@ public enum MindRpc {
     // And use it to create a socket.
     try {
       mSessionId = 0x26c000 + new Random().nextInt(0xFFFF);
-      mSocket = sslSocketFactory.createSocket(mTivoAddr, mTivoPort);
+      mSocket = sslSocketFactory.createSocket();
+      InetSocketAddress remoteAddr = new InetSocketAddress(mTivoAddr, mTivoPort);
+      mSocket.connect(remoteAddr, TIMEOUT_CONNECT);
       mInputStream =
           new BufferedReader(new InputStreamReader(mSocket.getInputStream()),
               BUFFER_SIZE);
