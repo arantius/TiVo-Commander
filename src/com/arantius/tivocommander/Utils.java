@@ -124,7 +124,7 @@ public class Utils {
   public static final void mailLog(String log, Context context, String title) {
     Intent i = new Intent(Intent.ACTION_SEND);
     i.setType("message/rfc822");
-    i.putExtra(Intent.EXTRA_EMAIL, new String[] { "arantius@gmail.com" });
+    i.putExtra(Intent.EXTRA_EMAIL, new String[] { "arantius+tivo@gmail.com" });
     i.putExtra(Intent.EXTRA_SUBJECT, "TiVo Commander " + title);
     i.putExtra(Intent.EXTRA_TEXT, "Please describe what went wrong:\n\n\n\n"
         + "Then leave these details for me:\n" + log);
