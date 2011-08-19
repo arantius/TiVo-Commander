@@ -20,11 +20,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package com.arantius.tivocommander;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -35,18 +38,25 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 public class Utils {
-  private static final boolean DEBUG = false;
+  private static boolean DEBUG = false;
+  private static final int LOG_DATA_SIZE = 20;
   private static final String LOG_TAG = "tivo_commander";
+  private static final LinkedList<String> logData = new LinkedList<String>();
   private static final ObjectMapper mMapper = new ObjectMapper();
   private static final ObjectWriter mMapperPretty = mMapper
       .defaultPrettyPrintingWriter();
 
   public final static void debugLog(String message) {
     if (DEBUG) {
-      Log.d(LOG_TAG, message);
+      log(message);
+    } else {
+      saveLog(message);
     }
   }
 
@@ -64,6 +74,10 @@ public class Utils {
       }
     }
     return url;
+  }
+
+  public final static String getLog() {
+    return join("\n", logData);
   }
 
   public static final String join(String glue, List<String> strings) {
@@ -89,15 +103,37 @@ public class Utils {
   }
 
   public final static void log(String message) {
+    saveLog(message);
     Log.i(LOG_TAG, message);
   }
 
   public final static void logError(String message) {
+    saveLog(message);
     Log.e(LOG_TAG, message);
   }
 
   public final static void logError(String message, Throwable e) {
+    StringWriter sw = new StringWriter();
+    e.printStackTrace(new PrintWriter(sw));
+    String stackTrace = sw.toString();
+
+    saveLog(message + "\n" + stackTrace);
     Log.e(LOG_TAG, message, e);
+  }
+
+  public static final void mailLog(String log, Context context, String title) {
+    Intent i = new Intent(Intent.ACTION_SEND);
+    i.setType("message/rfc822");
+    i.putExtra(Intent.EXTRA_EMAIL, new String[] { "arantius@gmail.com" });
+    i.putExtra(Intent.EXTRA_SUBJECT, "TiVo Commander " + title);
+    i.putExtra(Intent.EXTRA_TEXT, "Please describe what went wrong:\n\n\n\n"
+        + "Then leave these details for me:\n" + log);
+    try {
+      context.startActivity(Intent.createChooser(i, "Send mail..."));
+    } catch (android.content.ActivityNotFoundException ex) {
+      Toast.makeText(context, "There are no email clients installed.",
+          Toast.LENGTH_SHORT).show();
+    }
   }
 
   public final static Date parseDateStr(String dateStr) {
@@ -146,6 +182,13 @@ public class Utils {
     dateParser.setTimeZone(tz);
     ParsePosition pp = new ParsePosition(0);
     return dateParser.parse(dateStr, pp);
+  }
+
+  private final static void saveLog(String message) {
+    logData.add(message);
+    while (logData.size() > LOG_DATA_SIZE) {
+      logData.remove();
+    }
   }
 
   private final static String stringifyToJson(Object obj, boolean pretty) {

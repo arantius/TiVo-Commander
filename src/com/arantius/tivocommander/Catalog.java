@@ -19,7 +19,16 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.Thread.UncaughtExceptionHandler;
+
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -33,6 +42,35 @@ import android.widget.Toast;
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public class Catalog extends ListActivity {
+  private class CustomExceptionHandler implements UncaughtExceptionHandler {
+    private final UncaughtExceptionHandler defaultHandler;
+
+    public CustomExceptionHandler() {
+      defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+    }
+
+    public void uncaughtException(Thread thread, Throwable ex) {
+      Utils.logError("Unhandled exception", ex);
+      FileOutputStream fos;
+      try {
+        fos = Catalog.this.openFileOutput(CRASH_LOG, Context.MODE_PRIVATE);
+      } catch (FileNotFoundException e) {
+        defaultHandler.uncaughtException(thread, ex);
+        return;
+      }
+      try {
+        fos.write(Utils.getLog().getBytes());
+        fos.close();
+      } catch (IOException e) {
+        defaultHandler.uncaughtException(thread, ex);
+        return;
+      }
+
+      defaultHandler.uncaughtException(thread, ex);
+    }
+  }
+
+  private final static String CRASH_LOG = "crash-log.txt";
   // TODO: Manage
   // TODO: Now Playing
   private static final String[] mFeatures = { "Remote", "My Shows", "Search",
@@ -41,6 +79,9 @@ public class Catalog extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    checkCrashLog();
+    Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler());
 
     final ListAdapter adapter =
         new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
@@ -79,6 +120,42 @@ public class Catalog extends ListActivity {
       }
     });
   }
+
+  private final void checkCrashLog() {
+    FileInputStream fis;
+    try {
+      fis = openFileInput(CRASH_LOG);
+    } catch (FileNotFoundException e) {
+      // No log is good, ignore!
+      return;
+    }
+
+    byte[] crashLogBytes;
+    try {
+      crashLogBytes = new byte[fis.available()];
+      fis.read(crashLogBytes);
+    } catch (IOException e) {
+      Utils.logError("Reading crash log", e);
+      try {
+        fis.close();
+      } catch (IOException e1) {
+        Utils.logError("Closing crash log", e);
+      }
+      return;
+    }
+    final String crashLog = new String(crashLogBytes);
+    deleteFile(CRASH_LOG);
+
+    new AlertDialog.Builder(Catalog.this)
+        .setTitle("Whoops!")
+        .setMessage(
+            "Looks like I crashed last time.  Send crash report to developer?")
+        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int whichButton) {
+            Utils.mailLog(crashLog, Catalog.this, "Crash Report");
+          }
+        }).setNegativeButton("No", null).create().show();
+  };
 
   @Override
   protected void onResume() {
