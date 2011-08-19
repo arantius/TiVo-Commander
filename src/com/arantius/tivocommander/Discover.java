@@ -28,7 +28,9 @@ import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -39,8 +41,8 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
@@ -74,22 +76,32 @@ public class Discover extends ListActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position,
             long id) {
           if (position > 0) {
-            HashMap<String, String> item = mHosts.get(position);
-            SharedPreferences prefs =
+            final HashMap<String, String> item = mHosts.get(position);
+            final SharedPreferences prefs =
                 PreferenceManager.getDefaultSharedPreferences(Discover.this
                     .getBaseContext());
-            Editor editor = prefs.edit();
-            editor.putString("tivo_addr", item.get("addr"));
-            editor.putString("tivo_port", item.get("port"));
-            editor.commit();
 
-            Toast.makeText(getApplicationContext(), "Ok!  Just set the MAK.",
-                Toast.LENGTH_SHORT).show();
+            final EditText makEditText = new EditText(Discover.this);
+            makEditText.setText(prefs.getString("tivo_mak", ""));
+            new AlertDialog.Builder(Discover.this).setTitle("MAK")
+                .setMessage(R.string.pref_mak_instructions)
+                .setView(makEditText)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                  public void onClick(DialogInterface dialog, int whichButton) {
+                    Editor editor = prefs.edit();
+                    editor.putString("tivo_addr", item.get("addr"));
+                    editor.putString("tivo_port", item.get("port"));
+                    String mak = makEditText.getText().toString();
+                    editor.putString("tivo_mak", mak);
+                    editor.commit();
+                    Discover.this.finish();
+                  }
+                }).setNegativeButton("Cancel", null).create().show();
+          } else {
+            Intent intent = new Intent(Discover.this, Settings.class);
+            startActivity(intent);
+            finish();
           }
-
-          Intent intent = new Intent(Discover.this, Settings.class);
-          startActivity(intent);
-          finish();
         }
       };
   private final ServiceListener mServiceListener = new ServiceListener() {
