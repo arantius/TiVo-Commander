@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 -->
 <resources>
   <string name="app_name">TiVo Commander</string>
-  <string name="pref_mak_instructions">"Log in to tivo.com, then open the 'Vew media access key' section to find this value."</string>
+  <string name="pref_mak_instructions">"Log in to tivo.com, then open the 'View media access key' section to find this value."</string>
   <string name="error_addr">"Missing TiVo's address."</string>
   <string name="error_port">"Missing TiVo's port."</string>
   <string name="error_mak">"Please provide your TiVo's Media Access Key."</string>
