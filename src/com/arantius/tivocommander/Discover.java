@@ -43,6 +43,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
@@ -70,38 +71,32 @@ public class Discover extends ListActivity {
     }
   }
 
+  private TextView mEmpty;
   private MulticastLock mMulticastLock = null;
   private final OnItemClickListener mOnClickListener =
       new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position,
             long id) {
-          if (position > 0) {
-            final HashMap<String, String> item = mHosts.get(position);
-            final SharedPreferences prefs =
-                PreferenceManager.getDefaultSharedPreferences(Discover.this
-                    .getBaseContext());
+          final HashMap<String, String> item = mHosts.get(position);
+          final SharedPreferences prefs =
+              PreferenceManager.getDefaultSharedPreferences(Discover.this
+                  .getBaseContext());
 
-            final EditText makEditText = new EditText(Discover.this);
-            makEditText.setText(prefs.getString("tivo_mak", ""));
-            new AlertDialog.Builder(Discover.this).setTitle("MAK")
-                .setMessage(R.string.pref_mak_instructions)
-                .setView(makEditText)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                  public void onClick(DialogInterface dialog, int whichButton) {
-                    Editor editor = prefs.edit();
-                    editor.putString("tivo_addr", item.get("addr"));
-                    editor.putString("tivo_port", item.get("port"));
-                    String mak = makEditText.getText().toString();
-                    editor.putString("tivo_mak", mak);
-                    editor.commit();
-                    Discover.this.finish();
-                  }
-                }).setNegativeButton("Cancel", null).create().show();
-          } else {
-            Intent intent = new Intent(Discover.this, Settings.class);
-            startActivity(intent);
-            finish();
-          }
+          final EditText makEditText = new EditText(Discover.this);
+          makEditText.setText(prefs.getString("tivo_mak", ""));
+          new AlertDialog.Builder(Discover.this).setTitle("MAK")
+              .setMessage(R.string.pref_mak_instructions).setView(makEditText)
+              .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                  Editor editor = prefs.edit();
+                  editor.putString("tivo_addr", item.get("addr"));
+                  editor.putString("tivo_port", item.get("port"));
+                  String mak = makEditText.getText().toString();
+                  editor.putString("tivo_mak", mak);
+                  editor.commit();
+                  Discover.this.finish();
+                }
+              }).setNegativeButton("Cancel", null).create().show();
         }
       };
   private final ServiceListener mServiceListener = new ServiceListener() {
@@ -129,27 +124,19 @@ public class Discover extends ListActivity {
   protected final String mServiceName = "_tivo-mindrpc._tcp.local.";
   protected final long mTimeout = 2500;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    MindRpc.disconnect();
-
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.list);
-
-    mHosts.clear();
-    mHostAdapter =
-        new SimpleAdapter(this, mHosts, android.R.layout.simple_list_item_1,
-            new String[] { "name" }, new int[] { android.R.id.text1 });
-    setListAdapter(mHostAdapter);
-    runOnUiThread(new AddHost("Custom settings", null, 0));
-
-    getListView().setOnItemClickListener(mOnClickListener);
+  public final void customSettings(View v) {
+    Intent intent = new Intent(Discover.this, Settings.class);
+    startActivity(intent);
+    finish();
   }
 
-  @Override
-  protected void onResume() {
-    super.onResume();
+  public final void startQuery(View v) {
+    stopQuery();
+
+    mEmpty.setText("Searching ...");
+
+    mHosts.clear();
+    mHostAdapter.notifyDataSetChanged();
 
     android.net.wifi.WifiManager wifi =
         (android.net.wifi.WifiManager) getSystemService(android.content.Context.WIFI_SERVICE);
@@ -179,12 +166,42 @@ public class Discover extends ListActivity {
   }
 
   @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    MindRpc.disconnect();
+
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    setContentView(R.layout.list_discover);
+
+    mEmpty = ((TextView) findViewById(android.R.id.empty));
+    mHostAdapter =
+        new SimpleAdapter(this, mHosts, android.R.layout.simple_list_item_1,
+            new String[] { "name" }, new int[] { android.R.id.text1 });
+    setListAdapter(mHostAdapter);
+
+    getListView().setOnItemClickListener(mOnClickListener);
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    startQuery(null);
+  }
+
+  @Override
   protected void onStop() {
     super.onStop();
     stopQuery();
   }
 
   protected final void stopQuery() {
+    runOnUiThread(new Runnable() {
+      public void run() {
+        mEmpty
+            .setText("No results found.");
+      }
+    });
+
     if (mJmdns != null) {
       mJmdns.removeServiceListener(mServiceName, mServiceListener);
       try {
@@ -192,7 +209,6 @@ public class Discover extends ListActivity {
       } catch (IOException e) {
         Utils.logError("Closing jmdns", e);
       }
-      mJmdns = null;
     }
 
     if (mMulticastLock != null) {

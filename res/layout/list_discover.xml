@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+TiVo Commander allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/linearLayout1" android:orientation="vertical"
+  android:layout_width="fill_parent" android:layout_height="fill_parent"
+>
+  <TextView android:id="@+id/textView1" android:text="Searching for TiVo devices ..."
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:padding="2dip" />
+  <TextView android:id="@+id/textView2"
+    android:text="Hints: WiFi should be on.  If the TiVo is not found, you're probably not connected to the right network."
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:padding="2dip" />
+
+  <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:id="@android:id/list" android:layout_weight="1" />
+  <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/empty" android:text="Searching ..."
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:gravity="center" android:layout_weight="1" />
+
+  <LinearLayout android:id="@+id/linearLayout2"
+    android:layout_height="wrap_content" android:layout_width="fill_parent"
+  >
+    <Button android:id="@+id/button1" android:text="Refresh"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_gravity="center" android:onClick="startQuery"
+      android:layout_weight="1" />
+    <Button android:id="@+id/button2" android:text="Custom Settings"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_gravity="center" android:onClick="customSettings"
+      android:layout_weight="1" />
+  </LinearLayout>
+</LinearLayout>
