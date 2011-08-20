@@ -50,7 +50,7 @@ import com.arantius.tivocommander.rpc.MindRpc;
 // TODO: Need 3.4.1 for upstream bug fix?  See http://goo.gl/TdffF
 
 public class Discover extends ListActivity {
-  protected final class AddHost implements Runnable {
+  private final class AddHost implements Runnable {
     private final String mAddr;
     private final String mName;
     private final int mPort;
@@ -62,22 +62,80 @@ public class Discover extends ListActivity {
     }
 
     public void run() {
+      HashMap<String, String> host;
+      int i;
+      boolean found = false;
+      for (i = 0; i < mHosts.size(); i++) {
+        host = mHosts.get(i);
+        if (mName.equals(host.get("name"))) {
+          if (host.get("addr") == "" && mAddr != "") {
+            // If we found a name-matching host with no address, and we have
+            // one, prepare to use it.
+            found = true;
+            break;
+          } else {
+            // Otherwise, this host is of no benefit, stop.
+            return;
+          }
+        }
+      }
+
       HashMap<String, String> listItem = new HashMap<String, String>();
       listItem.put("addr", mAddr);
       listItem.put("name", mName);
       listItem.put("port", new Integer(mPort).toString());
-      mHosts.add(listItem);
+
+      if (found) {
+        // Replace the found host.
+        mHosts.set(i, listItem);
+      } else {
+        // Add a new one.
+        mHosts.add(listItem);
+      }
       mHostAdapter.notifyDataSetChanged();
     }
   }
 
+  private final class MdnsQuery implements Runnable {
+    private final String mServiceName;
+
+    public MdnsQuery(String service) {
+      mServiceName = service;
+    }
+
+    public void run() {
+      try {
+        mJmdns.addServiceListener(mServiceName, mServiceListener);
+        mJmdns.requestServiceInfo(mServiceName, "", mTimeout);
+      } catch (IllegalStateException e) {
+        // No-op, just clean up below.
+      }
+      mJmdns.removeServiceListener(mServiceName, mServiceListener);
+    }
+  }
+
   private TextView mEmpty;
+  private SimpleAdapter mHostAdapter;
+  private final ArrayList<HashMap<String, String>> mHosts =
+      new ArrayList<HashMap<String, String>>();
+  private JmDNS mJmdns;
   private MulticastLock mMulticastLock = null;
   private final OnItemClickListener mOnClickListener =
       new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position,
             long id) {
           final HashMap<String, String> item = mHosts.get(position);
+
+          if (item.get("addr") == "") {
+            // A saved null host means we found a device but not a rpc endpoint.
+            stopQuery();
+            Intent intent = new Intent(Discover.this, Help.class);
+            intent.putExtra("note",
+                "You need to enable network control to connect to this TiVo.");
+            startActivity(intent);
+            return;
+          }
+
           final SharedPreferences prefs =
               PreferenceManager.getDefaultSharedPreferences(Discover.this
                   .getBaseContext());
@@ -112,25 +170,27 @@ public class Discover extends ListActivity {
 
     public void serviceResolved(ServiceEvent event) {
       ServiceInfo info = event.getInfo();
-      runOnUiThread(new AddHost(event.getName(), info.getHostAddresses()[0],
-          info.getPort()));
+      if (mServiceNameRpc.equals(event.getType())) {
+        runOnUiThread(new AddHost(event.getName(), info.getHostAddresses()[0],
+            info.getPort()));
+      } else {
+        runOnUiThread(new AddHost(event.getName(), "", 0));
+      }
     }
   };
-
-  protected SimpleAdapter mHostAdapter;
-  protected ArrayList<HashMap<String, String>> mHosts =
-      new ArrayList<HashMap<String, String>>();
-  protected JmDNS mJmdns;
-  protected final String mServiceName = "_tivo-mindrpc._tcp.local.";
-  protected final long mTimeout = 2500;
+  private final String mServiceNameDevice = "_tivo-device._tcp.local.";
+  private final String mServiceNameRpc = "_tivo-mindrpc._tcp.local.";
+  private final long mTimeout = 3500;
 
   public final void customSettings(View v) {
+    stopQuery();
     Intent intent = new Intent(Discover.this, Settings.class);
     startActivity(intent);
     finish();
   }
 
   public final void showHelp(View V) {
+    stopQuery();
     Intent intent = new Intent(Discover.this, Help.class);
     startActivity(intent);
   }
@@ -150,22 +210,34 @@ public class Discover extends ListActivity {
     mMulticastLock.acquire();
 
     setProgressBarIndeterminateVisibility(true);
+
+    try {
+      mJmdns = JmDNS.create();
+    } catch (IOException e) {
+      Utils.logError("Couldn't do mDNS", e);
+      return;
+    }
+
+    // Issue queries.
+    final ThreadGroup tg = new ThreadGroup("queryThreadGroup");
+    new Thread(tg, new MdnsQuery(mServiceNameDevice)).start();
+    new Thread(tg, new MdnsQuery(mServiceNameRpc)).start();
+    // Wait for them and update the UI.
     new Thread(new Runnable() {
       public void run() {
-        try {
-          mJmdns = JmDNS.create();
-        } catch (IOException e) {
-          Utils.logError("Couldn't do mDNS", e);
-          return;
+        while (tg.activeCount() > 0) {
+          try {
+            Thread.sleep(50);
+          } catch (InterruptedException e) {
+            // No-op.
+          }
         }
-        mJmdns.addServiceListener(mServiceName, mServiceListener);
-        mJmdns.requestServiceInfo(mServiceName, "", mTimeout);
-        stopQuery();
         runOnUiThread(new Runnable() {
           public void run() {
             setProgressBarIndeterminateVisibility(false);
           }
         });
+        stopQuery();
       }
     }).start();
   }
@@ -207,11 +279,10 @@ public class Discover extends ListActivity {
     });
 
     if (mJmdns != null) {
-      mJmdns.removeServiceListener(mServiceName, mServiceListener);
       try {
         mJmdns.close();
+        mJmdns = null;
       } catch (IOException e) {
-        Utils.logError("Closing jmdns", e);
       }
     }
 

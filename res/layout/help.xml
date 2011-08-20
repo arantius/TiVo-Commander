@@ -30,6 +30,19 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:textAppearance="?android:attr/textAppearanceLarge"
       android:layout_gravity="center" android:layout_margin="8dip" />
 
+    <LinearLayout android:id="@+id/note_layout"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:visibility="gone"
+    >
+      <ImageView android:id="@+id/imageView1"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_dialog_alert" />
+      <TextView android:id="@+id/note" android:textColor="#ECF76A"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginBottom="6dip" android:gravity="center_vertical"
+        android:minHeight="30dip" android:layout_marginLeft="6dip" />
+    </LinearLayout>
+
     <TextView android:id="@+id/textView2"
       android:text="Hints: WiFi should be on.  If the TiVo is not found, you're probably not connected to the right network."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
