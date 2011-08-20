@@ -202,8 +202,7 @@ public class Discover extends ListActivity {
   protected final void stopQuery() {
     runOnUiThread(new Runnable() {
       public void run() {
-        mEmpty
-            .setText("No results found.");
+        mEmpty.setText("No results found.");
       }
     });
 
