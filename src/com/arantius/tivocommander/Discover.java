@@ -130,6 +130,11 @@ public class Discover extends ListActivity {
     finish();
   }
 
+  public final void showHelp(View V) {
+    Intent intent = new Intent(Discover.this, Help.class);
+    startActivity(intent);
+  }
+
   public final void startQuery(View v) {
     stopQuery();
 

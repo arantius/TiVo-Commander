@@ -21,14 +21,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   android:id="@+id/linearLayout1" android:orientation="vertical"
   android:layout_width="fill_parent" android:layout_height="fill_parent"
 >
-  <TextView android:id="@+id/textView1" android:text="Searching for TiVo devices ..."
+  <TextView android:id="@+id/textView1" android:text="TiVo Device Search"
     android:textAppearance="?android:attr/textAppearanceMedium"
     android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:padding="2dip" />
-  <TextView android:id="@+id/textView2"
-    android:text="Hints: WiFi should be on.  If the TiVo is not found, you're probably not connected to the right network."
-    android:layout_width="wrap_content" android:layout_height="wrap_content"
-    android:padding="2dip" />
+  <Button android:id="@+id/button3" android:text="Help!"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:onClick="showHelp"
+  />
 
   <ListView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" android:layout_height="fill_parent"

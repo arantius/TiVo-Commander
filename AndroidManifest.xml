@@ -36,6 +36,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     <activity android:name="Discover"></activity>
     <activity android:name="Explore"></activity>
     <activity android:name="ExploreTabs"></activity>
+    <activity android:name="Help"></activity>
     <activity android:name="MyShows">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
