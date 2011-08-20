@@ -105,6 +105,7 @@ public enum MindRpc {
 
   public static void disconnect() {
     // TODO: Do disconnect on close (after N idle seconds?).
+    stopThreads();
     if (mSocket != null) {
       try {
         mSocket.close();
@@ -164,7 +165,7 @@ public enum MindRpc {
 
     addRequest(new BodyAuthenticate(mTivoMak), new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
-        if (response.getBody().path("status").equals("failure")) {
+        if ("failure".equals(response.getBody().path("status").getTextValue())) {
           settingsError(originActivity, R.string.error_auth);
         }
       }
@@ -256,8 +257,6 @@ public enum MindRpc {
   }
 
   private static void settingsError(Activity activity, int messageId) {
-    stopThreads();
-    disconnect();
     Toast.makeText(activity.getBaseContext(), messageId, Toast.LENGTH_SHORT)
         .show();
     Intent i = new Intent(activity.getBaseContext(), Discover.class);
