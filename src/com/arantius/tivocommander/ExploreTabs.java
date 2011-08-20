@@ -36,9 +36,9 @@ public class ExploreTabs extends TabActivity {
   private String mRecordingId;
   private TabHost mTabHost;
 
-  private TabSpec makeTab(String name, Class<? extends Activity> cls) {
+  private TabSpec makeTab(String name, Class<? extends Activity> cls, int iconId) {
     TabSpec tab = mTabHost.newTabSpec(name);
-    tab.setIndicator(name);
+    tab.setIndicator(name, getResources().getDrawable(iconId));
 
     Intent intent = new Intent(getBaseContext(), cls);
     if (mCollectionId != null) {
@@ -91,11 +91,12 @@ public class ExploreTabs extends TabActivity {
       mRecordingId = null;
     }
 
-    // TODO: Icons for the tabs.
-    mTabHost.addTab(makeTab("Explore", Explore.class));
+    mTabHost.addTab(makeTab("Explore", Explore.class, R.drawable.icon_tv));
     if (mCollectionId != null) {
-      mTabHost.addTab(makeTab("Credits", Credits.class));
-      mTabHost.addTab(makeTab("Also", Suggestions.class));
+      mTabHost
+          .addTab(makeTab("Credits", Credits.class, R.drawable.icon_people));
+      mTabHost.addTab(makeTab("Similar", Suggestions.class,
+          R.drawable.icon_similar));
     }
   }
 }
