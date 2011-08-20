@@ -126,6 +126,7 @@ public class Utils {
     i.setType("message/rfc822");
     i.putExtra(Intent.EXTRA_EMAIL, new String[] { "arantius+tivo@gmail.com" });
     i.putExtra(Intent.EXTRA_SUBJECT, "TiVo Commander " + title);
+    // TODO: Annotate with app version.
     i.putExtra(Intent.EXTRA_TEXT, "Please describe what went wrong:\n\n\n\n"
         + "Then leave these details for me:\n" + log);
     try {
