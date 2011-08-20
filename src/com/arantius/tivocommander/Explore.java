@@ -99,6 +99,7 @@ public class Explore extends ExploreCommon {
   }
 
   public void doRecord(View v) {
+    // TODO: Set choices in onCreate; use them to decide whether to show Record.
     final ArrayList<String> choices = new ArrayList<String>();
 
     if (mOfferId != null) {
