@@ -40,6 +40,8 @@ import org.codehaus.jackson.map.ObjectWriter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -137,13 +139,25 @@ public class Utils {
     i.putExtra(Intent.EXTRA_SUBJECT, "TiVo Commander " + title);
     // TODO: Annotate with app version.
     i.putExtra(Intent.EXTRA_TEXT, "Please describe what went wrong:\n\n\n\n"
-        + "Then leave these details for me:\n" + log);
+        + "Then leave these details for me:\nVersion: " + getVersion(context)
+        + "\n" + log);
     try {
       context.startActivity(Intent.createChooser(i, "Send mail..."));
     } catch (android.content.ActivityNotFoundException ex) {
       Toast.makeText(context, "There are no email clients installed.",
           Toast.LENGTH_SHORT).show();
     }
+  }
+
+  public final static String getVersion(Context context) {
+    String version = " v";
+    try {
+      PackageManager pm = context.getPackageManager();
+      version += pm.getPackageInfo(context.getPackageName(), 0).versionName;
+    } catch (NameNotFoundException e) {
+      version = "";
+    }
+    return version;
   }
 
   public final static Date parseDateStr(String dateStr) {
