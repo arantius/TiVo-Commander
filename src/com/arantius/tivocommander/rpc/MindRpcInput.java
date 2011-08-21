@@ -74,7 +74,7 @@ public class MindRpcInput extends Thread {
           if (response != null) {
             Utils.log(String.format("% 4d RECV %s", response.getRpcId(),
                 response.getRespType()));
-            Utils.debugLog(Utils.stringifyToPrettyJson(response.getBody()));
+            Utils.logRpc(response.getBody());
             MindRpc.dispatchResponse(response);
           }
         }

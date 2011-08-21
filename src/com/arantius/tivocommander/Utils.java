@@ -112,6 +112,13 @@ public class Utils {
     Log.e(LOG_TAG, message);
   }
 
+  public final static void logRpc(Object obj) {
+    if (DEBUG) {
+      Log.d(LOG_TAG, Utils.stringifyToPrettyJson(obj));
+    }
+    saveLog(Utils.stringifyToJson(obj));
+  }
+
   public final static void logError(String message, Throwable e) {
     StringWriter sw = new StringWriter();
     e.printStackTrace(new PrintWriter(sw));

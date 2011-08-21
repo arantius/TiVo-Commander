@@ -68,7 +68,7 @@ public class MindRpcOutput extends Thread {
           String reqStr = request.toString();
           Utils.log(String.format("% 4d CALL %s", request.getRpcId(),
               request.getReqType()));
-          Utils.debugLog(Utils.stringifyToPrettyJson(request.getDataMap()));
+          Utils.logRpc(request.getDataMap());
           mStream.write(reqStr);
           mStream.flush();
         }
