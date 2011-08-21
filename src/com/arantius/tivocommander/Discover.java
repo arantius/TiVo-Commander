@@ -133,7 +133,8 @@ public class Discover extends ListActivity {
             stopQuery();
             Intent intent = new Intent(Discover.this, Help.class);
             intent.putExtra("note",
-                "You need to enable network control to connect to this TiVo.");
+                "You need to enable network control and/or "
+                    + "video sharing to connect to this TiVo.  (See below.)");
             startActivity(intent);
             return;
           }
