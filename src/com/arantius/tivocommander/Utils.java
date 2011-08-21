@@ -47,7 +47,9 @@ public class Utils {
   private static boolean DEBUG = false;
   private static final int LOG_DATA_SIZE = 20;
   private static final String LOG_TAG = "tivo_commander";
-  private static final LinkedList<String> logData = new LinkedList<String>();
+  private static final LinkedList<String> mLogData = new LinkedList<String>();
+  private static final SimpleDateFormat mLogDateFormatter =
+      new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS ");
   private static final ObjectMapper mMapper = new ObjectMapper();
   private static final ObjectWriter mMapperPretty = mMapper
       .defaultPrettyPrintingWriter();
@@ -77,7 +79,7 @@ public class Utils {
   }
 
   public final static String getLog() {
-    return join("\n", logData);
+    return join("\n", mLogData);
   }
 
   public static final String join(String glue, List<String> strings) {
@@ -193,9 +195,9 @@ public class Utils {
   }
 
   private final static void saveLog(String message) {
-    logData.add(message);
-    while (logData.size() > LOG_DATA_SIZE) {
-      logData.remove();
+    mLogData.add(mLogDateFormatter.format(new Date()) + message);
+    while (mLogData.size() > LOG_DATA_SIZE) {
+      mLogData.remove();
     }
   }
 
