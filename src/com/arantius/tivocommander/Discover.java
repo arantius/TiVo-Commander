@@ -110,7 +110,9 @@ public class Discover extends ListActivity {
       } catch (IllegalStateException e) {
         // No-op, just clean up below.
       }
-      mJmdns.removeServiceListener(mServiceName, mServiceListener);
+      if (mJmdns != null) {
+        mJmdns.removeServiceListener(mServiceName, mServiceListener);
+      }
     }
   }
 
