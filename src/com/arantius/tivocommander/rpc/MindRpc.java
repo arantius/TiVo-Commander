@@ -50,6 +50,7 @@ import android.widget.Toast;
 
 import com.arantius.tivocommander.Discover;
 import com.arantius.tivocommander.R;
+import com.arantius.tivocommander.Utils;
 import com.arantius.tivocommander.rpc.request.BodyAuthenticate;
 import com.arantius.tivocommander.rpc.request.MindRpcRequest;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
@@ -237,7 +238,8 @@ public enum MindRpc {
     try {
       mSessionId = 0x26c000 + new Random().nextInt(0xFFFF);
       mSocket = sslSocketFactory.createSocket();
-      InetSocketAddress remoteAddr = new InetSocketAddress(mTivoAddr, mTivoPort);
+      InetSocketAddress remoteAddr =
+          new InetSocketAddress(mTivoAddr, mTivoPort);
       mSocket.connect(remoteAddr, TIMEOUT_CONNECT);
       mInputStream =
           new BufferedReader(new InputStreamReader(mSocket.getInputStream()),
@@ -257,6 +259,7 @@ public enum MindRpc {
   }
 
   private static void settingsError(Activity activity, int messageId) {
+    Utils.log("Settings: " + activity.getResources().getString(messageId));
     Toast.makeText(activity.getBaseContext(), messageId, Toast.LENGTH_SHORT)
         .show();
     Intent i = new Intent(activity.getBaseContext(), Discover.class);
