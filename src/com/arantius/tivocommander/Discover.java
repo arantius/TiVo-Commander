@@ -237,11 +237,6 @@ public class Discover extends ListActivity {
             // No-op.
           }
         }
-        runOnUiThread(new Runnable() {
-          public void run() {
-            setProgressBarIndeterminateVisibility(false);
-          }
-        });
         stopQuery();
       }
     }).start();
@@ -279,6 +274,7 @@ public class Discover extends ListActivity {
   protected final void stopQuery() {
     runOnUiThread(new Runnable() {
       public void run() {
+        setProgressBarIndeterminateVisibility(false);
         mEmpty.setText("No results found.");
       }
     });
