@@ -172,6 +172,8 @@ public class Discover extends ListActivity {
 
     public void serviceResolved(ServiceEvent event) {
       ServiceInfo info = event.getInfo();
+      Utils.log(String.format("Discovered: %s %s %s", event.getType(),
+          event.getName(), info.getHostAddresses()[0]));
       if (mServiceNameRpc.equals(event.getType())) {
         runOnUiThread(new AddHost(event.getName(), info.getHostAddresses()[0],
             info.getPort()));
