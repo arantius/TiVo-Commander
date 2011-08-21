@@ -28,6 +28,9 @@ import com.arantius.tivocommander.rpc.MindRpc;
 public abstract class MindRpcRequest {
   private String mReqType;
 
+  // FIXME: Track and fill in the real bodyId.
+  // A user claiming "I'm using a special beta version of the TiVo software"
+  // reported a failure where the error indicated that this bodyId was rejected.
   protected String mBodyId = "-";
   protected Map<String, Object> mDataMap = new HashMap<String, Object>();
   protected String mResponseCount = "single";
