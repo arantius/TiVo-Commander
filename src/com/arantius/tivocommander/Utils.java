@@ -48,8 +48,9 @@ import android.widget.Toast;
 
 public class Utils {
   private static boolean DEBUG = false;
-  private static final int LOG_DATA_SIZE = 20;
+  private static final int LOG_DATA_SIZE = 50;
   private static final String LOG_TAG = "tivo_commander";
+  private static final int MAX_LOG_LEN = 4096;
   private static final LinkedList<String> mLogData = new LinkedList<String>();
   private static final SimpleDateFormat mLogDateFormatter =
       new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS ");
@@ -88,6 +89,17 @@ public class Utils {
     return join("\n", logData);
   }
 
+  public final static String getVersion(Context context) {
+    String version = " v";
+    try {
+      PackageManager pm = context.getPackageManager();
+      version += pm.getPackageInfo(context.getPackageName(), 0).versionName;
+    } catch (NameNotFoundException e) {
+      version = "";
+    }
+    return version;
+  }
+
   public static final String join(String glue, List<String> strings) {
     Iterator<String> it = strings.iterator();
     StringBuilder out = new StringBuilder();
@@ -120,13 +132,6 @@ public class Utils {
     Log.e(LOG_TAG, message);
   }
 
-  public final static void logRpc(Object obj) {
-    if (DEBUG) {
-      Log.d(LOG_TAG, Utils.stringifyToPrettyJson(obj));
-    }
-    saveLog(Utils.stringifyToJson(obj));
-  }
-
   public final static void logError(String message, Throwable e) {
     StringWriter sw = new StringWriter();
     e.printStackTrace(new PrintWriter(sw));
@@ -134,6 +139,13 @@ public class Utils {
 
     saveLog(message + "\n" + stackTrace);
     Log.e(LOG_TAG, message, e);
+  }
+
+  public final static void logRpc(Object obj) {
+    if (DEBUG) {
+      Log.d(LOG_TAG, Utils.stringifyToPrettyJson(obj));
+    }
+    saveLog(Utils.stringifyToJson(obj));
   }
 
   public static final void mailLog(String log, Context context, String title) {
@@ -150,17 +162,6 @@ public class Utils {
       Toast.makeText(context, "There are no email clients installed.",
           Toast.LENGTH_SHORT).show();
     }
-  }
-
-  public final static String getVersion(Context context) {
-    String version = " v";
-    try {
-      PackageManager pm = context.getPackageManager();
-      version += pm.getPackageInfo(context.getPackageName(), 0).versionName;
-    } catch (NameNotFoundException e) {
-      version = "";
-    }
-    return version;
   }
 
   public final static Date parseDateStr(String dateStr) {
@@ -212,6 +213,11 @@ public class Utils {
   }
 
   private final static void saveLog(String message) {
+    if (message.length() > MAX_LOG_LEN) {
+      message =
+          String.format("(%d) %s...", message.length(),
+              message.substring(0, MAX_LOG_LEN));
+    }
     mLogData.add(mLogDateFormatter.format(new Date()) + message);
     while (mLogData.size() > LOG_DATA_SIZE) {
       mLogData.remove();
