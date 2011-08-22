@@ -25,6 +25,7 @@ import java.io.StringWriter;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -81,7 +82,10 @@ public class Utils {
   }
 
   public final static String getLog() {
-    return join("\n", mLogData);
+    @SuppressWarnings("unchecked")
+    List<String> logData = (List<String>) mLogData.clone();
+    Collections.reverse(logData);
+    return join("\n", logData);
   }
 
   public static final String join(String glue, List<String> strings) {
