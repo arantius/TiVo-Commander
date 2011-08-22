@@ -10,12 +10,11 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class SubscribeOffer extends SubscribeBase {
   public void doSubscribe(View v) {
-    Bundle bundle = getIntent().getExtras();
+    getValues();
 
     Subscribe request = new Subscribe();
-    request
-        .setOffer(bundle.getString("offerId"), bundle.getString("contentId"));
-
+    Bundle b = getIntent().getExtras();
+    request.setOffer(b.getString("offerId"), b.getString("contentId"));
     subscribeRequestCommon(request);
 
     setProgressBarIndeterminateVisibility(true);

@@ -9,10 +9,6 @@ import android.widget.Spinner;
 import com.arantius.tivocommander.rpc.request.Subscribe;
 
 public class SubscribeBase extends Activity {
-  protected final static String[] mUntilValues = new String[] { "fifo",
-      "forever" };
-  protected final static String[] mUntilLabels = new String[] { "Space needed",
-      "Until I delete" };
   protected final static String[] mStartLabels = new String[] { "On time",
       "1 minute early", "2 minutes early", "3 minutes early",
       "4 minutes early", "5 minutes early", "10 minutes early" };
@@ -21,10 +17,26 @@ public class SubscribeBase extends Activity {
   protected final static String[] mStopLabels = new String[] { "On time",
       "1 minute late", "2 minutes late", "3 minutes late", "4 minutes late",
       "5 minutes late", "10 minutes late" };
+  protected final static String[] mUntilLabels = new String[] { "Space needed",
+      "Until I delete" };
+  protected final static String[] mUntilValues = new String[] { "fifo",
+      "forever" };
   protected String mKeepBehavior = null;
   protected String mKeepUntil = null;
   protected Integer mPaddingStart = null;
   protected Integer mPaddingStop = null;
+
+  protected void getValues() {
+    int pos;
+    pos = ((Spinner) findViewById(R.id.until)).getSelectedItemPosition();
+    mKeepUntil = mUntilValues[pos];
+
+    pos = ((Spinner) findViewById(R.id.start)).getSelectedItemPosition();
+    mPaddingStart = mStartStopValues[pos];
+
+    pos = ((Spinner) findViewById(R.id.stop)).getSelectedItemPosition();
+    mPaddingStop = mStartStopValues[pos];
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -44,21 +56,7 @@ public class SubscribeBase extends Activity {
   }
 
   protected void subscribeRequestCommon(Subscribe request) {
-    if (mKeepBehavior == null) {
-      int keepPos =
-          ((Spinner) findViewById(R.id.until)).getSelectedItemPosition();
-      mKeepUntil = mUntilValues[keepPos];
-    }
     request.setKeepUntil(mKeepUntil);
-
-    if (mPaddingStart == null) {
-      int startPos =
-          ((Spinner) findViewById(R.id.start)).getSelectedItemPosition();
-      int stopPos =
-          ((Spinner) findViewById(R.id.stop)).getSelectedItemPosition();
-      mPaddingStart = mStartStopValues[startPos];
-      mPaddingStop = mStartStopValues[stopPos];
-    }
     request.setPadding(mPaddingStart, mPaddingStop);
   }
 }

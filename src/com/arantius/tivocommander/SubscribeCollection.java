@@ -106,25 +106,14 @@ public class SubscribeCollection extends SubscribeBase {
   private String mWhich;
 
   public void doSubscribe(View v) {
-    // Main dialog, get the details and ...
-    int channelPos =
-        ((Spinner) findViewById(R.id.channel)).getSelectedItemPosition();
-    mChannel = mChannelNodes.get(channelPos);
-    int maxPos =
-        ((Spinner) findViewById(R.id.record_max)).getSelectedItemPosition();
-    mMax = mMaxValues[maxPos];
-    int whichPos =
-        ((Spinner) findViewById(R.id.record_which)).getSelectedItemPosition();
-    mWhich = mWhichValues[whichPos];
-
-    // ... use them.
+    getValues();
     doSubscribe(false);
   }
 
   public void doSubscribeAll(View v) {
     // Conflict dialog. Either boost priority or, if we already did that, also
     // ignore conflicts.
-    if (mPriority == 1) {
+    if (mPriority == 0) {
       doSubscribe(true);
     } else {
       mPriority++;
@@ -248,6 +237,25 @@ public class SubscribeCollection extends SubscribeBase {
     if (i != -1) {
       ((Spinner) findViewById(spinnerId)).setSelection(i);
     }
+  }
+
+  @Override
+  protected void getValues() {
+    super.getValues();
+    int pos;
+    pos = ((Spinner) findViewById(R.id.channel)).getSelectedItemPosition();
+    try {
+      mChannel = mChannelNodes.get(pos);
+    } catch (IndexOutOfBoundsException e) {
+      Utils.log(Utils.join(" / ", mChannelNames));
+      Utils.logError("Couldn't get channel", e);
+    }
+
+    pos = ((Spinner) findViewById(R.id.record_max)).getSelectedItemPosition();
+    mMax = mMaxValues[pos];
+
+    pos = ((Spinner) findViewById(R.id.record_which)).getSelectedItemPosition();
+    mWhich = mWhichValues[pos];
   }
 
   @Override
