@@ -141,10 +141,9 @@ public class Utils {
     i.setType("message/rfc822");
     i.putExtra(Intent.EXTRA_EMAIL, new String[] { "arantius+tivo@gmail.com" });
     i.putExtra(Intent.EXTRA_SUBJECT, "TiVo Commander " + title);
-    // TODO: Annotate with app version.
-    i.putExtra(Intent.EXTRA_TEXT, "Please describe what went wrong:\n\n\n\n"
-        + "Then leave these details for me:\nVersion: " + getVersion(context)
-        + "\n" + log);
+    i.putExtra(Intent.EXTRA_TEXT, "Please describe you were doing when "
+        + "something went wrong:\n\n\n\nThen leave these details for me:\n"
+        + "Version: " + getVersion(context) + "\n" + log);
     try {
       context.startActivity(Intent.createChooser(i, "Send mail..."));
     } catch (android.content.ActivityNotFoundException ex) {
