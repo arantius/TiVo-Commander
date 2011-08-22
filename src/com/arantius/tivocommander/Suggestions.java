@@ -131,13 +131,12 @@ public class Suggestions extends Activity {
   protected JsonNode mShows;
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
     MindRpc.init(this);
 
     Bundle bundle = getIntent().getExtras();
-    String collectionId;
+    String collectionId = null;
 
     if (bundle != null) {
       collectionId = bundle.getString("collectionId");
@@ -150,5 +149,14 @@ public class Suggestions extends Activity {
         MindRpc.addRequest(request, mSuggestionListener);
       }
     }
+
+    Utils.log(String.format("Suggestions: collectionId:%s", collectionId));
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:Suggestions");
+    MindRpc.init(this);
   }
 }

@@ -114,42 +114,6 @@ public class MyShows extends ListActivity {
         }
       };
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    MindRpc.init(this);
-
-    // TODO: Sorting.
-    // TODO: Show disk usage.
-    // TODO: Show date recorded.
-
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.list);
-
-    mListAdapter =
-        new SimpleAdapter(MyShows.this, mListItems, R.layout.item_my_shows,
-            new String[] { "folder_num", "icon", "title" }, new int[] {
-                R.id.folder_num, R.id.show_icon, R.id.show_title });
-    getListView().setAdapter(mListAdapter);
-    getListView().setOnItemClickListener(mOnClickListener);
-
-    Bundle bundle = getIntent().getExtras();
-    if (bundle != null) {
-      mFolderId = bundle.getString("folderId");
-      setTitle("TiVo Commander - " + bundle.getString("folderName"));
-    } else {
-      mFolderId = null;
-    }
-
-    startRequest();
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    MindRpc.init(this);
-  }
-
   private void startRequest() {
     setProgressBarIndeterminateVisibility(true);
 
@@ -217,5 +181,45 @@ public class MyShows extends ListActivity {
         startRequest();
       }
     }
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    Bundle bundle = getIntent().getExtras();
+    if (bundle != null) {
+      mFolderId = bundle.getString("folderId");
+      setTitle("TiVo Commander - " + bundle.getString("folderName"));
+    } else {
+      mFolderId = null;
+    }
+
+    Utils.log(String.format("MyShows: folderId:%s", mFolderId));
+
+    MindRpc.init(this);
+
+    // TODO: Sorting.
+    // TODO: Show disk usage.
+    // TODO: Show date recorded.
+
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    setContentView(R.layout.list);
+
+    mListAdapter =
+        new SimpleAdapter(MyShows.this, mListItems, R.layout.item_my_shows,
+            new String[] { "folder_num", "icon", "title" }, new int[] {
+                R.id.folder_num, R.id.show_icon, R.id.show_title });
+    getListView().setAdapter(mListAdapter);
+    getListView().setOnItemClickListener(mOnClickListener);
+
+    startRequest();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:MyShows");
+    MindRpc.init(this);
   }
 }

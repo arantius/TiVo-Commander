@@ -70,29 +70,6 @@ public class Remote extends Activity implements OnClickListener {
     MindRpc.addRequest(viewIdToEvent(v.getId()), null);
   }
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    MindRpc.init(this);
-
-    setContentView(R.layout.remote);
-
-    // It says always, but it only suppresses the open-on-launch.
-    getWindow().setSoftInputMode(
-        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
-    mEditText = (EditText) findViewById(R.id.keyboard_activator);
-    mEditText.addTextChangedListener(mTextWatcher);
-    mInputManager =
-        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    MindRpc.init(this);
-  }
-
   public void toggleKeyboard(View v) {
     mEditText.setText("");
     mEditText.requestFocus();
@@ -157,5 +134,29 @@ public class Remote extends Activity implements OnClickListener {
     }
 
     return null;
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    MindRpc.init(this);
+
+    setContentView(R.layout.remote);
+
+    // It says always, but it only suppresses the open-on-launch.
+    getWindow().setSoftInputMode(
+        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+    mEditText = (EditText) findViewById(R.id.keyboard_activator);
+    mEditText.addTextChangedListener(mTextWatcher);
+    mInputManager =
+        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:Remote");
+    MindRpc.init(this);
   }
 }

@@ -24,6 +24,7 @@ import org.codehaus.jackson.JsonNode;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.BaseSearch;
 import com.arantius.tivocommander.rpc.request.CreditsSearch;
 
@@ -138,5 +140,20 @@ public class Credits extends ExploreCommon {
       lv.setAdapter(adapter);
       lv.setOnItemClickListener(mOnItemClickListener);
     }
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    Utils.log(String.format("Credits: "
+        + "contentId:%s collectionId:%s offerId:%s recordingId:%s", mContentId,
+        mCollectionId, mOfferId, mRecordingId));
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:Credits");
+    MindRpc.init(this);
   }
 }

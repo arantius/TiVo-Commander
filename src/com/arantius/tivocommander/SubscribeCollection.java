@@ -266,4 +266,11 @@ public class SubscribeCollection extends SubscribeBase {
       mSubscription = Utils.parseJson(subscriptionJson);
     }
   }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:SubscribeCollection");
+    MindRpc.init(this);
+  }
 }

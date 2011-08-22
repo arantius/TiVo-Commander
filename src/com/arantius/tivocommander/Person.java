@@ -135,15 +135,12 @@ public class Person extends ListActivity {
       };
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    MindRpc.init(this);
-
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.list);
 
     Bundle bundle = getIntent().getExtras();
     if (bundle == null) {
+      Utils.log("Person: null bundle!");
       finish();
       return;
     }
@@ -153,6 +150,14 @@ public class Person extends ListActivity {
       mName += " " + bundle.getString("lName");
     }
     mPersonId = bundle.getString("personId");
+
+    Utils.log(String.format("Person: " + "name:%s personId:%s", mName,
+        mPersonId));
+
+    MindRpc.init(this);
+
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    setContentView(R.layout.list);
 
     MindRpc.addRequest(new PersonSearch(mPersonId), mPersonListener);
     mOutstandingRequests++;
@@ -164,8 +169,9 @@ public class Person extends ListActivity {
   }
 
   @Override
-  public void onResume() {
+  protected void onResume() {
     super.onResume();
+    Utils.log("Activity:Resume:Person");
     MindRpc.init(this);
   }
 

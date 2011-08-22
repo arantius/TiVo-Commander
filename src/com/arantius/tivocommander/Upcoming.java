@@ -131,7 +131,7 @@ public class Upcoming extends ListActivity {
     findViewById(android.R.id.empty).setVisibility(View.GONE);
 
     Bundle bundle = getIntent().getExtras();
-    String collectionId;
+    String collectionId = null;
 
     if (bundle != null) {
       collectionId = bundle.getString("collectionId");
@@ -144,11 +144,14 @@ public class Upcoming extends ListActivity {
         MindRpc.addRequest(request, mUpcomingListener);
       }
     }
+
+    Utils.log(String.format("Upcoming: collectionId:%s", collectionId));
   }
 
   @Override
   protected void onResume() {
     super.onResume();
+    Utils.log("Activity:Resume:Upcoming");
     MindRpc.init(this);
   }
 

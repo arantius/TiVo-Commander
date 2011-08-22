@@ -278,10 +278,9 @@ public class Explore extends ExploreCommon {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
-    Utils.log(String.format(
-        "Exploring contentId %s, collectionId %s, offerId %s, recordingId %s",
-        mContentId, mCollectionId, mOfferId, mRecordingId));
+    Utils.log(String.format("Explore: "
+        + "contentId:%s collectionId:%s offerId:%s recordingId:%s", mContentId,
+        mCollectionId, mOfferId, mRecordingId));
 
     // The one from ExploreCommon.
     mRequestCount = 1;
@@ -291,5 +290,12 @@ public class Explore extends ExploreCommon {
       MindRpc.addRequest(new SubscriptionSearch(mCollectionId),
           mSubscriptionListener);
     }
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:Explore");
+    MindRpc.init(this);
   }
 }

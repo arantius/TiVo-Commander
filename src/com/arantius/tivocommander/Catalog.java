@@ -76,8 +76,44 @@ public class Catalog extends ListActivity {
   private static final String[] mFeatures = { "Remote", "My Shows", "Search",
       "Settings", "About", "Problem Report" };
 
+  private final void checkCrashLog() {
+    FileInputStream fis;
+    try {
+      fis = openFileInput(CRASH_LOG);
+    } catch (FileNotFoundException e) {
+      // No log is good, ignore!
+      return;
+    }
+
+    byte[] crashLogBytes;
+    try {
+      crashLogBytes = new byte[fis.available()];
+      fis.read(crashLogBytes);
+    } catch (IOException e) {
+      Utils.logError("Reading crash log", e);
+      try {
+        fis.close();
+      } catch (IOException e1) {
+        Utils.logError("Closing crash log", e);
+      }
+      return;
+    }
+    final String crashLog = new String(crashLogBytes);
+    deleteFile(CRASH_LOG);
+
+    new AlertDialog.Builder(Catalog.this)
+        .setTitle("Whoops!")
+        .setMessage(
+            "Looks like I crashed last time.  Send crash report to developer?")
+        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int whichButton) {
+            Utils.mailLog(crashLog, Catalog.this, "Crash Report");
+          }
+        }).setNegativeButton("No", null).create().show();
+  }
+
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
     checkCrashLog();
@@ -122,47 +158,12 @@ public class Catalog extends ListActivity {
         }
       }
     });
-  }
-
-  private final void checkCrashLog() {
-    FileInputStream fis;
-    try {
-      fis = openFileInput(CRASH_LOG);
-    } catch (FileNotFoundException e) {
-      // No log is good, ignore!
-      return;
-    }
-
-    byte[] crashLogBytes;
-    try {
-      crashLogBytes = new byte[fis.available()];
-      fis.read(crashLogBytes);
-    } catch (IOException e) {
-      Utils.logError("Reading crash log", e);
-      try {
-        fis.close();
-      } catch (IOException e1) {
-        Utils.logError("Closing crash log", e);
-      }
-      return;
-    }
-    final String crashLog = new String(crashLogBytes);
-    deleteFile(CRASH_LOG);
-
-    new AlertDialog.Builder(Catalog.this)
-        .setTitle("Whoops!")
-        .setMessage(
-            "Looks like I crashed last time.  Send crash report to developer?")
-        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int whichButton) {
-            Utils.mailLog(crashLog, Catalog.this, "Crash Report");
-          }
-        }).setNegativeButton("No", null).create().show();
   };
 
   @Override
   protected void onResume() {
     super.onResume();
+    Utils.log("Activity:Resume:Catalog");
     MindRpc.init(this);
   }
 }

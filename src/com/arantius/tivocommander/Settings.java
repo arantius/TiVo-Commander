@@ -26,9 +26,15 @@ import com.arantius.tivocommander.rpc.MindRpc;
 
 public class Settings extends PreferenceActivity {
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     MindRpc.disconnect();
     addPreferencesFromResource(R.xml.preferences);
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:Settings");
   }
 }

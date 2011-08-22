@@ -35,4 +35,11 @@ public class SubscribeOffer extends SubscribeBase {
     setUpSpinner(R.id.start, mStartLabels);
     setUpSpinner(R.id.stop, mStopLabels);
   }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:SubscribeOffer");
+    MindRpc.init(this);
+  }
 }

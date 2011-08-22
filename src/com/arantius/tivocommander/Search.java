@@ -234,7 +234,7 @@ public class Search extends ListActivity {
   };
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -256,6 +256,7 @@ public class Search extends ListActivity {
   @Override
   protected void onResume() {
     super.onResume();
+    Utils.log("Activity:Resume:Search");
     MindRpc.init(this);
   }
 }
