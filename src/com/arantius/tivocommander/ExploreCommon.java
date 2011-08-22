@@ -78,7 +78,7 @@ abstract public class ExploreCommon extends Activity {
     } else {
       final String message = "Content: Bad input!";
       Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
-      Utils.logError(message, null);
+      Utils.logError(message);
       finish();
       return null;
     }
