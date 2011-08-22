@@ -1,3 +1,7 @@
+v5 Aug 22, 2011:
+* Fixes for all the crash bugs I know about.
+* Improvements for settings help text.
+
 v4 Aug 20, 2011:
 * Bug fixes, including a couple crash bugs.
 * Crash reporting and problem reporting feature.
