@@ -10,11 +10,13 @@ import java.util.TimeZone;
 
 import org.codehaus.jackson.JsonNode;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.OfferSearch;
@@ -249,6 +251,10 @@ public class SubscribeCollection extends SubscribeBase {
     } catch (IndexOutOfBoundsException e) {
       Utils.log(Utils.join(" / ", mChannelNames));
       Utils.logError("Couldn't get channel", e);
+      Toast.makeText(this, "Oops, something weird happened with the channels.",
+          Toast.LENGTH_SHORT).show();
+      startActivity(new Intent(this, ProblemReport.class));
+      finish();
     }
 
     pos = ((Spinner) findViewById(R.id.record_max)).getSelectedItemPosition();
