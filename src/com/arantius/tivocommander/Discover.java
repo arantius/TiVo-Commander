@@ -263,7 +263,6 @@ public class Discover extends ListActivity {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Discover");
-    MindRpc.init(this);
     startQuery(null);
   }
 
