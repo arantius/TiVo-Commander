@@ -222,4 +222,10 @@ public class MyShows extends ListActivity {
     Utils.log("Activity:Resume:MyShows");
     MindRpc.init(this);
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:MyShows");
+  }
 }

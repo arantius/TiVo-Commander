@@ -22,4 +22,10 @@ public class About extends Activity {
     Utils.log("Activity:Resume:About");
     MindRpc.init(this);
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:About");
+  }
 }

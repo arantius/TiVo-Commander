@@ -258,4 +258,10 @@ public class Person extends ListActivity {
     Utils.log("Activity:Resume:Person");
     MindRpc.init(this);
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Person");
+  }
 }

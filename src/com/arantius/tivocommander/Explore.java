@@ -298,4 +298,10 @@ public class Explore extends ExploreCommon {
     Utils.log("Activity:Resume:Explore");
     MindRpc.init(this);
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Explore");
+  }
 }

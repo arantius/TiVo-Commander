@@ -48,7 +48,7 @@ import android.widget.Toast;
 
 public class Utils {
   private static boolean DEBUG = false;
-  private static final int LOG_DATA_SIZE = 50;
+  private static final int LOG_DATA_SIZE = 75;
   private static final String LOG_TAG = "tivo_commander";
   private static final int MAX_LOG_LEN = 4096;
   private static final LinkedList<String> mLogData = new LinkedList<String>();

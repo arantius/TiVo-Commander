@@ -37,4 +37,10 @@ public class Settings extends PreferenceActivity {
     super.onResume();
     Utils.log("Activity:Resume:Settings");
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Settings");
+  }
 }

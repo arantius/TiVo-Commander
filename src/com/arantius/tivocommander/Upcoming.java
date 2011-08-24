@@ -169,4 +169,10 @@ public class Upcoming extends ListActivity {
     dateFormatter.setTimeZone(TimeZone.getDefault());
     return dateFormatter.format(playTime);
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Upcoming");
+  }
 }

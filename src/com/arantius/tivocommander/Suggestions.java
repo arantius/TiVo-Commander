@@ -159,4 +159,10 @@ public class Suggestions extends Activity {
     Utils.log("Activity:Resume:Suggestions");
     MindRpc.init(this);
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Suggestions");
+  }
 }

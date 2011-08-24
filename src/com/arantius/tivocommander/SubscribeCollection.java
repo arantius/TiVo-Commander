@@ -287,4 +287,10 @@ public class SubscribeCollection extends SubscribeBase {
     Utils.log("Activity:Resume:SubscribeCollection");
     MindRpc.init(this);
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:SubscribeCollection");
+  }
 }

@@ -259,4 +259,10 @@ public class Search extends ListActivity {
     Utils.log("Activity:Resume:Search");
     MindRpc.init(this);
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Search");
+  }
 }

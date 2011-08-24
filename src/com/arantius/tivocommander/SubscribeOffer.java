@@ -41,4 +41,10 @@ public class SubscribeOffer extends SubscribeBase {
     Utils.log("Activity:Resume:SubscribeOffer");
     MindRpc.init(this);
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:SubscribeOffer");
+  }
 }

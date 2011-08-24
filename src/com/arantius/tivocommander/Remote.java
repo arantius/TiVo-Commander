@@ -159,4 +159,10 @@ public class Remote extends Activity implements OnClickListener {
     Utils.log("Activity:Resume:Remote");
     MindRpc.init(this);
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Remote");
+  }
 }
