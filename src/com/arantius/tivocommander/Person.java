@@ -105,14 +105,6 @@ public class Person extends ListActivity {
 
   private JsonNode mCredits = null;
   private String mName;
-  private int mOutstandingRequests = 0;
-  private final MindRpcResponseListener mPersonCreditsListener =
-      new MindRpcResponseListener() {
-        public void onResponse(MindRpcResponse response) {
-          mCredits = response.getBody().path("collection");
-          requestFinished();
-        }
-      };
   private final OnItemClickListener mOnItemClickListener =
       new OnItemClickListener() {
         public void onItemClick(android.widget.AdapterView<?> parent,
@@ -124,7 +116,15 @@ public class Person extends ListActivity {
           startActivity(intent);
         }
       };
+  private int mOutstandingRequests = 0;
   private JsonNode mPerson = null;
+  private final MindRpcResponseListener mPersonCreditsListener =
+      new MindRpcResponseListener() {
+        public void onResponse(MindRpcResponse response) {
+          mCredits = response.getBody().path("collection");
+          requestFinished();
+        }
+      };
   private String mPersonId;
   private final MindRpcResponseListener mPersonListener =
       new MindRpcResponseListener() {
@@ -134,45 +134,14 @@ public class Person extends ListActivity {
         }
       };
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-
-    Bundle bundle = getIntent().getExtras();
-    if (bundle == null) {
-      Utils.log("Person: null bundle!");
-      finish();
-      return;
+  private String findRole(JsonNode credits) {
+    for (JsonNode credit : credits) {
+      String x = credit.path("personId").getTextValue();
+      if (mPersonId.equals(x)) {
+        return credit.path("role").getTextValue();
+      }
     }
-
-    mName = bundle.getString("fName");
-    if (bundle.getString("lName") != null) {
-      mName += " " + bundle.getString("lName");
-    }
-    mPersonId = bundle.getString("personId");
-
-    Utils.log(String.format("Person: " + "name:%s personId:%s", mName,
-        mPersonId));
-
-    MindRpc.init(this);
-
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.list);
-
-    MindRpc.addRequest(new PersonSearch(mPersonId), mPersonListener);
-    mOutstandingRequests++;
-    MindRpc.addRequest(new PersonCreditsSearch(mPersonId),
-        mPersonCreditsListener);
-    mOutstandingRequests++;
-
-    setProgressBarIndeterminateVisibility(true);
-  }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    Utils.log("Activity:Resume:Person");
-    MindRpc.init(this);
+    return null;
   }
 
   private void requestFinished() {
@@ -247,15 +216,46 @@ public class Person extends ListActivity {
     View pv = findViewById(R.id.progressBar1);
     String imgUrl = Utils.findImageUrl(mPerson);
     new DownloadImageTask(this, iv, pv).execute(imgUrl);
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    Bundle bundle = getIntent().getExtras();
+    if (bundle == null) {
+      Utils.log("Person: null bundle!");
+      finish();
+      return;
+    }
+
+    mName = bundle.getString("fName");
+    if (bundle.getString("lName") != null) {
+      mName += " " + bundle.getString("lName");
+    }
+    mPersonId = bundle.getString("personId");
+
+    Utils.log(String.format("Person: " + "name:%s personId:%s", mName,
+        mPersonId));
+
+    MindRpc.init(this);
+
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    setContentView(R.layout.list);
+
+    MindRpc.addRequest(new PersonSearch(mPersonId), mPersonListener);
+    mOutstandingRequests++;
+    MindRpc.addRequest(new PersonCreditsSearch(mPersonId),
+        mPersonCreditsListener);
+    mOutstandingRequests++;
+
+    setProgressBarIndeterminateVisibility(true);
   };
 
-  private String findRole(JsonNode credits) {
-    for (JsonNode credit : credits) {
-      String x = credit.path("personId").getTextValue();
-      if (mPersonId.equals(x)) {
-        return credit.path("role").getTextValue();
-      }
-    }
-    return null;
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:Person");
+    MindRpc.init(this);
   }
 }
