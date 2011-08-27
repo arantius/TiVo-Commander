@@ -113,16 +113,6 @@ public class MyShows extends ListActivity {
 
   private final static int EXPLORE_INTENT_ID = 1;
   private final static int MAX_SHOW_REQUEST_BATCH = 5;
-  /** For each RPC, a map of where each data point fits into the list. */
-  private static int mRequestCount = 0;
-  private static final HashMap<Integer, ArrayList<Integer>> mRequestSlotMap =
-      new HashMap<Integer, ArrayList<Integer>>();
-  private static final ArrayList<JsonNode> mShowData =
-      new ArrayList<JsonNode>();
-  private static JsonNode mShowIds;
-  private static final ArrayList<ShowStatus> mShowStatus =
-      new ArrayList<ShowStatus>();
-
   protected final static int getIconForItem(JsonNode item) {
     String folderTransportType =
         item.path("folderTransportType").path(0).getTextValue();
@@ -186,7 +176,6 @@ public class MyShows extends ListActivity {
         }
       };
   private String mFolderId;
-
   private final MindRpcResponseListener mIdSequenceCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
@@ -206,7 +195,6 @@ public class MyShows extends ListActivity {
         }
       };
   private ShowsAdapter mListAdapter;
-
   private final OnItemClickListener mOnClickListener =
       new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -238,6 +226,15 @@ public class MyShows extends ListActivity {
           }
         }
       };
+  /** For each RPC, a map of where each data point fits into the list. */
+  private int mRequestCount = 0;
+  private final HashMap<Integer, ArrayList<Integer>> mRequestSlotMap =
+      new HashMap<Integer, ArrayList<Integer>>();
+  private final ArrayList<JsonNode> mShowData =
+      new ArrayList<JsonNode>();
+  private JsonNode mShowIds;
+  private final ArrayList<ShowStatus> mShowStatus =
+      new ArrayList<ShowStatus>();
 
   private void startRequest() {
     MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId),
