@@ -54,6 +54,13 @@ public class SubscribeCollection extends SubscribeBase {
                 channel.path("channelNumber").getTextValue() + " "
                     + channel.path("callSign").getTextValue();
           }
+          if (i == 0) {
+            Toast.makeText(getApplicationContext(),
+                "Sorry: Couldn't find any channels to record that on.",
+                Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+          }
 
           setContentView(R.layout.subscribe_collection);
           setUpSpinner(R.id.channel, mChannelNames);
