@@ -19,6 +19,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc.request;
 
+import java.util.ArrayList;
+
 import org.codehaus.jackson.JsonNode;
 
 import com.arantius.tivocommander.Utils;
@@ -41,6 +43,14 @@ public class RecordingFolderItemSearch extends MindRpcRequest {
 
   /** Given a set of IDs, produces details about the shows. */
   public RecordingFolderItemSearch(JsonNode showIds) {
+    super("recordingFolderItemSearch");
+
+    addCommonDetails();
+    mDataMap.put("objectIdAndType", showIds);
+  }
+
+  /** Given a set of IDs, produces details about the shows. */
+  public RecordingFolderItemSearch(ArrayList<JsonNode> showIds) {
     super("recordingFolderItemSearch");
 
     addCommonDetails();

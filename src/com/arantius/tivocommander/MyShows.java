@@ -21,19 +21,23 @@ package com.arantius.tivocommander;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.SimpleAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.RecordingFolderItemSearch;
@@ -41,91 +45,85 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class MyShows extends ListActivity {
-  private final static int EXPLORE_INTENT_ID = 1;
+  private class ShowsAdapter extends ArrayAdapter<JsonNode> {
+    public ShowsAdapter(Context context) {
+      super(context, 0, mShowData);
+    }
 
-  private final MindRpcResponseListener mDetailCallback =
-      new MindRpcResponseListener() {
-        public void onResponse(MindRpcResponse response) {
-          mItems = response.getBody().path("recordingFolderItem");
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+      View v = convertView;
 
-          for (int i = 0; i < mItems.size(); i++) {
-            final JsonNode item = mItems.path(i);
-            HashMap<String, Object> listItem = new HashMap<String, Object>();
-
-            String title = item.path("title").getTextValue();
-            if ('"' == title.charAt(0)
-                && '"' == title.charAt(title.length() - 1)) {
-              title = title.substring(1, title.length() - 1);
+      if (mShowStatus.get(position) == ShowStatus.MISSING) {
+        // If the show for this position is missing, fetch it and more, if they
+        // exist, up to a limit of MAX_SHOW_REQUEST_BATCH.
+        ArrayList<JsonNode> showIds = new ArrayList<JsonNode>();
+        ArrayList<Integer> slots = new ArrayList<Integer>();
+        int i = position;
+        while (i < mShowStatus.size()) {
+          if (mShowStatus.get(i) == ShowStatus.MISSING) {
+            showIds.add(mShowIds.get(i));
+            slots.add(i);
+            mShowStatus.set(i, ShowStatus.LOADING);
+            if (showIds.size() >= MAX_SHOW_REQUEST_BATCH) {
+              break;
             }
-            listItem.put("folder_num", "");
-            listItem.put("icon", getIconForItem(item));
-            listItem.put("title", title);
-            Integer folderItemCount =
-                item.path("folderItemCount").getIntValue();
-            if (folderItemCount > 0) {
-              listItem.put("folder_num", folderItemCount.toString());
-            }
-            mListItems.add(listItem);
           }
-
-          mListAdapter.notifyDataSetChanged();
-          setProgressBarIndeterminateVisibility(false);
+          i++;
         }
-      };
-  private String mFolderId;
-  private final MindRpcResponseListener mIdSequenceCallback =
-      new MindRpcResponseListener() {
-        public void onResponse(MindRpcResponse response) {
-          JsonNode ids = response.getBody().findValue("objectIdAndType");
-          MindRpc.addRequest(new RecordingFolderItemSearch(ids),
-              mDetailCallback);
-          // TODO: Incremental detail loading.
+
+        RecordingFolderItemSearch req = new RecordingFolderItemSearch(showIds);
+        mRequestSlotMap.put(req.getRpcId(), slots);
+        MindRpc.addRequest(req, mDetailCallback);
+        setProgressIndicator(1);
+      }
+
+      LayoutInflater vi =
+          (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+      if (mShowStatus.get(position) == ShowStatus.LOADED) {
+        // If this item is available, display it.
+        v = vi.inflate(R.layout.item_my_shows, null);
+        final JsonNode item = mShowData.get(position);
+
+        String title = item.path("title").getTextValue();
+        if ('"' == title.charAt(0) && '"' == title.charAt(title.length() - 1)) {
+          title = title.substring(1, title.length() - 1);
         }
-      };
-  private JsonNode mItems;
-  private SimpleAdapter mListAdapter;
-  private final List<HashMap<String, Object>> mListItems =
-      new ArrayList<HashMap<String, Object>>();
-  private final OnItemClickListener mOnClickListener =
-      new OnItemClickListener() {
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-            long id) {
-          JsonNode item = mItems.path(position);
-          JsonNode countNode = item.path("folderItemCount");
-          if (countNode != null && countNode.getValueAsInt() > 0) {
-            // Navigate to 'my shows' for this folder.
-            Intent intent = new Intent(MyShows.this, MyShows.class);
-            intent.putExtra("folderId", item.path("recordingFolderItemId")
-                .getValueAsText());
-            intent.putExtra("folderName", item.path("title").getValueAsText());
-            startActivity(intent);
-          } else {
-            JsonNode recording = item.path("recordingForChildRecordingId");
+        ((TextView) v.findViewById(R.id.show_title)).setText(title);
 
-            Intent intent = new Intent(MyShows.this, ExploreTabs.class);
-            intent.putExtra("contentId", recording.path("contentId")
-                .getTextValue());
-            intent.putExtra("collectionId", recording.path("collectionId")
-                .getTextValue());
-            intent.putExtra("recordingId", item.path("childRecordingId")
-                .getTextValue());
-            startActivityForResult(intent, EXPLORE_INTENT_ID);
-          }
-        }
-      };
+        Integer folderItemCount = item.path("folderItemCount").getIntValue();
+        ((TextView) v.findViewById(R.id.folder_num))
+            .setText(folderItemCount > 0 ? folderItemCount.toString() : "");
 
-  private void startRequest() {
-    setProgressBarIndeterminateVisibility(true);
+        int iconId = MyShows.getIconForItem(item);
+        ((ImageView) v.findViewById(R.id.show_icon))
+            .setImageDrawable(getResources().getDrawable(iconId));
+      } else {
+        // Otherwise give a loading indicator.
+        v = vi.inflate(R.layout.progress, null);
+      }
 
-    // Clear any possible old data.
-    mListItems.clear();
-    mListAdapter.notifyDataSetChanged();
-    // Get new data.
-    MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId),
-        mIdSequenceCallback);
+      return v;
+    }
   }
 
-  protected final int getIconForItem(JsonNode item) {
+  private enum ShowStatus {
+    LOADED, LOADING, MISSING;
+  }
+
+  private final static int EXPLORE_INTENT_ID = 1;
+  private final static int MAX_SHOW_REQUEST_BATCH = 5;
+  /** For each RPC, a map of where each data point fits into the list. */
+  private static int mRequestCount = 0;
+  private static final HashMap<Integer, ArrayList<Integer>> mRequestSlotMap =
+      new HashMap<Integer, ArrayList<Integer>>();
+  private static final ArrayList<JsonNode> mShowData =
+      new ArrayList<JsonNode>();
+  private static JsonNode mShowIds;
+  private static final ArrayList<ShowStatus> mShowStatus =
+      new ArrayList<ShowStatus>();
+
+  protected final static int getIconForItem(JsonNode item) {
     String folderTransportType =
         item.path("folderTransportType").path(0).getTextValue();
     if ("mrv".equals(folderTransportType)) {
@@ -169,6 +167,84 @@ public class MyShows extends ListActivity {
     return R.drawable.blank;
   }
 
+  private final MindRpcResponseListener mDetailCallback =
+      new MindRpcResponseListener() {
+        public void onResponse(MindRpcResponse response) {
+          setProgressIndicator(-1);
+
+          JsonNode items = response.getBody().path("recordingFolderItem");
+          ArrayList<Integer> slotMap = mRequestSlotMap.get(response.getRpcId());
+
+          for (int i = 0; i < items.size(); i++) {
+            int pos = slotMap.get(i);
+            mShowData.set(pos, items.get(i));
+            mShowStatus.set(pos, ShowStatus.LOADED);
+          }
+
+          mRequestSlotMap.remove(response.getRpcId());
+          mListAdapter.notifyDataSetChanged();
+        }
+      };
+  private String mFolderId;
+
+  private final MindRpcResponseListener mIdSequenceCallback =
+      new MindRpcResponseListener() {
+        public void onResponse(MindRpcResponse response) {
+          setProgressIndicator(-1);
+          mShowIds = response.getBody().findValue("objectIdAndType");
+
+          // Start from nothing ...
+          mShowData.clear();
+          mShowStatus.clear();
+          for (int i = 0; i < mShowIds.size(); i++) {
+            mShowData.add(null);
+            mShowStatus.add(ShowStatus.MISSING);
+          }
+
+          // And get them displayed.
+          mListAdapter.notifyDataSetChanged();
+        }
+      };
+  private ShowsAdapter mListAdapter;
+
+  private final OnItemClickListener mOnClickListener =
+      new OnItemClickListener() {
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id) {
+          JsonNode item = mShowData.get(position);
+          if (item == null) {
+            return;
+          }
+
+          JsonNode countNode = item.path("folderItemCount");
+          if (countNode != null && countNode.getValueAsInt() > 0) {
+            // Navigate to 'my shows' for this folder.
+            Intent intent = new Intent(MyShows.this, MyShows.class);
+            intent.putExtra("folderId", item.path("recordingFolderItemId")
+                .getValueAsText());
+            intent.putExtra("folderName", item.path("title").getValueAsText());
+            startActivity(intent);
+          } else {
+            JsonNode recording = item.path("recordingForChildRecordingId");
+
+            Intent intent = new Intent(MyShows.this, ExploreTabs.class);
+            intent.putExtra("contentId", recording.path("contentId")
+                .getTextValue());
+            intent.putExtra("collectionId", recording.path("collectionId")
+                .getTextValue());
+            intent.putExtra("recordingId", item.path("childRecordingId")
+                .getTextValue());
+            startActivityForResult(intent, EXPLORE_INTENT_ID);
+          }
+        }
+      };
+
+  private void startRequest() {
+    MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId),
+        mIdSequenceCallback);
+    setProgressIndicator(1);
+  }
+
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (resultCode != Activity.RESULT_OK) {
@@ -177,7 +253,6 @@ public class MyShows extends ListActivity {
 
     if (EXPLORE_INTENT_ID == requestCode) {
       if (data.getBooleanExtra("refresh", false)) {
-        Utils.log("do refresh");
         startRequest();
       }
     }
@@ -206,14 +281,17 @@ public class MyShows extends ListActivity {
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.list);
 
-    mListAdapter =
-        new SimpleAdapter(MyShows.this, mListItems, R.layout.item_my_shows,
-            new String[] { "folder_num", "icon", "title" }, new int[] {
-                R.id.folder_num, R.id.show_icon, R.id.show_title });
+    mListAdapter = new ShowsAdapter(this);
     getListView().setAdapter(mListAdapter);
     getListView().setOnItemClickListener(mOnClickListener);
 
     startRequest();
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:MyShows");
   }
 
   @Override
@@ -223,9 +301,8 @@ public class MyShows extends ListActivity {
     MindRpc.init(this);
   }
 
-  @Override
-  protected void onPause() {
-    super.onPause();
-    Utils.log("Activity:Pause:MyShows");
+  protected void setProgressIndicator(int change) {
+    mRequestCount += change;
+    setProgressBarIndeterminateVisibility(mRequestCount > 0);
   }
 }

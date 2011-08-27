@@ -1,3 +1,7 @@
+v7 ???:
+* Load the "My Shows" list incrementally, so even long lists of shows appear
+  quickly.  More are loaded only when they scroll into view.
+
 v6 Aug 23, 2011:
 * Fix a stupid mistake I made in v5.
 * Update the JmDNS library to a snapshot of 3.4.1.
