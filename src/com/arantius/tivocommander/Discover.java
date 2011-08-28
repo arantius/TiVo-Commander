@@ -212,7 +212,13 @@ public class Discover extends ListActivity {
         (android.net.wifi.WifiManager) getSystemService(android.content.Context.WIFI_SERVICE);
     mMulticastLock = wifi.createMulticastLock("HeeereDnssdLock");
     mMulticastLock.setReferenceCounted(false);
-    mMulticastLock.acquire();
+    try {
+      mMulticastLock.acquire();
+    } catch (UnsupportedOperationException e) {
+      MindRpc.settingsError(this, R.string.error_wifi_lock);
+      finish();
+      return;
+    }
 
     setProgressBarIndeterminateVisibility(true);
 

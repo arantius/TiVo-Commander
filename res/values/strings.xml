@@ -33,4 +33,5 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <string name="channel">Channel</string>
   <string name="record_max">Keep at most</string>
   <string name="record_which">Record</string>
+  <string name="error_wifi_lock">Could not do discovery; falling back to manual settings.</string>
 </resources>

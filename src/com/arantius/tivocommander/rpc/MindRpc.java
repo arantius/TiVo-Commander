@@ -176,6 +176,14 @@ public enum MindRpc {
     });
   }
 
+  public static void settingsError(Activity activity, int messageId) {
+    Utils.log("Settings: " + activity.getResources().getString(messageId));
+    Toast.makeText(activity.getBaseContext(), messageId, Toast.LENGTH_SHORT)
+        .show();
+    Intent i = new Intent(activity.getBaseContext(), Discover.class);
+    activity.startActivity(i);
+  }
+
   private static boolean checkConnected() {
     if (mInputThread == null
         || mInputThread.getState() == Thread.State.TERMINATED
@@ -263,14 +271,6 @@ public enum MindRpc {
     }
 
     return true;
-  }
-
-  private static void settingsError(Activity activity, int messageId) {
-    Utils.log("Settings: " + activity.getResources().getString(messageId));
-    Toast.makeText(activity.getBaseContext(), messageId, Toast.LENGTH_SHORT)
-        .show();
-    Intent i = new Intent(activity.getBaseContext(), Discover.class);
-    activity.startActivity(i);
   }
 
   private static void stopThreads() {
