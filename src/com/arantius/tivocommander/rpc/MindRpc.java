@@ -176,6 +176,20 @@ public enum MindRpc {
     });
   }
 
+  public static void saveBodyId(String bodyId) {
+    if (bodyId == null || bodyId == "" || bodyId == mBodyId) {
+      return;
+    }
+
+    mBodyId = bodyId;
+    SharedPreferences prefs =
+        PreferenceManager.getDefaultSharedPreferences(mOriginActivity
+            .getBaseContext());
+    Editor edit = prefs.edit();
+    edit.putString("tivo_tsn", bodyId);
+    edit.commit();
+  }
+
   public static void settingsError(Activity activity, int messageId) {
     Utils.log("Settings: " + activity.getResources().getString(messageId));
     Toast.makeText(activity.getBaseContext(), messageId, Toast.LENGTH_SHORT)
@@ -299,19 +313,5 @@ public enum MindRpc {
         mResponseListenerMap.remove(rpcId);
       }
     });
-  }
-
-  public static void saveBodyId(String bodyId) {
-    if (bodyId == null || bodyId == "" || bodyId == mBodyId) {
-      return;
-    }
-
-    mBodyId = bodyId;
-    SharedPreferences prefs =
-        PreferenceManager.getDefaultSharedPreferences(mOriginActivity
-            .getBaseContext());
-    Editor edit = prefs.edit();
-    edit.putString("tivo_tsn", bodyId);
-    edit.commit();
   }
 }
