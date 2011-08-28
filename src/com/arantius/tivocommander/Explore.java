@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
+import com.arantius.tivocommander.rpc.request.RecordingSearch;
 import com.arantius.tivocommander.rpc.request.RecordingUpdate;
 import com.arantius.tivocommander.rpc.request.SubscriptionSearch;
 import com.arantius.tivocommander.rpc.request.UiNavigate;
@@ -50,7 +51,8 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 public class Explore extends ExploreCommon {
   enum RecordActions {
     RECORD("Record this episode"), SP_ADD("Add season pass"), SP_CANCEL(
-        "Cancel season pass"), SP_MODIFY("Modify season pass");
+        "Cancel season pass"), SP_MODIFY("Modify season pass"), RECORD_STOP(
+        "Stop recording in progress");
 
     private final String mText;
 
@@ -68,6 +70,16 @@ public class Explore extends ExploreCommon {
   private int mRequestCount = 0;
   private JsonNode mSubscription = null;
   private String mSubscriptionId = null;
+  private final MindRpcResponseListener mRecordingListener =
+      new MindRpcResponseListener() {
+        public void onResponse(MindRpcResponse response) {
+          mRecordingState =
+              response.getBody().path("recording").path(0).path("state")
+                  .getTextValue();
+          finishRequest();
+        }
+      };
+  private String mRecordingState = null;
   private final MindRpcResponseListener mSubscriptionListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
@@ -115,6 +127,15 @@ public class Explore extends ExploreCommon {
               intent.putExtra("contentId", mContentId);
               intent.putExtra("offerId", mOfferId);
               startActivity(intent);
+            } else if (RecordActions.RECORD_STOP.toString().equals(label)) {
+              getParent().setProgressBarIndeterminateVisibility(true);
+              MindRpc.addRequest(new RecordingUpdate(mRecordingId, "complete"),
+                  new MindRpcResponseListener() {
+                    public void onResponse(MindRpcResponse response) {
+                      getParent().setProgressBarIndeterminateVisibility(false);
+                      mRecordingId = null;
+                    }
+                  });
             } else if (RecordActions.SP_ADD.toString().equals(label)) {
               Intent intent =
                   new Intent(getBaseContext(), SubscribeCollection.class);
@@ -144,8 +165,6 @@ public class Explore extends ExploreCommon {
     AlertDialog dialog = dialogBuilder.create();
     dialog.show();
   }
-
-  // TODO: doStopRecording()
 
   public void doUpcoming(View v) {
     Intent intent = new Intent(getBaseContext(), Upcoming.class);
@@ -181,8 +200,10 @@ public class Explore extends ExploreCommon {
     }
 
     // Fill mChoices based on the data we now have.
-    // TODO: Stop active recording.
     // TODO: Cancel future recording.
+    if ("inProgress".equals(mRecordingState)) {
+      mChoices.add(RecordActions.RECORD_STOP.toString());
+    }
     if (mOfferId != null) {
       mChoices.add(RecordActions.RECORD.toString());
     }
@@ -289,6 +310,11 @@ public class Explore extends ExploreCommon {
       mRequestCount++;
       MindRpc.addRequest(new SubscriptionSearch(mCollectionId),
           mSubscriptionListener);
+    }
+
+    if (mRecordingId != null) {
+      mRequestCount++;
+      MindRpc.addRequest(new RecordingSearch(mRecordingId), mRecordingListener);
     }
   }
 

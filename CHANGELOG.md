@@ -6,6 +6,7 @@ v7 ???:
 * Discover, save, and re-use the "bodyId" value that will soon be required.
 * Correctly hide Record button when it has no choices.
 * Fix Collection view to show description and credits.
+* Stop a recording in progress.
 
 v6 Aug 23, 2011:
 
