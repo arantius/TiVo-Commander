@@ -4,6 +4,7 @@ v7 ???:
 * Do not try to schedule a Season Pass with no channel.
 * Discover, save, and re-use the "bodyId" value that will soon be required.
 * Correctly hide Record button when it has no choices.
+* Fix Collection view to show description and credits.
 
 v6 Aug 23, 2011:
 * Fix a stupid mistake I made in v5.
