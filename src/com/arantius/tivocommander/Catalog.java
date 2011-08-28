@@ -24,6 +24,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -34,9 +36,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
@@ -71,10 +73,6 @@ public class Catalog extends ListActivity {
   }
 
   private final static String CRASH_LOG = "crash-log.txt";
-  // TODO: Manage
-  // TODO: Now Playing
-  private static final String[] mFeatures = { "Remote", "My Shows", "Search",
-      "Settings", "About", "Problem Report" };
 
   private final void checkCrashLog() {
     FileInputStream fis;
@@ -112,6 +110,12 @@ public class Catalog extends ListActivity {
         }).setNegativeButton("No", null).create().show();
   }
 
+  private HashMap<String, Object> listItem(String title, Integer icon) {
+    HashMap<String, Object> listItem = new HashMap<String, Object>();
+    listItem.put("title", title);
+    listItem.put("icon", icon);
+    return listItem;
+  };
   private final OnItemClickListener mOnItemClickListener =
       new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -154,9 +158,20 @@ public class Catalog extends ListActivity {
     checkCrashLog();
     Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler());
 
+    ArrayList<HashMap<String, Object>> listItems =
+        new ArrayList<HashMap<String, Object>>();
+    // TODO: Manage
+    // TODO: Now Playing
+    listItems.add(listItem("Remote", R.drawable.icon_remote));
+    listItems.add(listItem("My Shows", R.drawable.icon_tv32));
+    listItems.add(listItem("Search", R.drawable.icon_search));
+    listItems.add(listItem("Settings", R.drawable.icon_cog));
+    listItems.add(listItem("About", R.drawable.icon_info));
+    listItems.add(listItem("Problem Report", R.drawable.icon_bug));
+
     final ListAdapter adapter =
-        new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-            mFeatures);
+        new SimpleAdapter(this, listItems, R.layout.item_catalog, new String[] {
+            "icon", "title" }, new int[] { R.id.icon, R.id.title });
     setListAdapter(adapter);
 
     final ListView lv = getListView();
