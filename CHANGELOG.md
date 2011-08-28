@@ -1,12 +1,18 @@
 v7 ???:
 
+Enhancements:
+
 * Load the "My Shows" list incrementally, so even long lists of shows appear
   quickly.  More are loaded only when they scroll into view.
-* Do not try to schedule a Season Pass with no channel.
+* Show recorded date in My Shows.
 * Discover, save, and re-use the "bodyId" value that will soon be required.
+* Stop a recording in progress.
+
+Bug fixes:
+
+* Do not try to schedule a Season Pass with no channel.
 * Correctly hide Record button when it has no choices.
 * Fix Collection view to show description and credits.
-* Stop a recording in progress.
 * Fix rare crash ("Exceeded maximum number of wifi locks") in device discovery.
 
 v6 Aug 23, 2011:

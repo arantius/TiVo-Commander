@@ -19,7 +19,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.codehaus.jackson.JsonNode;
@@ -95,6 +97,17 @@ public class MyShows extends ListActivity {
         ((TextView) v.findViewById(R.id.folder_num))
             .setText(folderItemCount > 0 ? folderItemCount.toString() : "");
 
+        if ("1970"
+            .equals(item.path("startTime").getTextValue().substring(0, 4))) {
+          v.findViewById(R.id.show_time).setVisibility(View.GONE);
+        } else {
+          Date startTime =
+              Utils.parseDateTimeStr(item.path("startTime").getTextValue());
+          SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE M/d");
+          ((TextView) v.findViewById(R.id.show_time)).setText(dateFormatter
+              .format(startTime));
+        }
+
         int iconId = MyShows.getIconForItem(item);
         ((ImageView) v.findViewById(R.id.show_icon))
             .setImageDrawable(getResources().getDrawable(iconId));
@@ -113,6 +126,7 @@ public class MyShows extends ListActivity {
 
   private final static int EXPLORE_INTENT_ID = 1;
   private final static int MAX_SHOW_REQUEST_BATCH = 5;
+
   protected final static int getIconForItem(JsonNode item) {
     String folderTransportType =
         item.path("folderTransportType").path(0).getTextValue();
@@ -232,11 +246,9 @@ public class MyShows extends ListActivity {
   private int mRequestCount = 0;
   private final HashMap<Integer, ArrayList<Integer>> mRequestSlotMap =
       new HashMap<Integer, ArrayList<Integer>>();
-  private final ArrayList<JsonNode> mShowData =
-      new ArrayList<JsonNode>();
+  private final ArrayList<JsonNode> mShowData = new ArrayList<JsonNode>();
   private JsonNode mShowIds;
-  private final ArrayList<ShowStatus> mShowStatus =
-      new ArrayList<ShowStatus>();
+  private final ArrayList<ShowStatus> mShowStatus = new ArrayList<ShowStatus>();
 
   private void startRequest() {
     MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId),
