@@ -73,6 +73,40 @@ public class Catalog extends ListActivity {
   }
 
   private final static String CRASH_LOG = "crash-log.txt";
+  private final OnItemClickListener mOnItemClickListener =
+      new OnItemClickListener() {
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id) {
+          Intent intent = null;
+          switch (position) {
+          case 0:
+            intent = new Intent(getBaseContext(), Remote.class);
+            break;
+          case 1:
+            intent = new Intent(getBaseContext(), MyShows.class);
+            break;
+          case 2:
+            intent = new Intent(getBaseContext(), Search.class);
+            break;
+          case 3:
+            intent = new Intent(getBaseContext(), Discover.class);
+            break;
+          case 4:
+            intent = new Intent(getBaseContext(), About.class);
+            break;
+          case 5:
+            intent = new Intent(getBaseContext(), ProblemReport.class);
+            break;
+          default:
+            Toast.makeText(getApplicationContext(), "Not Implemented",
+                Toast.LENGTH_SHORT).show();
+          }
+
+          if (intent != null) {
+            startActivity(intent);
+          }
+        }
+      };
 
   private final void checkCrashLog() {
     FileInputStream fis;
@@ -116,40 +150,6 @@ public class Catalog extends ListActivity {
     listItem.put("icon", icon);
     return listItem;
   };
-  private final OnItemClickListener mOnItemClickListener =
-      new OnItemClickListener() {
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-            long id) {
-          Intent intent = null;
-          switch (position) {
-          case 0:
-            intent = new Intent(getBaseContext(), Remote.class);
-            break;
-          case 1:
-            intent = new Intent(getBaseContext(), MyShows.class);
-            break;
-          case 2:
-            intent = new Intent(getBaseContext(), Search.class);
-            break;
-          case 3:
-            intent = new Intent(getBaseContext(), Discover.class);
-            break;
-          case 4:
-            intent = new Intent(getBaseContext(), About.class);
-            break;
-          case 5:
-            intent = new Intent(getBaseContext(), ProblemReport.class);
-            break;
-          default:
-            Toast.makeText(getApplicationContext(), "Not Implemented",
-                Toast.LENGTH_SHORT).show();
-          }
-
-          if (intent != null) {
-            startActivity(intent);
-          }
-        }
-      };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -176,18 +176,18 @@ public class Catalog extends ListActivity {
 
     final ListView lv = getListView();
     lv.setOnItemClickListener(mOnItemClickListener);
-  };
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    Utils.log("Activity:Resume:Catalog");
-    MindRpc.init(this);
   }
 
   @Override
   protected void onPause() {
     super.onPause();
     Utils.log("Activity:Pause:Catalog");
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:Catalog");
+    MindRpc.init(this);
   }
 }
