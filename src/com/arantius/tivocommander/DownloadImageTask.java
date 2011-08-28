@@ -70,7 +70,7 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
           @Override
           public InputStream getBody() throws IOException {
-            // TODO: Touch file for LRU cache behavior?
+            file.setLastModified(System.currentTimeMillis());
             return new FileInputStream(file);
           }
         };
