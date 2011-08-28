@@ -18,19 +18,20 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-  <EditTextPreference android:summary="IP address or host name"
-    android:key="tivo_addr" android:title="TiVo Address"
-  ></EditTextPreference>
-  <EditTextPreference android:summary="Media Access Key"
-    android:key="tivo_mak" android:title="MAK"
-    android:dialogMessage="@string/pref_mak_instructions"
-  ></EditTextPreference>
+  <EditTextPreference android:title="TiVo Address"
+    android:summary="IP address or host name" android:key="tivo_addr" />
+  <EditTextPreference android:title="MAK"
+    android:summary="Media Access Key" android:key="tivo_mak"
+    android:dialogMessage="@string/pref_mak_instructions" />
   <PreferenceCategory android:title="Advanced"
     android:summary="You should not change these."
   >
-    <EditTextPreference android:summary="This should always be 1413"
-      android:key="tivo_port" android:title="TiVo Port"
-      android:defaultValue="1413"
-    ></EditTextPreference>
+    <EditTextPreference android:title="TiVo Port"
+      android:summary="This should always be 1413" android:key="tivo_port"
+      android:defaultValue="1413" />
+    <EditTextPreference android:title="TiVo service number"
+      android:summary="This should be discovered automatically"
+      android:key="tivo_tsn" android:defaultValue="-"
+      android:dialogMessage="@string/pref_tsn_instructions" />
   </PreferenceCategory>
 </PreferenceScreen>

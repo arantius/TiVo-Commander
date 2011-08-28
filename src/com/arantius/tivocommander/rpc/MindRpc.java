@@ -44,6 +44,7 @@ import javax.net.ssl.X509TrustManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -193,6 +194,7 @@ public enum MindRpc {
     SharedPreferences prefs =
         PreferenceManager
             .getDefaultSharedPreferences(activity.getBaseContext());
+
     mTivoAddr = prefs.getString("tivo_addr", "");
     try {
       mTivoPort = Integer.parseInt(prefs.getString("tivo_port", ""));
@@ -214,6 +216,9 @@ public enum MindRpc {
       settingsError(activity, error);
       return false;
     }
+
+    // No errors found, so load the bodyId value.
+    mBodyId = prefs.getString("tivo_tsn", "-");
 
     return true;
   }
@@ -294,5 +299,19 @@ public enum MindRpc {
         mResponseListenerMap.remove(rpcId);
       }
     });
+  }
+
+  public static void saveBodyId(String bodyId) {
+    if (bodyId == null || bodyId == "" || bodyId == mBodyId) {
+      return;
+    }
+
+    mBodyId = bodyId;
+    SharedPreferences prefs =
+        PreferenceManager.getDefaultSharedPreferences(mOriginActivity
+            .getBaseContext());
+    Editor edit = prefs.edit();
+    edit.putString("tivo_tsn", bodyId);
+    edit.commit();
   }
 }

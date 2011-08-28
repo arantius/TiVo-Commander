@@ -165,6 +165,8 @@ public class MyShows extends ListActivity {
           JsonNode items = response.getBody().path("recordingFolderItem");
           ArrayList<Integer> slotMap = mRequestSlotMap.get(response.getRpcId());
 
+          MindRpc.saveBodyId(items.path(0).path("bodyId").getTextValue());
+
           for (int i = 0; i < items.size(); i++) {
             int pos = slotMap.get(i);
             mShowData.set(pos, items.get(i));
