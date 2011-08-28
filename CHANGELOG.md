@@ -3,6 +3,7 @@ v7 ???:
   quickly.  More are loaded only when they scroll into view.
 * Do not try to schedule a Season Pass with no channel.
 * Discover, save, and re-use the "bodyId" value that will soon be required.
+* Correctly hide Record button when it has no choices.
 
 v6 Aug 23, 2011:
 * Fix a stupid mistake I made in v5.

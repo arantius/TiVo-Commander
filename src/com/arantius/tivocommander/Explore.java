@@ -64,6 +64,7 @@ public class Explore extends ExploreCommon {
     }
   }
 
+  private final ArrayList<String> mChoices = new ArrayList<String>();
   private int mRequestCount = 0;
   private JsonNode mSubscription = null;
   private String mSubscriptionId = null;
@@ -99,32 +100,15 @@ public class Explore extends ExploreCommon {
   }
 
   public void doRecord(View v) {
-    // TODO: Set choices in onCreate; use them to decide whether to show Record.
-    final ArrayList<String> choices = new ArrayList<String>();
-
-    if (mOfferId != null) {
-      choices.add(RecordActions.RECORD.toString());
-    }
-
-    if (mSubscriptionId != null) {
-      choices.add(RecordActions.SP_MODIFY.toString());
-      choices.add(RecordActions.SP_CANCEL.toString());
-    } else if (mCollectionId != null) {
-      choices.add(RecordActions.SP_ADD.toString());
-    }
-
-    // TODO: Stop active recording.
-    // TODO: Cancel future recording.
-
     ArrayAdapter<String> choicesAdapter =
         new ArrayAdapter<String>(this, android.R.layout.select_dialog_item,
-            choices);
+            mChoices);
     Builder dialogBuilder = new AlertDialog.Builder(this);
     dialogBuilder.setTitle("Operation?");
     dialogBuilder.setAdapter(choicesAdapter,
         new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int position) {
-            String label = choices.get(position);
+            String label = mChoices.get(position);
             if (RecordActions.RECORD.toString().equals(label)) {
               Intent intent =
                   new Intent(getBaseContext(), SubscribeOffer.class);
@@ -196,12 +180,28 @@ public class Explore extends ExploreCommon {
       }
     }
 
+    // Fill mChoices based on the data we now have.
+    // TODO: Stop active recording.
+    // TODO: Cancel future recording.
+    if (mOfferId != null) {
+      mChoices.add(RecordActions.RECORD.toString());
+    }
+    if (mSubscriptionId != null) {
+      mChoices.add(RecordActions.SP_MODIFY.toString());
+      mChoices.add(RecordActions.SP_CANCEL.toString());
+    } else if (mCollectionId != null) {
+      mChoices.add(RecordActions.SP_ADD.toString());
+    }
+
     setContentView(R.layout.explore);
 
     // Show only appropriate buttons.
     hideViewIfNull(R.id.explore_btn_watch, mRecordingId);
     hideViewIfNull(R.id.explore_btn_delete, mRecordingId);
     hideViewIfNull(R.id.explore_btn_upcoming, mCollectionId);
+    if (mChoices.size() == 0) {
+      findViewById(R.id.explore_btn_record).setVisibility(View.GONE);
+    }
 
     // Display titles.
     String title = mContent.path("title").getTextValue();
@@ -293,15 +293,15 @@ public class Explore extends ExploreCommon {
   }
 
   @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Explore");
+  }
+
+  @Override
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Explore");
     MindRpc.init(this);
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    Utils.log("Activity:Pause:Explore");
   }
 }
