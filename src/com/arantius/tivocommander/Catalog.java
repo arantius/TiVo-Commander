@@ -112,6 +112,41 @@ public class Catalog extends ListActivity {
         }).setNegativeButton("No", null).create().show();
   }
 
+  private final OnItemClickListener mOnItemClickListener =
+      new OnItemClickListener() {
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id) {
+          Intent intent = null;
+          switch (position) {
+          case 0:
+            intent = new Intent(getBaseContext(), Remote.class);
+            break;
+          case 1:
+            intent = new Intent(getBaseContext(), MyShows.class);
+            break;
+          case 2:
+            intent = new Intent(getBaseContext(), Search.class);
+            break;
+          case 3:
+            intent = new Intent(getBaseContext(), Discover.class);
+            break;
+          case 4:
+            intent = new Intent(getBaseContext(), About.class);
+            break;
+          case 5:
+            intent = new Intent(getBaseContext(), ProblemReport.class);
+            break;
+          default:
+            Toast.makeText(getApplicationContext(), "Not Implemented",
+                Toast.LENGTH_SHORT).show();
+          }
+
+          if (intent != null) {
+            startActivity(intent);
+          }
+        }
+      };
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -125,39 +160,7 @@ public class Catalog extends ListActivity {
     setListAdapter(adapter);
 
     final ListView lv = getListView();
-    lv.setOnItemClickListener(new OnItemClickListener() {
-      public void onItemClick(AdapterView<?> parent, View view, int position,
-          long id) {
-        Intent intent = null;
-        switch (position) {
-        case 0:
-          intent = new Intent(getBaseContext(), Remote.class);
-          break;
-        case 1:
-          intent = new Intent(getBaseContext(), MyShows.class);
-          break;
-        case 2:
-          intent = new Intent(getBaseContext(), Search.class);
-          break;
-        case 3:
-          intent = new Intent(getBaseContext(), Discover.class);
-          break;
-        case 4:
-          intent = new Intent(getBaseContext(), About.class);
-          break;
-        case 5:
-          intent = new Intent(getBaseContext(), ProblemReport.class);
-          break;
-        default:
-          Toast.makeText(getApplicationContext(), "Not Implemented",
-              Toast.LENGTH_SHORT).show();
-        }
-
-        if (intent != null) {
-          startActivity(intent);
-        }
-      }
-    });
+    lv.setOnItemClickListener(mOnItemClickListener);
   };
 
   @Override
