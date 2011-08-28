@@ -176,7 +176,6 @@ public class Utils {
 
   public final static JsonNode parseJson(String json) {
     try {
-      // TODO: Map. (simple data) instead of JsonNode. (tree) binding ?
       return mMapper.readValue(json, JsonNode.class);
     } catch (JsonMappingException e) {
       Log.e(LOG_TAG, "parseJson failure", e);
