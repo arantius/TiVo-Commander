@@ -1,11 +1,12 @@
 package com.arantius.tivocommander.rpc.request;
 
+import com.arantius.tivocommander.rpc.MindRpc;
 
 public class OfferSearch extends MindRpcRequest {
   public OfferSearch() {
     super("offerSearch");
 
-    mDataMap.put("bodyId", mBodyId);
+    mDataMap.put("bodyId", MindRpc.mBodyId);
     mDataMap.put("count", 50);
     mDataMap.put("namespace", "refserver");
     mDataMap.put("searchable", true);

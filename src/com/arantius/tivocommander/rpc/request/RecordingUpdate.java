@@ -19,12 +19,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc.request;
 
+import com.arantius.tivocommander.rpc.MindRpc;
 
 public class RecordingUpdate extends MindRpcRequest {
   public RecordingUpdate(String recordingId, String state) {
     super("recordingUpdate");
 
-    mDataMap.put("bodyId", mBodyId);
+    mDataMap.put("bodyId", MindRpc.mBodyId);
     mDataMap.put("recordingId", new String[] { recordingId });
     mDataMap.put("state", state);
   }

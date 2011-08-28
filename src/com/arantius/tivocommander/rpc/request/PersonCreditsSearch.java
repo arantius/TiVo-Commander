@@ -22,6 +22,7 @@ package com.arantius.tivocommander.rpc.request;
 import org.codehaus.jackson.JsonNode;
 
 import com.arantius.tivocommander.Utils;
+import com.arantius.tivocommander.rpc.MindRpc;
 
 public class PersonCreditsSearch extends MindRpcRequest {
   private static final JsonNode mImageRuleset =
@@ -37,7 +38,7 @@ public class PersonCreditsSearch extends MindRpcRequest {
     final String creditJson =
         "[{\"personId\": \"" + personId + "\", \"type\": \"credit\"}]";
 
-    mDataMap.put("bodyId", mBodyId);
+    mDataMap.put("bodyId", MindRpc.mBodyId);
     mDataMap.put("count", 50);
     mDataMap.put("credit", Utils.parseJson(creditJson));
     mDataMap.put("imageRuleset", mImageRuleset);

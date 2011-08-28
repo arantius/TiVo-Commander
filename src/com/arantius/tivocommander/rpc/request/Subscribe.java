@@ -4,11 +4,13 @@ import java.util.HashMap;
 
 import org.codehaus.jackson.JsonNode;
 
+import com.arantius.tivocommander.rpc.MindRpc;
+
 public class Subscribe extends MindRpcRequest {
   public Subscribe() {
     super("subscribe");
 
-    mDataMap.put("bodyId", mBodyId);
+    mDataMap.put("bodyId", MindRpc.mBodyId);
     mDataMap.put("recordingQuality", "best");
   }
 

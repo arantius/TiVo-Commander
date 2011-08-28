@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import org.codehaus.jackson.JsonNode;
 
 import com.arantius.tivocommander.Utils;
+import com.arantius.tivocommander.rpc.MindRpc;
 
 public class RecordingFolderItemSearch extends MindRpcRequest {
   private static final JsonNode mResponseTemplate =
@@ -59,7 +60,7 @@ public class RecordingFolderItemSearch extends MindRpcRequest {
 
   private void addCommonDetails() {
     mDataMap.put("orderBy", new String[] { "startTime" });
-    mDataMap.put("bodyId", mBodyId);
+    mDataMap.put("bodyId", MindRpc.mBodyId);
     mDataMap.put("note", new String[] { "recordingForChildRecordingId" });
     mDataMap.put("responseTemplate", mResponseTemplate);
   }

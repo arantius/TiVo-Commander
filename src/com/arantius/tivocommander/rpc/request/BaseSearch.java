@@ -21,6 +21,8 @@ package com.arantius.tivocommander.rpc.request;
 
 import org.codehaus.jackson.JsonNode;
 
+import com.arantius.tivocommander.rpc.MindRpc;
+
 public class BaseSearch extends MindRpcRequest {
   public BaseSearch(String collectionId, String contentId) {
     super(""); // We'll figure out type next.
@@ -35,7 +37,7 @@ public class BaseSearch extends MindRpcRequest {
       mDataMap.put("filterUnavailableContent", false);
     }
 
-    mDataMap.put("bodyId", mBodyId);
+    mDataMap.put("bodyId", MindRpc.mBodyId);
     mDataMap.put("levelOfDetail", "high");
   }
 

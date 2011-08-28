@@ -73,8 +73,9 @@ public enum MindRpc {
     }
   }
 
+  public static String mBodyId = "-";
+
   private static final int BUFFER_SIZE = 1024;
-  private static final int TIMEOUT_CONNECT = 2500;
   private static final String LOG_TAG = "tivo_commander";
   private static BufferedReader mInputStream;
   private static MindRpcInput mInputThread;
@@ -89,6 +90,7 @@ public enum MindRpc {
   private static String mTivoAddr;
   private static String mTivoMak;
   private static int mTivoPort;
+  private static final int TIMEOUT_CONNECT = 2500;
 
   /**
    * Add an outgoing request to the queue.

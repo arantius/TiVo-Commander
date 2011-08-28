@@ -22,6 +22,7 @@ package com.arantius.tivocommander.rpc.request;
 import org.codehaus.jackson.JsonNode;
 
 import com.arantius.tivocommander.Utils;
+import com.arantius.tivocommander.rpc.MindRpc;
 
 public class UnifiedItemSearch extends MindRpcRequest {
   private static final int NUM_RESULTS = 25;
@@ -35,7 +36,7 @@ public class UnifiedItemSearch extends MindRpcRequest {
   public UnifiedItemSearch(String keyword) {
     super("unifiedItemSearch");
 
-    mDataMap.put("bodyId", mBodyId);
+    mDataMap.put("bodyId", MindRpc.mBodyId);
     mDataMap.put("count", NUM_RESULTS);
     mDataMap.put("imageRuleset", mImageRuleset);
     mDataMap.put("includeUnifiedItemType", new String[] { "collection",
