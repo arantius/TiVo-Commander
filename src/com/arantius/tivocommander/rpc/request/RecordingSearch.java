@@ -4,7 +4,7 @@ public class RecordingSearch extends MindRpcRequest {
   public RecordingSearch(String recordingId) {
     super("recordingSearch");
 
-    mDataMap.put("bodyId", "-");
+    mDataMap.put("bodyId", mBodyId);
     mDataMap.put("recordingId", new String[] { recordingId });
     mDataMap.put("levelOfDetail", "high");
   }

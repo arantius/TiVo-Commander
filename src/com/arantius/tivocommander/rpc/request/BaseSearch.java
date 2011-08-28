@@ -35,7 +35,7 @@ public class BaseSearch extends MindRpcRequest {
       mDataMap.put("filterUnavailableContent", false);
     }
 
-    mDataMap.put("bodyId", "-");
+    mDataMap.put("bodyId", mBodyId);
     mDataMap.put("levelOfDetail", "high");
   }
 

@@ -37,7 +37,7 @@ public class PersonCreditsSearch extends MindRpcRequest {
     final String creditJson =
         "[{\"personId\": \"" + personId + "\", \"type\": \"credit\"}]";
 
-    mDataMap.put("bodyId", "-");
+    mDataMap.put("bodyId", mBodyId);
     mDataMap.put("count", 50);
     mDataMap.put("credit", Utils.parseJson(creditJson));
     mDataMap.put("imageRuleset", mImageRuleset);

@@ -4,7 +4,7 @@ public class SubscriptionSearch extends MindRpcRequest {
   public SubscriptionSearch(String collectionId) {
     super("subscriptionSearch");
 
-    mDataMap.put("bodyId", "-");
+    mDataMap.put("bodyId", mBodyId);
     mDataMap.put("collectionId", collectionId);
     mDataMap.put("levelOfDetail", "medium");
   }

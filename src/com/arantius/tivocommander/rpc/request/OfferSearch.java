@@ -5,7 +5,7 @@ public class OfferSearch extends MindRpcRequest {
   public OfferSearch() {
     super("offerSearch");
 
-    mDataMap.put("bodyId", "-");
+    mDataMap.put("bodyId", mBodyId);
     mDataMap.put("count", 50);
     mDataMap.put("namespace", "refserver");
     mDataMap.put("searchable", true);

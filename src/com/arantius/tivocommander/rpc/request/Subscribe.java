@@ -8,7 +8,7 @@ public class Subscribe extends MindRpcRequest {
   public Subscribe() {
     super("subscribe");
 
-    mDataMap.put("bodyId", "-");
+    mDataMap.put("bodyId", mBodyId);
     mDataMap.put("recordingQuality", "best");
   }
 
