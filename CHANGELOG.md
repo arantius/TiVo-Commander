@@ -1,4 +1,4 @@
-v7 ???:
+v7 Aug 28, 2011:
 
 Enhancements:
 
@@ -14,7 +14,6 @@ Bug fixes:
 * Correctly hide Record button when it has no choices.
 * Fix Collection view to show description and credits.
 * Fix rare crash ("Exceeded maximum number of wifi locks") in device discovery.
-* Crash when deleting the last show from a folder.
 
 v6 Aug 23, 2011:
 
