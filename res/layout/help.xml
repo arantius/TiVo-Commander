@@ -68,8 +68,17 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
     <TextView android:id="@+id/authentication2"
-      android:text="Is the MAK not displayed here?  (Or, as a last resort:)  Log into your tivo.com account and check that the &quot;Video Sharing&quot; option is enabled.  According to TiVo, this setting can take up to 24 hours to take effect.  Maybe less."
+      android:text="Is the MAK not displayed here (or, just to be sure)?  Log into your tivo.com account and check that the &quot;Video Sharing&quot; option is enabled.  According to TiVo, this setting can take up to 24 hours to take effect.  Maybe less."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
+
+    <TextView android:id="@+id/header_last_resort" android:text="What, it STILL doesn&apos;t work?"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
+    <TextView android:id="@+id/net_remote"
+      android:text="Ok, as a really last resort: From TiVo Central, go to > Settings &amp; messages > Settings > Network &amp; Phone.  Read the &quot;Ip addr&quot; there, and put it in via the custom settings button.  If THAT doesn't work, something's really wrong.  Drat."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
+
   </LinearLayout>
 </ScrollView>

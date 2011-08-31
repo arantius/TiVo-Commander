@@ -1,3 +1,8 @@
+v8 ???:
+
+* Revamp device discovery and matching help.  Hopefully much more reliable.
+  * This includes fixing a situation that could cause infinite loops.
+
 v7 Aug 28, 2011:
 
 Enhancements:
