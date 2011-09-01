@@ -64,8 +64,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
   private MulticastLock mMulticastLock = null;
   private final String mRpcServiceName = "_tivo-mindrpc._tcp.local.";
   private final String[] mServiceNames = new String[] {
-      "_tivo-device._tcp.local.", "_tivo-mindrpc._tcp.local.",
-      "_tivo-remote._tcp.local.", "_tivo-videos._tcp.local." };
+      "_tivo-mindrpc._tcp.local.", "_tivo-videos._tcp.local." };
 
   public final void customSettings(View v) {
     stopQuery();
@@ -138,15 +137,16 @@ public class Discover extends ListActivity implements OnItemClickListener,
       tsn = info.getPropertyString("TSN");
     }
 
+    Integer oldIndex = null;
     for (HashMap<String, Object> host : mHosts) {
       if (name.equals(host.get("name")) && addr.equals(host.get("addr"))) {
         if ((Integer) host.get("messageId") != 0 && messageId == 0) {
           // If we previously added this as an error (i.e. mindrpc was not the
           // first discovered service) but now we're satisfied: remove the
           // previous item and add this as a replacement.
-          // TODO: Guarantee it goes in the same spot.
-          Utils.log("Remove: " + host.toString());
-          mHosts.remove(host);
+          oldIndex = mHosts.indexOf(host);
+          Utils.log("found! at " + oldIndex.toString());
+          break;
         } else {
           // Ignore dupes. I'm not sure what Series 2 or 3/HD devices will
           // report, so I listen for everything it might be, and skip dupes
@@ -165,9 +165,15 @@ public class Discover extends ListActivity implements OnItemClickListener,
     listItem.put("warn_icon", messageId == 0 ? R.drawable.blank
         : android.R.drawable.ic_dialog_alert);
 
+    if (oldIndex != null) {
+      Utils.log(String.format("Replace %s with %s", mHosts.get(oldIndex),
+          listItem));
+      mHosts.set(oldIndex, listItem);
+    } else {
+      mHosts.add(listItem);
+    }
     runOnUiThread(new Runnable() {
       public void run() {
-        mHosts.add(listItem);
         mHostAdapter.notifyDataSetChanged();
       }
     });
