@@ -64,6 +64,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" android:autoLink="web" />
 
+    <TextView android:id="@+id/textView10"
+      android:text="Otherwise copyright ® 2011  Anthony Lieuallen (arantius@gmail.com)."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
+
     <TextView android:id="@+id/textView6"
       android:text="TiVo Commander comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; read the license (link below) for more details."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
