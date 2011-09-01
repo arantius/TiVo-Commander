@@ -1,4 +1,4 @@
-v8 ???:
+v8 Aug 31, 2011:
 
 * Revamp device discovery and matching help.  Hopefully much more reliable.
   * This includes fixing a situation that could cause infinite loops.
