@@ -268,7 +268,7 @@ public class MyShows extends ListActivity {
           // We deleted the last show! Go up a level.
           Intent resultIntent = new Intent();
           resultIntent.putExtra("refresh", true);
-          getParent().setResult(Activity.RESULT_OK, resultIntent);
+          setResult(Activity.RESULT_OK, resultIntent);
           finish();
         } else {
           // Load the list of remaining shows.
