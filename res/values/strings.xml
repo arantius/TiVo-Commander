@@ -34,7 +34,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <string name="record_max">Keep at most</string>
   <string name="record_which">Record</string>
   <string name="error_wifi_lock">Could not do discovery; falling back to manual settings.</string>
-  <string name="error_get_wifi_addr">Could not get wifi address.</string>
+  <string name="error_get_wifi_addr">Could not access wifi, is it enabled?</string>
   <string name="error_multicast">Device search failed.  (Read below and) Try custom settings.</string>
   <string name="error_net_control">You need to enable network control and/or video sharing to connect to this TiVo.  (See below.)</string>
   <string name="premiere_only">This app only works with a TiVo Premiere device; not Series 2, Series 3 or HD.</string>
