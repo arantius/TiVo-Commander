@@ -90,6 +90,7 @@ public class Explore extends ExploreCommon {
       };
 
   public void doDelete(View v) {
+    // FIXME: Fails when deleting the currently-playing show.
     getParent().setProgressBarIndeterminateVisibility(true);
     // Delete the recording ...
     MindRpc.addRequest(new RecordingUpdate(mRecordingId, "deleted"),
