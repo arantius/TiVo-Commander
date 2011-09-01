@@ -32,10 +32,10 @@ public class RecordingFolderItemSearch extends MindRpcRequest {
           .parseJson("[{\"type\":\"responseTemplate\",\"fieldName\":[\"recordingFolderItem\"],\"typeName\":\"recordingFolderItemList\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"folderTransportType\",\"folderType\",\"recordingFolderItemId\",\"recordingForChildRecordingId\",\"folderItemCount\",\"recordingStatusType\",\"startTime\",\"title\",\"childRecordingId\"],\"typeName\":\"recordingFolderItem\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"contentId\",\"collectionId\",\"hdtv\",\"startTime\"],\"typeName\":\"recording\"}]");
 
   /** Produces an idSequence of shows for the given folder, all if null. */
-  public RecordingFolderItemSearch(String folderId) {
+  public RecordingFolderItemSearch(String folderId, String orderBy) {
     super("recordingFolderItemSearch");
 
-    addCommonDetails();
+    addCommonDetails(orderBy);
     mDataMap.put("format", "idSequence");
     if (folderId != null) {
       mDataMap.put("parentRecordingFolderItemId", folderId);
@@ -43,23 +43,23 @@ public class RecordingFolderItemSearch extends MindRpcRequest {
   }
 
   /** Given a set of IDs, produces details about the shows. */
-  public RecordingFolderItemSearch(JsonNode showIds) {
+  public RecordingFolderItemSearch(JsonNode showIds, String orderBy) {
     super("recordingFolderItemSearch");
 
-    addCommonDetails();
+    addCommonDetails(orderBy);
     mDataMap.put("objectIdAndType", showIds);
   }
 
   /** Given a set of IDs, produces details about the shows. */
-  public RecordingFolderItemSearch(ArrayList<JsonNode> showIds) {
+  public RecordingFolderItemSearch(ArrayList<JsonNode> showIds, String orderBy) {
     super("recordingFolderItemSearch");
 
-    addCommonDetails();
+    addCommonDetails(orderBy);
     mDataMap.put("objectIdAndType", showIds);
   }
 
-  private void addCommonDetails() {
-    mDataMap.put("orderBy", new String[] { "startTime" });
+  private void addCommonDetails(String orderBy) {
+    mDataMap.put("orderBy", new String[] { orderBy });
     mDataMap.put("bodyId", MindRpc.mBodyId);
     mDataMap.put("note", new String[] { "recordingForChildRecordingId" });
     mDataMap.put("responseTemplate", mResponseTemplate);

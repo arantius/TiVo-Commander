@@ -5,6 +5,7 @@ v8 ???:
 * More help text.
 * Fix a crash when deleting shows.
 * Disk usage meter.
+* Sort shows by date or title.
 
 v7 Aug 28, 2011:
 

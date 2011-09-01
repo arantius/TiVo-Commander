@@ -41,10 +41,9 @@ which requires calling setContentView(), thus we need content.
         android:text="" android:gravity="center_vertical"
         android:paddingLeft="10dip" android:textColor="#0040bb" />
     </FrameLayout>
-    <!--
-    <Button android:text="Sort" android:layout_width="wrap_content"
-      android:layout_height="wrap_content" />
-    -->
+    <Button android:id="@+id/button1" android:text="Sort"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:onClick="doSort" />
   </LinearLayout>
   <ListView android:id="@android:id/list" android:layout_width="fill_parent"
     android:layout_height="fill_parent" />

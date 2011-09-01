@@ -27,8 +27,11 @@ import java.util.HashMap;
 import org.codehaus.jackson.JsonNode;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -76,7 +79,8 @@ public class MyShows extends ListActivity {
           i++;
         }
 
-        RecordingFolderItemSearch req = new RecordingFolderItemSearch(showIds);
+        RecordingFolderItemSearch req =
+            new RecordingFolderItemSearch(showIds, mOrderBy);
         mRequestSlotMap.put(req.getRpcId(), slots);
         MindRpc.addRequest(req, mDetailCallback);
         setProgressIndicator(1);
@@ -262,6 +266,9 @@ public class MyShows extends ListActivity {
           }
         }
       };
+  private String mOrderBy = "startTime";
+  private final String[] mOrderLabels = new String[] { "Date", "A-Z" };
+  private final String[] mOrderValues = new String[] { "startTime", "title" };
   private int mRequestCount = 0;
   private final HashMap<Integer, ArrayList<Integer>> mRequestSlotMap =
       new HashMap<Integer, ArrayList<Integer>>();
@@ -269,8 +276,25 @@ public class MyShows extends ListActivity {
   private JsonNode mShowIds;
   private final ArrayList<ShowStatus> mShowStatus = new ArrayList<ShowStatus>();
 
+  public void doSort(View v) {
+    ArrayAdapter<String> orderAdapter =
+        new ArrayAdapter<String>(this, android.R.layout.select_dialog_item,
+            mOrderLabels);
+    Builder dialogBuilder = new AlertDialog.Builder(this);
+    dialogBuilder.setTitle("Order?");
+    dialogBuilder.setAdapter(orderAdapter,
+        new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int position) {
+            mOrderBy = mOrderValues[position];
+            startRequest();
+          }
+        });
+    AlertDialog dialog = dialogBuilder.create();
+    dialog.show();
+  }
+
   private void startRequest() {
-    MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId),
+    MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId, mOrderBy),
         mIdSequenceCallback);
     setProgressIndicator(1);
     MindRpc.addRequest(new BodyConfigSearch(), mBodyConfigCallback);
@@ -321,6 +345,10 @@ public class MyShows extends ListActivity {
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.list_my_shows);
+
+    if (mFolderId != null) {
+      findViewById(R.id.button1).setVisibility(View.GONE);
+    }
 
     mListAdapter = new ShowsAdapter(this);
     getListView().setAdapter(mListAdapter);
