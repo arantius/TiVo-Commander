@@ -4,6 +4,7 @@ v8 ???:
   * This includes fixing a situation that could cause infinite loops.
 * More help text.
 * Fix a crash when deleting shows.
+* Disk usage meter.
 
 v7 Aug 28, 2011:
 

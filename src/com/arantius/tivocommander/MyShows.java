@@ -39,9 +39,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
+import com.arantius.tivocommander.rpc.request.BodyConfigSearch;
 import com.arantius.tivocommander.rpc.request.RecordingFolderItemSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
@@ -171,6 +173,24 @@ public class MyShows extends ListActivity {
     return R.drawable.blank;
   }
 
+  private final MindRpcResponseListener mBodyConfigCallback =
+      new MindRpcResponseListener() {
+        public void onResponse(MindRpcResponse response) {
+          setProgressIndicator(-1);
+
+          ProgressBar mMeter = (ProgressBar) findViewById(R.id.meter);
+          TextView mMeterText = (TextView) findViewById(R.id.meter_text);
+          JsonNode bodyConfig = response.getBody().path("bodyConfig").path(0);
+          int used = bodyConfig.path("userDiskUsed").getIntValue();
+          int size = bodyConfig.path("userDiskSize").getIntValue();
+
+          mMeter.setMax(size);
+          mMeter.setProgress(used);
+
+          mMeterText.setText(String.format("%d%% Disk Used",
+              (int) ((double) 100 * used / size)));
+        }
+      };
   private final MindRpcResponseListener mDetailCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
@@ -242,7 +262,6 @@ public class MyShows extends ListActivity {
           }
         }
       };
-  /** For each RPC, a map of where each data point fits into the list. */
   private int mRequestCount = 0;
   private final HashMap<Integer, ArrayList<Integer>> mRequestSlotMap =
       new HashMap<Integer, ArrayList<Integer>>();
@@ -253,6 +272,8 @@ public class MyShows extends ListActivity {
   private void startRequest() {
     MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId),
         mIdSequenceCallback);
+    setProgressIndicator(1);
+    MindRpc.addRequest(new BodyConfigSearch(), mBodyConfigCallback);
     setProgressIndicator(1);
   }
 
@@ -299,7 +320,7 @@ public class MyShows extends ListActivity {
     // TODO: Show date recorded.
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.list);
+    setContentView(R.layout.list_my_shows);
 
     mListAdapter = new ShowsAdapter(this);
     getListView().setAdapter(mListAdapter);
