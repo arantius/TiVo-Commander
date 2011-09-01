@@ -242,8 +242,10 @@ public class Discover extends ListActivity implements OnItemClickListener,
 
   private final void showHelp(int messageId) {
     stopQuery();
+    String message = getResources().getString(messageId);
+    Utils.log("Showing help because:\n" + message);
     Intent intent = new Intent(Discover.this, Help.class);
-    intent.putExtra("note", getResources().getString(messageId));
+    intent.putExtra("note", message);
     startActivity(intent);
   }
 
