@@ -225,9 +225,12 @@ public class MyShows extends ListActivity {
           // Start from nothing ...
           mShowData.clear();
           mShowStatus.clear();
-          for (int i = 0; i < mShowIds.size(); i++) {
-            mShowData.add(null);
-            mShowStatus.add(ShowStatus.MISSING);
+          if (mShowIds != null) {
+            // e.g. "Suggestions" can be present, but empty!
+            for (int i = 0; i < mShowIds.size(); i++) {
+              mShowData.add(null);
+              mShowStatus.add(ShowStatus.MISSING);
+            }
           }
 
           // And get them displayed.

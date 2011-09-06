@@ -1,3 +1,7 @@
+v9 ???:
+
+* Handle crash when a "my shows" section has no shows.
+
 v8 Aug 31, 2011:
 
 * Revamp device discovery and matching help.  Hopefully much more reliable.
