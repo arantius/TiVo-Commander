@@ -56,6 +56,27 @@ import com.arantius.tivocommander.rpc.MindRpc;
 
 public class Discover extends ListActivity implements OnItemClickListener,
     ServiceListener {
+  private class DvrListUpdater implements Runnable {
+    private final HashMap<String, Object> mListItem;
+    private final Integer mOldIndex;
+
+    public DvrListUpdater(HashMap<String, Object> listItem, Integer oldIndex) {
+      mListItem = listItem;
+      mOldIndex = oldIndex;
+    }
+
+    public void run() {
+      if (mOldIndex != null) {
+        Utils.log(String.format("Replace %s with %s", mHosts.get(mOldIndex),
+            mListItem));
+        mHosts.set(mOldIndex, mListItem);
+      } else {
+        mHosts.add(mListItem);
+      }
+      mHostAdapter.notifyDataSetChanged();
+    }
+  }
+
   private TextView mEmpty;
   private SimpleAdapter mHostAdapter;
   private volatile ArrayList<HashMap<String, Object>> mHosts =
@@ -145,12 +166,11 @@ public class Discover extends ListActivity implements OnItemClickListener,
           // first discovered service) but now we're satisfied: remove the
           // previous item and add this as a replacement.
           oldIndex = mHosts.indexOf(host);
-          Utils.log("found! at " + oldIndex.toString());
           break;
         } else {
           // Ignore dupes. I'm not sure what Series 2 or 3/HD devices will
           // report, so I listen for everything it might be, and skip dupes
-          // here.
+          // here. Also, timing issues are rarely caught here.
           return;
         }
       }
@@ -165,18 +185,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     listItem.put("warn_icon", messageId == 0 ? R.drawable.blank
         : android.R.drawable.ic_dialog_alert);
 
-    if (oldIndex != null) {
-      Utils.log(String.format("Replace %s with %s", mHosts.get(oldIndex),
-          listItem));
-      mHosts.set(oldIndex, listItem);
-    } else {
-      mHosts.add(listItem);
-    }
-    runOnUiThread(new Runnable() {
-      public void run() {
-        mHostAdapter.notifyDataSetChanged();
-      }
-    });
+    runOnUiThread(new DvrListUpdater(listItem, oldIndex));
   }
 
   public final void showHelp(View V) {
