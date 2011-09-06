@@ -40,6 +40,7 @@ public class MindRpcOutput extends Thread {
   private final BufferedWriter mStream;
 
   public MindRpcOutput(BufferedWriter stream) {
+    super("MindRpcOutput");
     mStream = stream;
   }
 

@@ -39,6 +39,7 @@ public class MindRpcInput extends Thread {
   private final BufferedReader mStream;
 
   public MindRpcInput(BufferedReader stream) {
+    super("MindRpcInput");
     mStream = stream;
   }
 
