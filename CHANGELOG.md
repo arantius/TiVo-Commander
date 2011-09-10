@@ -1,6 +1,6 @@
-v9 ???:
+v9 Sep 10, 2011:
 
-* Handle crash when a "my shows" section has no shows.
+* Address a handful of crashes.
 
 v8 Aug 31, 2011:
 
