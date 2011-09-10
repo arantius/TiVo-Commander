@@ -219,8 +219,16 @@ public class MyShows extends ListActivity {
   private final MindRpcResponseListener mIdSequenceCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
+          JsonNode body = response.getBody();
+          if ("error".equals(body.path("status").getTextValue())) {
+            Utils.log("Handling mIdSequenceCallback error response by "
+                + "finishWithRefresh()");
+            finishWithRefresh();
+            return;
+          }
+
           setProgressIndicator(-1);
-          mShowIds = response.getBody().findValue("objectIdAndType");
+          mShowIds = body.findValue("objectIdAndType");
 
           // Start from nothing ...
           mShowData.clear();
@@ -296,6 +304,13 @@ public class MyShows extends ListActivity {
     dialog.show();
   }
 
+  private void finishWithRefresh() {
+    Intent resultIntent = new Intent();
+    resultIntent.putExtra("refresh", true);
+    setResult(Activity.RESULT_OK, resultIntent);
+    finish();
+  }
+
   private void startRequest() {
     MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId, mOrderBy),
         mIdSequenceCallback);
@@ -314,10 +329,7 @@ public class MyShows extends ListActivity {
       if (data.getBooleanExtra("refresh", false)) {
         if (mShowData.size() == 1) {
           // We deleted the last show! Go up a level.
-          Intent resultIntent = new Intent();
-          resultIntent.putExtra("refresh", true);
-          setResult(Activity.RESULT_OK, resultIntent);
-          finish();
+          finishWithRefresh();
         } else {
           // Load the list of remaining shows.
           startRequest();
