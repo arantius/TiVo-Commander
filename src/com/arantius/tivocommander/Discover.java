@@ -316,6 +316,8 @@ public class Discover extends ListActivity implements OnItemClickListener,
               oldMdns.removeServiceListener(serviceName, Discover.this);
             }
             oldMdns.close();
+          } catch (RuntimeException e) {
+            Utils.logError("Could not close JmDNS!", e);
           } catch (IOException e) {
             Utils.logError("Could not close JmDNS!", e);
           }
