@@ -130,7 +130,7 @@ public class MyShows extends ListActivity {
     LOADED, LOADING, MISSING;
   }
 
-  private final static int EXPLORE_INTENT_ID = 1;
+  private final static int EXPECT_REFRESH_INTENT_ID = 1;
   private final static int MAX_SHOW_REQUEST_BATCH = 5;
 
   protected final static int getIconForItem(JsonNode item) {
@@ -263,7 +263,7 @@ public class MyShows extends ListActivity {
             intent.putExtra("folderId", item.path("recordingFolderItemId")
                 .getValueAsText());
             intent.putExtra("folderName", item.path("title").getValueAsText());
-            startActivity(intent);
+            startActivityForResult(intent, EXPECT_REFRESH_INTENT_ID);
           } else {
             JsonNode recording = item.path("recordingForChildRecordingId");
 
@@ -274,7 +274,7 @@ public class MyShows extends ListActivity {
                 .getTextValue());
             intent.putExtra("recordingId", item.path("childRecordingId")
                 .getTextValue());
-            startActivityForResult(intent, EXPLORE_INTENT_ID);
+            startActivityForResult(intent, EXPECT_REFRESH_INTENT_ID);
           }
         }
       };
@@ -326,7 +326,7 @@ public class MyShows extends ListActivity {
       return;
     }
 
-    if (EXPLORE_INTENT_ID == requestCode) {
+    if (EXPECT_REFRESH_INTENT_ID == requestCode) {
       if (data.getBooleanExtra("refresh", false)) {
         if (mShowData.size() == 1) {
           // We deleted the last show! Go up a level.
