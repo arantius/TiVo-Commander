@@ -220,7 +220,8 @@ public class MyShows extends ListActivity {
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           JsonNode body = response.getBody();
-          if ("error".equals(body.path("status").getTextValue())) {
+          if ("error".equals(body.path("status").getTextValue())
+              || !body.has("objectIdAndType")) {
             Utils.log("Handling mIdSequenceCallback error response by "
                 + "finishWithRefresh()");
             finishWithRefresh();
