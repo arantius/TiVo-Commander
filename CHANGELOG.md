@@ -1,6 +1,7 @@
 v9 Sep 10, 2011:
 
 * Address a handful of crashes.
+* Reminder about "Watch Now" feature behavior.
 
 v8 Aug 31, 2011:
 
