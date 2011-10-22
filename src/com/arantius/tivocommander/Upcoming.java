@@ -87,7 +87,7 @@ public class Upcoming extends ListActivity {
                   String.format("%s  %s %s", formatTime(item), channelNum,
                       callSign);
               if (item.path("episodic").getBooleanValue()
-                  && item.path("episodeNumber").path(0).getIntValue() > 0
+                  && item.path("episodeNum").path(0).getIntValue() > 0
                   && item.path("seasonNumber").getIntValue() > 0) {
                 details =
                     String.format("(Sea %d Ep %d)  ", item.path("seasonNumber")
