@@ -53,7 +53,8 @@ public class Upcoming extends ListActivity {
       new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position,
             long id) {
-          JsonNode show = mShows.path(position);
+          HashMap<String, Object> listItem = (HashMap<String, Object>) parent.getItemAtPosition(position);
+          JsonNode show = mShows.path(((Integer) listItem.get("index")).intValue());
 
           Intent intent = new Intent(Upcoming.this, ExploreTabs.class);
           intent.putExtra("contentId", show.path("contentId").getTextValue());
@@ -103,6 +104,7 @@ public class Upcoming extends ListActivity {
               listItem.put("title", item.has("subtitle") ? item
                   .path("subtitle").getTextValue() : item.path("title")
                   .getTextValue());
+              listItem.put("index", new Integer(i));
               listItems.add(listItem);
             } catch (DateInPast e) {
               // No-op. Just don't show past items.
