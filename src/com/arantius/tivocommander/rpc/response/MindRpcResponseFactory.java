@@ -20,21 +20,21 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package com.arantius.tivocommander.rpc.response;
 
 import java.io.BufferedReader;
-import java.io.CharArrayReader;
 import java.io.IOException;
+import java.io.StringReader;
 
 import org.codehaus.jackson.JsonNode;
 
 import com.arantius.tivocommander.Utils;
 
 public class MindRpcResponseFactory {
-  public MindRpcResponse create(char[] headers, char[] body) {
+  public MindRpcResponse create(byte[] headers, byte[] body) {
     Boolean isFinal = true;
     int rpcId = 0;
 
     String line;
     BufferedReader headerReader =
-        new BufferedReader(new CharArrayReader(headers));
+        new BufferedReader(new StringReader(new String(headers)));
     try {
       while ((line = headerReader.readLine()) != null) {
         if (line.length() > 9 && "IsFinal:".equals(line.substring(0, 8))) {

@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc;
 
-import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -37,11 +37,11 @@ public class MindRpcOutput extends Thread {
   public volatile boolean mStopFlag = false;
   private volatile ConcurrentLinkedQueue<MindRpcRequest> mRequestQueue =
       new ConcurrentLinkedQueue<MindRpcRequest>();
-  private final BufferedWriter mStream;
+  private final DataOutputStream mStream;
 
-  public MindRpcOutput(BufferedWriter stream) {
+  public MindRpcOutput(DataOutputStream mOutputStream) {
     super("MindRpcOutput");
-    mStream = stream;
+    mStream = mOutputStream;
   }
 
   public void addRequest(MindRpcRequest request) {
@@ -66,11 +66,11 @@ public class MindRpcOutput extends Thread {
       try {
         if (mRequestQueue.peek() != null) {
           MindRpcRequest request = mRequestQueue.remove();
-          String reqStr = request.toString();
           Utils.log(String.format("% 4d CALL %s", request.getRpcId(),
               request.getReqType()));
           Utils.logRpc(request.getDataMap());
-          mStream.write(reqStr);
+          byte[] requestBytes = request.getBytes();
+          mStream.write(requestBytes, 0, requestBytes.length);
           mStream.flush();
         }
       } catch (IOException e) {

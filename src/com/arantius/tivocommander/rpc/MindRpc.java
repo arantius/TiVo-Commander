@@ -19,11 +19,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -77,12 +75,11 @@ public enum MindRpc {
 
   public static String mBodyId = "-";
 
-  private static final int BUFFER_SIZE = 1024;
   private static final String LOG_TAG = "tivo_commander";
-  private static BufferedReader mInputStream;
+  private static DataInputStream mInputStream;
   private static MindRpcInput mInputThread;
   private static Activity mOriginActivity;
-  private static BufferedWriter mOutputStream;
+  private static DataOutputStream mOutputStream;
   private static MindRpcOutput mOutputThread;
   private static HashMap<Integer, MindRpcResponseListener> mResponseListenerMap =
       new HashMap<Integer, MindRpcResponseListener>();
@@ -276,12 +273,8 @@ public enum MindRpc {
       InetSocketAddress remoteAddr =
           new InetSocketAddress(mTivoAddr, mTivoPort);
       mSocket.connect(remoteAddr, TIMEOUT_CONNECT);
-      mInputStream =
-          new BufferedReader(new InputStreamReader(mSocket.getInputStream()),
-              BUFFER_SIZE);
-      mOutputStream =
-          new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()),
-              BUFFER_SIZE);
+      mInputStream = new DataInputStream(mSocket.getInputStream());
+      mOutputStream = new DataOutputStream(mSocket.getOutputStream());
     } catch (UnknownHostException e) {
       Log.e(LOG_TAG, "connect: unknown host!", e);
       return false;

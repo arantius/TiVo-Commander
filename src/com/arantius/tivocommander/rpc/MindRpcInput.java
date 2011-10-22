@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
 
 import android.util.Log;
@@ -36,11 +36,11 @@ public class MindRpcInput extends Thread {
 
   public volatile boolean mStopFlag = false;
 
-  private final BufferedReader mStream;
+  private final DataInputStream mStream;
 
-  public MindRpcInput(BufferedReader stream) {
+  public MindRpcInput(DataInputStream mInputStream) {
     super("MindRpcInput");
-    mStream = stream;
+    mStream = mInputStream;
   }
 
   @Override
@@ -64,10 +64,10 @@ public class MindRpcInput extends Thread {
           int headerLen = Integer.parseInt(respBytes[1]);
           int bodyLen = Integer.parseInt(respBytes[2]);
 
-          char[] headers = new char[headerLen];
+          byte[] headers = new byte[headerLen];
           readBytes(headers, headerLen);
 
-          char[] body = new char[bodyLen];
+          byte[] body = new byte[bodyLen];
           readBytes(body, bodyLen);
 
           final MindRpcResponse response =
@@ -86,10 +86,10 @@ public class MindRpcInput extends Thread {
     }
   }
 
-  private void readBytes(char[] buf, int len) throws IOException {
+  private void readBytes(byte[] body, int len) throws IOException {
     int bytesRead = 0;
     while (bytesRead < len) {
-      bytesRead += mStream.read(buf, bytesRead, len - bytesRead);
+      bytesRead += mStream.read(body, bytesRead, len - bytesRead);
     }
   }
 }
