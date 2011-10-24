@@ -36,6 +36,7 @@ import com.arantius.tivocommander.rpc.request.KeyEventSend;
 public class Remote extends Activity implements OnClickListener {
   private EditText mEditText;
   private InputMethodManager mInputManager;
+  private String mLastString = null;
 
   private final TextWatcher mTextWatcher = new TextWatcher() {
     public void afterTextChanged(Editable s) {
@@ -46,9 +47,22 @@ public class Remote extends Activity implements OnClickListener {
     }
 
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-      if (s.length() == 0) {
-        MindRpc.addRequest(new KeyEventSend("clear"), null);
-      } else if (before > count) {
+      // In case of screen rotation, Android restores the contents of the
+      // (hidden) EditText. Pull it out for no-change-change detection.
+      if (mLastString == null) {
+        mLastString = mEditText.getText().toString();
+      }
+
+      String newString = s.toString();
+      String oldString = new String(mLastString);
+      mLastString = newString;
+
+      if (newString.equals(oldString)) {
+        // No actual change; e.g. screen rotation fired a fake one.
+        return;
+      }
+
+      if (before > count) {
         while (before > count) {
           MindRpc.addRequest(viewIdToEvent(R.id.remote_reverse), null);
           count++;
@@ -64,6 +78,7 @@ public class Remote extends Activity implements OnClickListener {
 
   public void onClick(View v) {
     if (v.getId() == R.id.remote_clear) {
+      mLastString = "";
       mEditText.setText("");
     }
 

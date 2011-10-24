@@ -1,6 +1,18 @@
+v10 Oct 22, 2011:
+
+* Fix rare network transmission issue.  This should address primarily when
+  the "My Shows" section doesn't load, or only partially loads.
+* Remove "Problem Report".  There don't seem to be many real problems left.
+* Upgrade the JmDNS library in use.  This should fix some crashes when
+  discovering TiVo devices.
+* Fix keyboard input in the Remote section.  This fixes sending clear when
+  rotating the phone, and a second when clear is really pressed.
+* Fix display of details and episode selection in the "Upcoming" screen.
+
 v9 Sep 10, 2011:
 
 * Address a handful of crashes.
+* Reminder about "Watch Now" feature behavior.
 
 v8 Aug 31, 2011:
 

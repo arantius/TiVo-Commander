@@ -326,7 +326,11 @@ public class Discover extends ListActivity implements OnItemClickListener,
     }
 
     if (mMulticastLock != null) {
-      mMulticastLock.release();
+      try {
+        mMulticastLock.release();
+      } catch (RuntimeException e) {
+        // Ignore. Likely "MulticastLock under-locked TiVo Commander Lock".
+      }
       mMulticastLock = null;
     }
   }

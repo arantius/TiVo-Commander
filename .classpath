@@ -5,6 +5,6 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="lib" path="lib/jackson-core-asl-1.8.3.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-mapper-asl-1.8.3.jar"/>
-	<classpathentry kind="lib" path="lib/jmdns-3.4.1-20110818.151145-24.jar" sourcepath="lib/jmdns-3.4.1-20110818.151145-24-sources.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="lib" path="lib/jmdns-3.4.2-20111001.154214-8.jar" sourcepath="lib/jmdns-3.4.2-20111001.154214-8-sources.jar"/>
+	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

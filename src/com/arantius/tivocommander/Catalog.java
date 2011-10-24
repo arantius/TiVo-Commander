@@ -167,7 +167,7 @@ public class Catalog extends ListActivity {
     listItems.add(listItem("Search", R.drawable.icon_search));
     listItems.add(listItem("Settings", R.drawable.icon_cog));
     listItems.add(listItem("About", R.drawable.icon_info));
-    listItems.add(listItem("Problem Report", R.drawable.icon_bug));
+//    listItems.add(listItem("Problem Report", R.drawable.icon_bug));
 
     final ListAdapter adapter =
         new SimpleAdapter(this, listItems, R.layout.item_catalog, new String[] {

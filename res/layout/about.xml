@@ -50,11 +50,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
 
-    <TextView android:id="@+id/textView4"
-      android:text="Contains the JmDNS multi-cast DNS library, used under the terms of the Apache (AL 2.0) license."
-      android:layout_width="wrap_content" android:layout_height="wrap_content"
-      android:layout_marginBottom="6dip" />
-
     <TextView android:id="@+id/textView8"
       android:text="Contains images from the &quot;Farm-Fresh Web Icons&quot; set by FatCow, used under the terms of the Creative Commons 3.0 Attribution license."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
