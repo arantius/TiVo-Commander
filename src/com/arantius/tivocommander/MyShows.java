@@ -110,8 +110,20 @@ public class MyShows extends ListActivity {
           Date startTime =
               Utils.parseDateTimeStr(item.path("startTime").getTextValue());
           SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE M/d");
-          ((TextView) v.findViewById(R.id.show_time)).setText(dateFormatter
-              .format(startTime));
+          String str = dateFormatter.format(startTime);
+
+          if (folderItemCount == 0) {
+              JsonNode recording = item.path("recordingForChildRecordingId");
+		  if (recording.has("channel")) {
+			  JsonNode channel = recording.path("channel");
+			  String cNum = channel.path("channelNumber").getTextValue();
+			  String callSign = channel.path("callSign").getTextValue();
+			  String time = new SimpleDateFormat("HH:mm").format(startTime);
+			  str = String.format("%s %s  %s %s", cNum, callSign, time, str);
+		  }
+          }
+
+          ((TextView) v.findViewById(R.id.show_time)).setText(str);
         }
 
         int iconId = MyShows.getIconForItem(item);

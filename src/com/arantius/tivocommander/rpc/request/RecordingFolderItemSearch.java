@@ -29,7 +29,7 @@ import com.arantius.tivocommander.rpc.MindRpc;
 public class RecordingFolderItemSearch extends MindRpcRequest {
   private static final JsonNode mResponseTemplate =
       Utils
-          .parseJson("[{\"type\":\"responseTemplate\",\"fieldName\":[\"recordingFolderItem\"],\"typeName\":\"recordingFolderItemList\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"folderTransportType\",\"folderType\",\"recordingFolderItemId\",\"recordingForChildRecordingId\",\"folderItemCount\",\"recordingStatusType\",\"startTime\",\"title\",\"childRecordingId\"],\"typeName\":\"recordingFolderItem\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"contentId\",\"collectionId\",\"hdtv\",\"startTime\"],\"typeName\":\"recording\"}]");
+          .parseJson("[{\"type\":\"responseTemplate\",\"fieldName\":[\"recordingFolderItem\"],\"typeName\":\"recordingFolderItemList\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"folderTransportType\",\"folderType\",\"recordingFolderItemId\",\"recordingForChildRecordingId\",\"folderItemCount\",\"recordingStatusType\",\"startTime\",\"title\",\"childRecordingId\"],\"typeName\":\"recordingFolderItem\"},{\"type\":\"responseTemplate\",\"fieldName\":[\"contentId\",\"collectionId\",\"hdtv\",\"channel\",\"startTime\"],\"typeName\":\"recording\"}]");
 
   /** Produces an idSequence of shows for the given folder, all if null. */
   public RecordingFolderItemSearch(String folderId, String orderBy) {
