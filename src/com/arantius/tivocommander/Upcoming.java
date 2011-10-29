@@ -53,8 +53,11 @@ public class Upcoming extends ListActivity {
       new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position,
             long id) {
-          HashMap<String, Object> listItem = (HashMap<String, Object>) parent.getItemAtPosition(position);
-          JsonNode show = mShows.path(((Integer) listItem.get("index")).intValue());
+          @SuppressWarnings("unchecked")
+          HashMap<String, Object> listItem =
+              (HashMap<String, Object>) parent.getItemAtPosition(position);
+          JsonNode show =
+              mShows.path(((Integer) listItem.get("index")).intValue());
 
           Intent intent = new Intent(Upcoming.this, ExploreTabs.class);
           intent.putExtra("contentId", show.path("contentId").getTextValue());
