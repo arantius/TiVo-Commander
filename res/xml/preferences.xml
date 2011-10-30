@@ -35,7 +35,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:dialogMessage="@string/pref_tsn_instructions" />
   </PreferenceCategory>
   <PreferenceCategory android:title="Remote">
-      <CheckBoxPreference android:summary="Provides feedback on button press from remote" android:key="remote_vibrate" android:title="Vibrate On Remote Press" android:defaultValue="true"/>
-  	
+      <CheckBoxPreference
+          android:defaultValue="true"
+          android:key="remote_vibrate"
+          android:summary="Provides feedback on button press from remote"
+          android:title="Vibrate On Remote Press" />
   </PreferenceCategory>
 </PreferenceScreen>
