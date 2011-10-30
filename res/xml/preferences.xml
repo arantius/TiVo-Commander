@@ -34,4 +34,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:key="tivo_tsn" android:defaultValue="-"
       android:dialogMessage="@string/pref_tsn_instructions" />
   </PreferenceCategory>
+  <PreferenceCategory android:title="Remote">
+      <CheckBoxPreference
+          android:defaultValue="true"
+          android:key="remote_vibrate"
+          android:summary="Provides feedback on button press from remote"
+          android:title="Vibrate On Remote Press" />
+  </PreferenceCategory>
 </PreferenceScreen>
