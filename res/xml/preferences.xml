@@ -23,6 +23,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <EditTextPreference android:title="MAK"
     android:summary="Media Access Key" android:key="tivo_mak"
     android:dialogMessage="@string/pref_mak_instructions" />
+  <PreferenceCategory android:title="Remote">
+    <CheckBoxPreference android:title="Vibrate On Button Press"
+      android:key="remote_vibrate" android:defaultValue="true" />
+  </PreferenceCategory>
   <PreferenceCategory android:title="Advanced"
     android:summary="You should not change these."
   >

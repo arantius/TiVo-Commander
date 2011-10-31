@@ -22,6 +22,8 @@ package com.arantius.tivocommander;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -37,6 +39,7 @@ public class Remote extends Activity implements OnClickListener {
   private EditText mEditText;
   private InputMethodManager mInputManager;
   private String mLastString = null;
+  private Vibrator mVibrator;
 
   private final TextWatcher mTextWatcher = new TextWatcher() {
     public void afterTextChanged(Editable s) {
@@ -80,6 +83,14 @@ public class Remote extends Activity implements OnClickListener {
     if (v.getId() == R.id.remote_clear) {
       mLastString = "";
       mEditText.setText("");
+    }
+
+    boolean doVibrate =
+        PreferenceManager.getDefaultSharedPreferences(this.getBaseContext())
+            .getBoolean("remote_vibrate", true);
+
+    if (mVibrator != null && doVibrate) {
+      mVibrator.vibrate(15);
     }
 
     MindRpc.addRequest(viewIdToEvent(v.getId()), null);
@@ -166,6 +177,8 @@ public class Remote extends Activity implements OnClickListener {
     mEditText.addTextChangedListener(mTextWatcher);
     mInputManager =
         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+    mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
   }
 
   @Override
