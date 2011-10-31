@@ -1,3 +1,9 @@
+v11 Oct 30, 2011:
+
+* Optionally vibrate on button presses in Remote.
+* Make the MAK entry dialog use "phone" keyboard layout, since it's numbers.
+* Try to reduce some crashes.
+
 v10 Oct 22, 2011:
 
 * Fix rare network transmission issue.  This should address primarily when
