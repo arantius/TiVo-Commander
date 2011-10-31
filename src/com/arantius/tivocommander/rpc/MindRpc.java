@@ -99,6 +99,16 @@ public enum MindRpc {
    */
   public static void addRequest(MindRpcRequest request,
       MindRpcResponseListener listener) {
+    if (mOutputThread == null) {
+      if (mOriginActivity == null) {
+        Utils.log("Tried to add a request while mOutputThread is null!  "
+            + "mOriginActivity is null too!  I'm about to die ...");
+      } else {
+        Utils.log("Tried to add a request while mOutputThread is null!  "
+            + "Doing .init() ...");
+        MindRpc.init(mOriginActivity);
+      }
+    }
     mOutputThread.addRequest(request);
     if (listener != null) {
       mResponseListenerMap.put(request.getRpcId(), listener);
