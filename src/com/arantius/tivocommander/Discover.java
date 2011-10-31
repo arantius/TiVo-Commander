@@ -42,6 +42,7 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -109,6 +110,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
             .getBaseContext());
 
     final EditText makEditText = new EditText(Discover.this);
+    makEditText.setInputType(InputType.TYPE_CLASS_PHONE);
     makEditText.setText(prefs.getString("tivo_mak", ""));
     new AlertDialog.Builder(Discover.this).setTitle("MAK")
         .setMessage(R.string.pref_mak_instructions).setView(makEditText)
