@@ -103,6 +103,16 @@ public class MyShows extends ListActivity {
         ((TextView) v.findViewById(R.id.folder_num))
             .setText(folderItemCount > 0 ? folderItemCount.toString() : "");
 
+        String channelStr = "";
+        JsonNode channel =
+            item.path("recordingForChildRecordingId").path("channel");
+        if (folderItemCount == 0 && !channel.isMissingNode()) {
+          channelStr =
+              String.format("%s %s", channel.path("channelNumber")
+                  .getTextValue(), channel.path("callSign").getTextValue());
+        }
+        ((TextView) v.findViewById(R.id.show_channel)).setText(channelStr);
+
         if ("1970"
             .equals(item.path("startTime").getTextValue().substring(0, 4))) {
           v.findViewById(R.id.show_time).setVisibility(View.GONE);

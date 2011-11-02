@@ -1,7 +1,8 @@
-v11 Oct 30, 2011:
+v11 Nov 1, 2011:
 
 * Optionally vibrate on button presses in Remote.
 * Make the MAK entry dialog use "phone" keyboard layout, since it's numbers.
+* Show recordings' channel in My Shows list.
 * Try to reduce some crashes.
 
 v10 Oct 22, 2011:
