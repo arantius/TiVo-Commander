@@ -92,6 +92,7 @@ public class MyShows extends ListActivity {
         // If this item is available, display it.
         v = vi.inflate(R.layout.item_my_shows, null);
         final JsonNode item = mShowData.get(position);
+        final JsonNode recording = item.path("recordingForChildRecordingId");
 
         String title = item.path("title").getTextValue();
         if ('"' == title.charAt(0) && '"' == title.charAt(title.length() - 1)) {
@@ -104,8 +105,7 @@ public class MyShows extends ListActivity {
             .setText(folderItemCount > 0 ? folderItemCount.toString() : "");
 
         String channelStr = "";
-        JsonNode channel =
-            item.path("recordingForChildRecordingId").path("channel");
+        JsonNode channel = recording.path("channel");
         if (folderItemCount == 0 && !channel.isMissingNode()) {
           channelStr =
               String.format("%s %s", channel.path("channelNumber")
@@ -113,8 +113,13 @@ public class MyShows extends ListActivity {
         }
         ((TextView) v.findViewById(R.id.show_channel)).setText(channelStr);
 
-        if ("1970"
-            .equals(item.path("startTime").getTextValue().substring(0, 4))) {
+        String startTimeStr = item.path("startTime").getTextValue();
+        if (startTimeStr == null) {
+          // Rarely the time is only on the recording, not the item.
+          startTimeStr = recording.path("startTime").getTextValue();
+        }
+
+        if (startTimeStr == null || "1970".equals(startTimeStr.substring(0, 4))) {
           v.findViewById(R.id.show_time).setVisibility(View.GONE);
         } else {
           Date startTime =
