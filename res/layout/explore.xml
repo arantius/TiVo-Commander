@@ -52,6 +52,16 @@ with this program; if not, write to the Free Software Foundation, Inc.,
           android:layout_width="wrap_content" android:layout_height="wrap_content"
           android:textAppearance="?android:attr/textAppearanceMedium"
           android:textColor="#FF9500" android:text="Subtitle" />
+        <LinearLayout android:layout_width="fill_parent"
+          android:layout_height="wrap_content" android:paddingTop="3dip"
+        >
+          <ImageView android:id="@+id/badge_new"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:src="@drawable/badge_new" android:paddingLeft="3dip" />
+          <ImageView android:id="@+id/badge_hd"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:src="@drawable/badge_hd" android:paddingLeft="6dip" />
+        </LinearLayout>
         <TextView android:id="@+id/content_details"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
           android:text="Details" android:layout_marginTop="2dip" />
@@ -76,8 +86,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     <Button android:id="@+id/explore_btn_delete" android:text="Delete"
       android:layout_width="fill_parent" android:layout_height="wrap_content"
       android:onClick="doDelete" />
-    <Button android:id="@+id/explore_btn_upcoming"
-      android:text="Upcoming" android:layout_width="fill_parent"
-      android:layout_height="wrap_content" android:onClick="doUpcoming" />
+    <Button android:id="@+id/explore_btn_upcoming" android:text="Upcoming"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:onClick="doUpcoming" />
   </LinearLayout>
 </LinearLayout>

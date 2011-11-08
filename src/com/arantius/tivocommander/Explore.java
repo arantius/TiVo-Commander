@@ -76,12 +76,12 @@ public class Explore extends ExploreCommon {
   private final MindRpcResponseListener mRecordingListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          mRecordingState =
-              response.getBody().path("recording").path(0).path("state")
-                  .getTextValue();
+          mRecording = response.getBody().path("recording").path(0);
+          mRecordingState = mRecording.path("state").getTextValue();
           finishRequest();
         }
       };
+  private JsonNode mRecording = null;
   private String mRecordingState = null;
   private final MindRpcResponseListener mSubscriptionListener =
       new MindRpcResponseListener() {
@@ -250,6 +250,14 @@ public class Explore extends ExploreCommon {
       subtitleView.setVisibility(View.GONE);
     } else {
       subtitleView.setText(subtitle);
+    }
+
+    // Display (only the proper) badges.
+    if (mRecording.path("repeat").getBooleanValue()) {
+      findViewById(R.id.badge_new).setVisibility(View.GONE);
+    }
+    if (!mRecording.path("hdtv").getBooleanValue()) {
+      findViewById(R.id.badge_hd).setVisibility(View.GONE);
     }
 
     // Construct and display details.
