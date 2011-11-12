@@ -20,15 +20,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package com.arantius.tivocommander;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -48,12 +44,7 @@ import android.widget.Toast;
 
 public class Utils {
   private static boolean DEBUG = false;
-  private static final int LOG_DATA_SIZE = 75;
   private static final String LOG_TAG = "tivo_commander";
-  private static final int MAX_LOG_LEN = 4096;
-  private static final LinkedList<String> mLogData = new LinkedList<String>();
-  private static final SimpleDateFormat mLogDateFormatter =
-      new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS ");
   private static final ObjectMapper mMapper = new ObjectMapper();
   private static final ObjectWriter mMapperPretty = mMapper
       .defaultPrettyPrintingWriter();
@@ -61,8 +52,6 @@ public class Utils {
   public final static void debugLog(String message) {
     if (DEBUG) {
       log(message);
-    } else {
-      saveLog(message);
     }
   }
 
@@ -80,13 +69,6 @@ public class Utils {
       }
     }
     return url;
-  }
-
-  public final static String getLog() {
-    @SuppressWarnings("unchecked")
-    List<String> logData = (List<String>) mLogData.clone();
-    Collections.reverse(logData);
-    return join("\n", logData);
   }
 
   public final static String getVersion(Context context) {
@@ -123,21 +105,14 @@ public class Utils {
   }
 
   public final static void log(String message) {
-    saveLog(message);
     Log.i(LOG_TAG, message);
   }
 
   public final static void logError(String message) {
-    saveLog(message);
     Log.e(LOG_TAG, message);
   }
 
   public final static void logError(String message, Throwable e) {
-    StringWriter sw = new StringWriter();
-    e.printStackTrace(new PrintWriter(sw));
-    String stackTrace = sw.toString();
-
-    saveLog(message + "\n" + stackTrace);
     Log.e(LOG_TAG, message, e);
   }
 
@@ -145,7 +120,6 @@ public class Utils {
     if (DEBUG) {
       Log.d(LOG_TAG, Utils.stringifyToPrettyJson(obj));
     }
-    saveLog(Utils.stringifyToJson(obj));
   }
 
   public static final void mailLog(String log, Context context, String title) {
@@ -209,18 +183,6 @@ public class Utils {
     dateParser.setTimeZone(tz);
     ParsePosition pp = new ParsePosition(0);
     return dateParser.parse(dateStr, pp);
-  }
-
-  private final static void saveLog(String message) {
-    if (message.length() > MAX_LOG_LEN) {
-      message =
-          String.format("(%d) %s...", message.length(),
-              message.substring(0, MAX_LOG_LEN));
-    }
-    mLogData.add(mLogDateFormatter.format(new Date()) + message);
-    while (mLogData.size() > LOG_DATA_SIZE) {
-      mLogData.remove();
-    }
   }
 
   private final static String stringifyToJson(Object obj, boolean pretty) {

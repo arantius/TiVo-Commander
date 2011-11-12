@@ -45,7 +45,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       </intent-filter>
     </activity>
     <activity android:name="Person"></activity>
-    <activity android:name="ProblemReport"></activity>
     <activity android:name="Remote">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
