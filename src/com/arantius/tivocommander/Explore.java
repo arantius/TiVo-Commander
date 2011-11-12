@@ -20,6 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package com.arantius.tivocommander;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.codehaus.jackson.JsonNode;
 
@@ -70,19 +71,21 @@ public class Explore extends ExploreCommon {
   }
 
   private final ArrayList<String> mChoices = new ArrayList<String>();
-  private int mRequestCount = 0;
-  private JsonNode mSubscription = null;
-  private String mSubscriptionId = null;
+  private JsonNode mRecording = null;
   private final MindRpcResponseListener mRecordingListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           mRecording = response.getBody().path("recording").path(0);
           mRecordingState = mRecording.path("state").getTextValue();
+          Utils.log(String.format("Duration: %d", mRecording.path("duration")
+              .getIntValue()));
           finishRequest();
         }
       };
-  private JsonNode mRecording = null;
   private String mRecordingState = null;
+  private int mRequestCount = 0;
+  private JsonNode mSubscription = null;
+  private String mSubscriptionId = null;
   private final MindRpcResponseListener mSubscriptionListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
@@ -113,6 +116,22 @@ public class Explore extends ExploreCommon {
             finish();
           }
         });
+  }
+
+  private Boolean isRecordingPartial() {
+    final Date actualStart =
+        Utils.parseDateTimeStr(mRecording.path("actualStartTime")
+            .getTextValue());
+    final Date scheduledStart =
+        Utils.parseDateTimeStr(mRecording.path("scheduledStartTime")
+            .getTextValue());
+    final Date actualEnd =
+        Utils.parseDateTimeStr(mRecording.path("actualEndTime").getTextValue());
+    final Date scheduledEnd =
+        Utils.parseDateTimeStr(mRecording.path("scheduledEndTime")
+            .getTextValue());
+    return actualStart.getTime() - scheduledStart.getTime() >= 30000
+        || scheduledEnd.getTime() - actualEnd.getTime() >= 30000;
   }
 
   public void doRecord(View v) {
@@ -193,12 +212,6 @@ public class Explore extends ExploreCommon {
     MindRpc.addRequest(new UiNavigate(mRecordingId), null);
   }
 
-  private void hideViewIfNull(int viewId, Object condition) {
-    if (condition != null)
-      return;
-    findViewById(viewId).setVisibility(View.GONE);
-  }
-
   protected void finishRequest() {
     if (--mRequestCount != 0) {
       return;
@@ -260,6 +273,28 @@ public class Explore extends ExploreCommon {
       findViewById(R.id.badge_hd).setVisibility(View.GONE);
     }
 
+    // Display channel and time.
+    String channelStr = "";
+    JsonNode channel = mRecording.path("channel");
+    if (!channel.isMissingNode()) {
+      channelStr =
+          String.format("%s %s", channel.path("channelNumber").getTextValue(),
+              channel.path("callSign").getTextValue());
+    }
+
+    // Lots of shows seem to be a few seconds short, add padding so that
+    // rounding down works as expected. Magic number.
+    final int minutes = (30 + mRecording.path("duration").getIntValue()) / 60;
+
+    String durationStr =
+        minutes >= 60 ? String.format("%d hr", minutes / 60) : String.format(
+            "%d min", minutes);
+    if (isRecordingPartial()) {
+      durationStr += " (partial)";
+    }
+    ((TextView) findViewById(R.id.content_time)).setText(channelStr + ", "
+        + durationStr);
+
     // Construct and display details.
     ArrayList<String> detailParts = new ArrayList<String>();
     int season = mContent.path("seasonNumber").getIntValue();
@@ -314,6 +349,12 @@ public class Explore extends ExploreCommon {
     new DownloadImageTask(this, imageView, progressView).execute(imageUrl);
 
     // TODO: Show date recorded (?).
+  }
+
+  private void hideViewIfNull(int viewId, Object condition) {
+    if (condition != null)
+      return;
+    findViewById(viewId).setVisibility(View.GONE);
   }
 
   @Override

@@ -57,17 +57,21 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         >
           <ImageView android:id="@+id/badge_new"
             android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:src="@drawable/badge_new" android:paddingLeft="3dip" />
+            android:src="@drawable/badge_new" />
           <ImageView android:id="@+id/badge_hd"
             android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:src="@drawable/badge_hd" android:paddingLeft="6dip" />
         </LinearLayout>
+        <TextView android:id="@+id/content_time"
+          android:layout_width="wrap_content" android:layout_height="wrap_content"
+          android:layout_marginTop="2dip" android:gravity="center|center_vertical"
+          android:text="999 WXYZ, 30 min" android:textColor="#83C2E3" />
         <TextView android:id="@+id/content_details"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
           android:text="Details" android:layout_marginTop="2dip" />
         <TextView android:id="@+id/content_credits"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
-          android:layout_marginTop="2dip" android:textColor="#00BFFF"
+          android:layout_marginTop="2dip" android:textColor="#83C2E3"
           android:text="Credits" />
       </LinearLayout>
     </ScrollView>
