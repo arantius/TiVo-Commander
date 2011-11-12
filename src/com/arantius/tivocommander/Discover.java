@@ -53,8 +53,6 @@ import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
-// TODO: Need 3.4.1 for upstream bug fix?  See http://goo.gl/TdffF
-
 public class Discover extends ListActivity implements OnItemClickListener,
     ServiceListener {
   private class DvrListUpdater implements Runnable {

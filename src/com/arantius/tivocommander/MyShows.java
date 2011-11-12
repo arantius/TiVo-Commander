@@ -370,10 +370,6 @@ public class MyShows extends ListActivity {
 
     MindRpc.init(this);
 
-    // TODO: Sorting.
-    // TODO: Show disk usage.
-    // TODO: Show date recorded.
-
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.list_my_shows);
 
