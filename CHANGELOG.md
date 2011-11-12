@@ -1,3 +1,8 @@
+v12 Nov 12, 2011:
+
+* Display "New" and "HD" badges, channel, and recording length in Explore.
+* Address some crash cases.
+
 v11 Nov 1, 2011:
 
 * Optionally vibrate on button presses in Remote.
