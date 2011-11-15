@@ -200,8 +200,8 @@ public class MyShows extends ListActivity {
           ProgressBar mMeter = (ProgressBar) findViewById(R.id.meter);
           TextView mMeterText = (TextView) findViewById(R.id.meter_text);
           JsonNode bodyConfig = response.getBody().path("bodyConfig").path(0);
-          int used = bodyConfig.path("userDiskUsed").getIntValue();
-          int size = bodyConfig.path("userDiskSize").getIntValue();
+          int used = bodyConfig.path("userDiskUsed").getValueAsInt();
+          int size = bodyConfig.path("userDiskSize").getValueAsInt();
 
           mMeter.setMax(size);
           mMeter.setProgress(used);
