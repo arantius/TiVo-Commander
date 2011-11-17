@@ -1,3 +1,8 @@
+v13 Nov 16, 2011:
+
+* Fix the crash introduced in v12.
+* Fix for "Disk Used" meter with 14.9 TiVo software.
+
 v12 Nov 12, 2011:
 
 * Display "New" and "HD" badges, channel, and recording length in Explore.
