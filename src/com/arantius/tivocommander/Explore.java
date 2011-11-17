@@ -266,34 +266,38 @@ public class Explore extends ExploreCommon {
     }
 
     // Display (only the proper) badges.
-    if (mRecording.path("repeat").getBooleanValue()) {
+    if (mRecording == null || mRecording.path("repeat").getBooleanValue()) {
       findViewById(R.id.badge_new).setVisibility(View.GONE);
     }
-    if (!mRecording.path("hdtv").getBooleanValue()) {
+    if (mRecording == null || !mRecording.path("hdtv").getBooleanValue()) {
       findViewById(R.id.badge_hd).setVisibility(View.GONE);
     }
 
     // Display channel and time.
-    String channelStr = "";
-    JsonNode channel = mRecording.path("channel");
-    if (!channel.isMissingNode()) {
-      channelStr =
-          String.format("%s %s", channel.path("channelNumber").getTextValue(),
-              channel.path("callSign").getTextValue());
-    }
+    if (mRecording != null) {
+      String channelStr = "";
+      JsonNode channel = mRecording.path("channel");
+      if (!channel.isMissingNode()) {
+        channelStr =
+            String.format("%s %s", channel.path("channelNumber").getTextValue(),
+                channel.path("callSign").getTextValue());
+      }
 
-    // Lots of shows seem to be a few seconds short, add padding so that
-    // rounding down works as expected. Magic number.
-    final int minutes = (30 + mRecording.path("duration").getIntValue()) / 60;
+      // Lots of shows seem to be a few seconds short, add padding so that
+      // rounding down works as expected. Magic number.
+      final int minutes = (30 + mRecording.path("duration").getIntValue()) / 60;
 
-    String durationStr =
-        minutes >= 60 ? String.format("%d hr", minutes / 60) : String.format(
-            "%d min", minutes);
-    if (isRecordingPartial()) {
-      durationStr += " (partial)";
+      String durationStr =
+          minutes >= 60 ? String.format("%d hr", minutes / 60) : String.format(
+              "%d min", minutes);
+      if (isRecordingPartial()) {
+        durationStr += " (partial)";
+      }
+      ((TextView) findViewById(R.id.content_time)).setText(channelStr + ", "
+          + durationStr);
+    } else {
+      ((TextView) findViewById(R.id.content_time)).setVisibility(View.GONE);
     }
-    ((TextView) findViewById(R.id.content_time)).setText(channelStr + ", "
-        + durationStr);
 
     // Construct and display details.
     ArrayList<String> detailParts = new ArrayList<String>();
