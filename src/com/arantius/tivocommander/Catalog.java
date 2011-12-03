@@ -55,6 +55,9 @@ public class Catalog extends ListActivity {
             intent = new Intent(getBaseContext(), Discover.class);
             break;
           case 4:
+            intent = new Intent(getBaseContext(), Help.class);
+            break;
+          case 5:
             intent = new Intent(getBaseContext(), About.class);
             break;
           default:
@@ -87,6 +90,7 @@ public class Catalog extends ListActivity {
     listItems.add(listItem("My Shows", R.drawable.icon_tv32));
     listItems.add(listItem("Search", R.drawable.icon_search));
     listItems.add(listItem("Settings", R.drawable.icon_cog));
+    listItems.add(listItem("Help", R.drawable.icon_help));
     listItems.add(listItem("About", R.drawable.icon_info));
 
     final ListAdapter adapter =
