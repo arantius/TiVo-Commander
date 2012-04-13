@@ -123,7 +123,7 @@ public class MyShows extends ListActivity {
           v.findViewById(R.id.show_time).setVisibility(View.GONE);
         } else {
           Date startTime =
-              Utils.parseDateTimeStr(item.path("startTime").getTextValue());
+              Utils.parseDateTimeStr(startTimeStr);
           SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE M/d");
           ((TextView) v.findViewById(R.id.show_time)).setText(dateFormatter
               .format(startTime));
