@@ -202,44 +202,55 @@ public class Discover extends ListActivity implements OnItemClickListener,
     mHosts.clear();
     mHostAdapter.notifyDataSetChanged();
 
-    WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-    WifiInfo wifiInfo = wifi.getConnectionInfo();
-    int intaddr = wifiInfo.getIpAddress();
-    byte[] byteaddr =
-        new byte[] { (byte) (intaddr & 0xff), (byte) (intaddr >> 8 & 0xff),
-            (byte) (intaddr >> 16 & 0xff), (byte) (intaddr >> 24 & 0xff) };
-    InetAddress addr;
-    try {
-      addr = InetAddress.getByAddress(byteaddr);
-    } catch (UnknownHostException e1) {
-      showHelp(R.string.error_get_wifi_addr);
-      finish();
-      return;
-    }
-
-    mMulticastLock = wifi.createMulticastLock("TiVo Commander Lock");
-    mMulticastLock.setReferenceCounted(true);
-    try {
-      mMulticastLock.acquire();
-    } catch (UnsupportedOperationException e) {
-      showHelp(R.string.error_wifi_lock);
-      finish();
-      return;
-    }
-
     setProgressBarIndeterminateVisibility(true);
     findViewById(R.id.button1).setEnabled(false);
 
-    try {
-      mJmdns = JmDNS.create(addr, "localhost");
-    } catch (IOException e1) {
-      showHelp(R.string.error_multicast);
-      finish();
-      return;
-    }
+    final Discover that = this;
+    Thread jmdnsThread = new Thread(new Runnable() {
+      public void run() {
+        WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifi.getConnectionInfo();
+        int intaddr = wifiInfo.getIpAddress();
+        byte[] byteaddr =
+            new byte[] { (byte) (intaddr & 0xff), (byte) (intaddr >> 8 & 0xff),
+            (byte) (intaddr >> 16 & 0xff), (byte) (intaddr >> 24 & 0xff) };
+        InetAddress addr;
+        try {
+          addr = InetAddress.getByAddress(byteaddr);
+        } catch (UnknownHostException e1) {
+          showHelp(R.string.error_get_wifi_addr);
+          finish();
+          return;
+        }
 
-    for (String serviceName : mServiceNames) {
-      mJmdns.addServiceListener(serviceName, this);
+        mMulticastLock = wifi.createMulticastLock("TiVo Commander Lock");
+        mMulticastLock.setReferenceCounted(true);
+        try {
+          mMulticastLock.acquire();
+        } catch (UnsupportedOperationException e) {
+          showHelp(R.string.error_wifi_lock);
+          finish();
+          return;
+        }
+
+        try {
+          mJmdns = JmDNS.create(addr, "localhost");
+        } catch (IOException e1) {
+          showHelp(R.string.error_multicast);
+          finish();
+          return;
+        }
+
+        for (String serviceName : mServiceNames) {
+          mJmdns.addServiceListener(serviceName, that);
+        }
+      }
+    });
+    jmdnsThread.start();
+    try {
+      jmdnsThread.join();
+    } catch (InterruptedException e1) {
+      Utils.logError("jmdns thread interrupted", e1);
     }
 
     // Don't run for too long.

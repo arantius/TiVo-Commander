@@ -32,6 +32,11 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
@@ -116,28 +121,38 @@ public enum MindRpc {
   }
 
   public static void disconnect() {
-    // TODO: Do disconnect on close (after N idle seconds?).
-    stopThreads();
-    if (mSocket != null) {
-      try {
-        mSocket.close();
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "disconnect()", e);
+    Thread disconnectThread = new Thread(new Runnable() {
+      public void run() {
+        // TODO: Do disconnect on close (after N idle seconds?).
+        stopThreads();
+        if (mSocket != null) {
+          try {
+            mSocket.close();
+          } catch (IOException e) {
+            Log.e(LOG_TAG, "disconnect() socket", e);
+          }
+        }
+        if (mInputStream != null) {
+          try {
+            mInputStream.close();
+          } catch (IOException e) {
+            Log.e(LOG_TAG, "disconnect() input stream", e);
+          }
+        }
+        if (mOutputStream != null) {
+          try {
+            mOutputStream.close();
+          } catch (IOException e) {
+            Log.e(LOG_TAG, "disconnect() output stream", e);
+          }
+        }
       }
-    }
-    if (mInputStream != null) {
-      try {
-        mInputStream.close();
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "disconnect()", e);
-      }
-    }
-    if (mOutputStream != null) {
-      try {
-        mOutputStream.close();
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "disconnect()", e);
-      }
+    });
+    disconnectThread.start();
+    try {
+      disconnectThread.join();
+    } catch (InterruptedException e) {
+      Log.e(LOG_TAG, "disconnect() interrupted exception", e);
     }
   }
 
@@ -259,41 +274,57 @@ public enum MindRpc {
   }
 
   private static boolean connect() {
-    SSLSocketFactory sslSocketFactory = null;
+    Callable<Boolean> connectCallable = new Callable<Boolean>() {
+      public Boolean call() throws Exception {
+        SSLSocketFactory sslSocketFactory = null;
 
-    // Set up the socket factory.
+        // Set up the socket factory.
+        try {
+          TrustManager[] tm = new TrustManager[] { new AlwaysTrustManager() };
+          SSLContext context = SSLContext.getInstance("TLS");
+          context.init(new KeyManager[0], tm, new SecureRandom());
+
+          sslSocketFactory = context.getSocketFactory();
+        } catch (KeyManagementException e) {
+          Log.e(LOG_TAG, "ssl: KeyManagementException!", e);
+          return false;
+        } catch (NoSuchAlgorithmException e) {
+          Log.e(LOG_TAG, "ssl: NoSuchAlgorithmException!", e);
+          return false;
+        }
+
+        // And use it to create a socket.
+        try {
+          mSessionId = 0x26c000 + new Random().nextInt(0xFFFF);
+          mSocket = sslSocketFactory.createSocket();
+          InetSocketAddress remoteAddr =
+              new InetSocketAddress(mTivoAddr, mTivoPort);
+          mSocket.connect(remoteAddr, TIMEOUT_CONNECT);
+          mInputStream = new DataInputStream(mSocket.getInputStream());
+          mOutputStream = new DataOutputStream(mSocket.getOutputStream());
+        } catch (UnknownHostException e) {
+          Log.e(LOG_TAG, "connect: unknown host!", e);
+          return false;
+        } catch (IOException e) {
+          Log.e(LOG_TAG, "connect: io exception!", e);
+          return false;
+        }
+
+        return true;
+      }
+    };
+
+    ExecutorService executor = new ScheduledThreadPoolExecutor(1);
+    Future<Boolean> success = executor.submit(connectCallable);
     try {
-      TrustManager[] tm = new TrustManager[] { new AlwaysTrustManager() };
-      SSLContext context = SSLContext.getInstance("TLS");
-      context.init(new KeyManager[0], tm, new SecureRandom());
-
-      sslSocketFactory = context.getSocketFactory();
-    } catch (KeyManagementException e) {
-      Log.e(LOG_TAG, "ssl: KeyManagementException!", e);
+      return success.get();
+    } catch (InterruptedException e) {
+      Log.e(LOG_TAG, "connect: interrupted exception!", e);
       return false;
-    } catch (NoSuchAlgorithmException e) {
-      Log.e(LOG_TAG, "ssl: NoSuchAlgorithmException!", e);
+    } catch (ExecutionException e) {
+      Log.e(LOG_TAG, "connect: execution exception!", e);
       return false;
     }
-
-    // And use it to create a socket.
-    try {
-      mSessionId = 0x26c000 + new Random().nextInt(0xFFFF);
-      mSocket = sslSocketFactory.createSocket();
-      InetSocketAddress remoteAddr =
-          new InetSocketAddress(mTivoAddr, mTivoPort);
-      mSocket.connect(remoteAddr, TIMEOUT_CONNECT);
-      mInputStream = new DataInputStream(mSocket.getInputStream());
-      mOutputStream = new DataOutputStream(mSocket.getOutputStream());
-    } catch (UnknownHostException e) {
-      Log.e(LOG_TAG, "connect: unknown host!", e);
-      return false;
-    } catch (IOException e) {
-      Log.e(LOG_TAG, "connect: io exception!", e);
-      return false;
-    }
-
-    return true;
   }
 
   private static void stopThreads() {
