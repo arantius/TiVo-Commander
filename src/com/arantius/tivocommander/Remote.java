@@ -26,6 +26,8 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -179,6 +181,16 @@ public class Remote extends Activity implements OnClickListener {
         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
     mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    return Utils.onCreateOptionsMenu(menu, this);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    return Utils.onOptionsItemSelected(item, this);
   }
 
   @Override

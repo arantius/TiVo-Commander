@@ -35,11 +35,16 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 public class Utils {
@@ -136,6 +141,52 @@ public class Utils {
       Toast.makeText(context, "There are no email clients installed.",
           Toast.LENGTH_SHORT).show();
     }
+  }
+
+  public final static void activateHomeButton(Activity activity) {
+    ActionBar ab = activity.getActionBar();
+    ab.setDisplayHomeAsUpEnabled(true);
+  }
+
+  public final static boolean onCreateOptionsMenu(Menu menu, Activity activity) {
+    Utils.activateHomeButton(activity);
+    // TODO: Not show the current activity.
+    MenuInflater inflater = activity.getMenuInflater();
+    inflater.inflate(R.menu.main, menu);
+    return true;
+  }
+
+  public final static boolean onOptionsItemSelected(MenuItem item,
+      Activity activity) {
+    Intent intent = null;
+    switch (item.getItemId()) {
+    case android.R.id.home:
+      intent = new Intent(activity, Catalog.class);
+      break;
+    case R.id.menu_item_remote:
+      intent = new Intent(activity, Remote.class);
+    case R.id.menu_item_my_shows:
+      intent = new Intent(activity, MyShows.class);
+      break;
+    case R.id.menu_item_search:
+      intent = new Intent(activity, Search.class);
+      break;
+    case R.id.menu_item_settings:
+      intent = new Intent(activity, Discover.class);
+      break;
+    case R.id.menu_item_help:
+      intent = new Intent(activity, Help.class);
+      break;
+    case R.id.menu_item_about:
+      intent = new Intent(activity, About.class);
+      break;
+    default:
+      Utils.logError("Unknown item ID: " + Integer.toString(item.getItemId()));
+      return false;
+    }
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    activity.startActivity(intent);
+    return true;
   }
 
   public final static Date parseDateStr(String dateStr) {

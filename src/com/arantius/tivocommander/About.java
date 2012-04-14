@@ -21,6 +21,7 @@ package com.arantius.tivocommander;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
@@ -33,6 +34,13 @@ public class About extends Activity {
 
     TextView title = (TextView) findViewById(R.id.textView1);
     title.setText(title.getText() + Utils.getVersion(this));
+
+    Utils.activateHomeButton(this);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    return Utils.onOptionsItemSelected(item, this);
   }
 
   @Override

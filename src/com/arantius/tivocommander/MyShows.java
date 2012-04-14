@@ -35,6 +35,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -382,6 +384,16 @@ public class MyShows extends ListActivity {
     getListView().setOnItemClickListener(mOnClickListener);
 
     startRequest();
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    return Utils.onCreateOptionsMenu(menu, this);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    return Utils.onOptionsItemSelected(item, this);
   }
 
   @Override

@@ -32,6 +32,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -251,6 +253,16 @@ public class Search extends ListActivity {
 
     mEmptyView = findViewById(android.R.id.empty);
     mEmptyView.setVisibility(View.INVISIBLE);
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    return Utils.onCreateOptionsMenu(menu, this);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    return Utils.onOptionsItemSelected(item, this);
   }
 
   @Override

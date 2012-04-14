@@ -23,6 +23,8 @@ import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
@@ -98,5 +100,15 @@ public class ExploreTabs extends TabActivity {
       mTabHost.addTab(makeTab("Similar", Suggestions.class,
           R.drawable.icon_similar));
     }
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    return Utils.onCreateOptionsMenu(menu, this);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    return Utils.onOptionsItemSelected(item, this);
   }
 }

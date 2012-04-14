@@ -3,6 +3,7 @@ package com.arantius.tivocommander;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,6 +24,13 @@ public class Help extends Activity {
       ((TextView) findViewById(R.id.note)).setText(bundle.getString("note"));
       findViewById(R.id.note_layout).setVisibility(View.VISIBLE);
     }
+
+    Utils.activateHomeButton(this);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    return Utils.onOptionsItemSelected(item, this);
   }
 
   @Override
