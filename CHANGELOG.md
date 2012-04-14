@@ -1,3 +1,9 @@
+v14 Apr 13, 2012:
+
+* Update target SDK for Holo theme, where available.
+* Fix start time parsing crash for "HD Recordings" group which is missing it.
+* Add action bar buttons.
+
 v13 Nov 16, 2011:
 
 * Fix the crash introduced in v12.
