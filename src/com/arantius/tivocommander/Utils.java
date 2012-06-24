@@ -1,5 +1,5 @@
 /*
-TiVo Commander allows control of a TiVo Premiere device.
+DVR Commander for TiVo allows control of a TiVo Premiere device.
 Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
@@ -131,7 +131,7 @@ public class Utils {
     Intent i = new Intent(Intent.ACTION_SEND);
     i.setType("message/rfc822");
     i.putExtra(Intent.EXTRA_EMAIL, new String[] { "arantius+tivo@gmail.com" });
-    i.putExtra(Intent.EXTRA_SUBJECT, "TiVo Commander " + title);
+    i.putExtra(Intent.EXTRA_SUBJECT, "DVR Commander for TiVo " + title);
     i.putExtra(Intent.EXTRA_TEXT, "Please describe you were doing when "
         + "something went wrong:\n\n\n\nThen leave these details for me:\n"
         + "Version: " + getVersion(context) + "\n" + log);
