@@ -241,6 +241,7 @@ public class Search extends ListActivity {
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.search);
+    setTitle("Search");
 
     final EditText searchBox = (EditText) findViewById(R.id.search_box);
     mAdapter = new SearchAdapter(this, R.layout.item_show, mResults);

@@ -67,6 +67,8 @@ public class ExploreTabs extends TabActivity {
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.explore_tabs);
+    setTitle("Explore");
+
     mTabHost = getTabHost();
     Bundle bundle = getIntent().getExtras();
     try {

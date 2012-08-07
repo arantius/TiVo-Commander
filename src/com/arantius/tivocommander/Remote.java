@@ -170,6 +170,7 @@ public class Remote extends Activity implements OnClickListener {
     MindRpc.init(this);
 
     setContentView(R.layout.remote);
+    setTitle("Remote");
 
     // It says always, but it only suppresses the open-on-launch.
     getWindow().setSoftInputMode(

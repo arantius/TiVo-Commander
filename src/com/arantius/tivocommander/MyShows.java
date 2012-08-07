@@ -363,9 +363,10 @@ public class MyShows extends ListActivity {
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
       mFolderId = bundle.getString("folderId");
-      setTitle("DVR Commander for TiVo - " + bundle.getString("folderName"));
+      setTitle(bundle.getString("folderName"));
     } else {
       mFolderId = null;
+      setTitle("My Shows");
     }
 
     Utils.log(String.format("MyShows: folderId:%s", mFolderId));

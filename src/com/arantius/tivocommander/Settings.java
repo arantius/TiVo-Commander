@@ -35,6 +35,7 @@ public class Settings extends PreferenceActivity {
   @Override
   protected void onResume() {
     super.onResume();
+    setTitle("Settings");
     Utils.log("Activity:Resume:Settings");
   }
 
