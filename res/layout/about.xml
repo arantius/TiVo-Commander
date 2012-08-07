@@ -36,7 +36,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_gravity="center" android:layout_margin="8dip" />
 
     <TextView android:id="@+id/textView2"
-      android:text="All relevant images and marks ® and ™ and © by TiVo Inc."
+      android:text="TiVo and the TiVo logo are registered trademarks of TiVo Inc. or its subsidiaries worldwide."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
 
@@ -60,7 +60,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_marginBottom="6dip" android:autoLink="web" />
 
     <TextView android:id="@+id/textView10"
-      android:text="Otherwise copyright ® 2011  Anthony Lieuallen (arantius@gmail.com)."
+      android:text="Otherwise copyright ® 2011, 2012  Anthony Lieuallen (arantius@gmail.com)."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
 
