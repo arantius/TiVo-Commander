@@ -19,15 +19,21 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
@@ -39,12 +45,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -179,7 +187,7 @@ public enum MindRpc {
       return;
     }
 
-    if (!connect()) {
+    if (!connect(originActivity)) {
       settingsError(originActivity, R.string.error_connect);
       return;
     }
@@ -273,27 +281,14 @@ public enum MindRpc {
     return true;
   }
 
-  private static boolean connect() {
+  private static boolean connect(final Activity originActivity) {
     Callable<Boolean> connectCallable = new Callable<Boolean>() {
-      public Boolean call() throws Exception {
-        SSLSocketFactory sslSocketFactory = null;
-
-        // Set up the socket factory.
-        try {
-          TrustManager[] tm = new TrustManager[] { new AlwaysTrustManager() };
-          SSLContext context = SSLContext.getInstance("TLS");
-          context.init(new KeyManager[0], tm, new SecureRandom());
-
-          sslSocketFactory = context.getSocketFactory();
-        } catch (KeyManagementException e) {
-          Log.e(LOG_TAG, "ssl: KeyManagementException!", e);
-          return false;
-        } catch (NoSuchAlgorithmException e) {
-          Log.e(LOG_TAG, "ssl: NoSuchAlgorithmException!", e);
+      public Boolean call() {
+        SSLSocketFactory sslSocketFactory = createSocketFactory(originActivity);
+        if (sslSocketFactory == null) {
           return false;
         }
 
-        // And use it to create a socket.
         try {
           mSessionId = 0x26c000 + new Random().nextInt(0xFFFF);
           mSocket = sslSocketFactory.createSocket();
@@ -324,6 +319,53 @@ public enum MindRpc {
     } catch (ExecutionException e) {
       Log.e(LOG_TAG, "connect: execution exception!", e);
       return false;
+    }
+  }
+
+  private static SSLSocketFactory createSocketFactory(
+      final Activity originActivity
+  ) {
+    final String password = readPassword(originActivity);
+    try {
+       KeyStore keyStore = KeyStore.getInstance("PKCS12");
+       KeyManagerFactory fac = KeyManagerFactory.getInstance("X509");
+       InputStream keyInput = originActivity.getResources().openRawResource(
+           R.raw.cdata);
+
+       keyStore.load(keyInput, password.toCharArray());
+       keyInput.close();
+
+       fac.init(keyStore, password.toCharArray());
+       SSLContext context = SSLContext.getInstance("TLS");
+       TrustManager[] tm = new TrustManager[] { new AlwaysTrustManager() };
+       context.init(fac.getKeyManagers(), tm, new SecureRandom());
+       return context.getSocketFactory();
+    } catch (CertificateException e) {
+      Log.e(LOG_TAG, "createSocketFactory: CertificateException!", e);
+    } catch (IOException e) {
+      Log.e(LOG_TAG, "createSocketFactory: IOException!", e);
+    } catch (KeyManagementException e) {
+      Log.e(LOG_TAG, "createSocketFactory: KeyManagementException!", e);
+    } catch (KeyStoreException e) {
+      Log.e(LOG_TAG, "createSocketFactory: KeyStoreException!", e);
+    } catch (NoSuchAlgorithmException e) {
+      Log.e(LOG_TAG, "createSocketFactory: NoSuchAlgorithmException!", e);
+    } catch (UnrecoverableKeyException e) {
+      Log.e(LOG_TAG, "createSocketFactory: UnrecoverableKeyException!", e);
+    }
+    return null;
+  }
+
+  private static String readPassword(Context ctx) {
+    InputStream inputStream = ctx.getResources().openRawResource(
+        R.raw.cdata_pass);
+    BufferedReader reader = new BufferedReader(
+        new InputStreamReader(inputStream));
+    try {
+      return reader.readLine();
+    } catch (IOException e) {
+      Log.e(LOG_TAG, "readpassword: IOException!", e);
+      return "";
     }
   }
 

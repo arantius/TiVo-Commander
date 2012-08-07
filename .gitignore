@@ -1,5 +1,7 @@
 .settings/
 bin/
 gen/
+res/raw/cdata
+res/raw/cdata_pass
 proguard.cfg
 Thumbs.db
