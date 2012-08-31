@@ -35,12 +35,14 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -143,9 +145,12 @@ public class Utils {
     }
   }
 
+  @TargetApi(11)
   public final static void activateHomeButton(Activity activity) {
-    ActionBar ab = activity.getActionBar();
-    ab.setDisplayHomeAsUpEnabled(true);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+      ActionBar ab = activity.getActionBar();
+      ab.setDisplayHomeAsUpEnabled(true);
+    }
   }
 
   public final static boolean onCreateOptionsMenu(Menu menu, Activity activity) {
