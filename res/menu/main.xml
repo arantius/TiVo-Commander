@@ -6,9 +6,9 @@
   <item android:id="@+id/menu_item_search" android:icon="@drawable/icon_search"
     android:showAsAction="ifRoom" android:title="Search" />
   <item android:id="@+id/menu_item_settings" android:icon="@drawable/icon_cog"
-    android:showAsAction="ifRoom" android:title="Settings" />
+    android:showAsAction="collapseActionView" android:title="Settings" />
   <item android:id="@+id/menu_item_help" android:icon="@drawable/icon_help"
-    android:showAsAction="ifRoom" android:title="Help" />
+    android:showAsAction="collapseActionView" android:title="Help" />
   <item android:id="@+id/menu_item_about" android:icon="@drawable/icon_info"
-    android:showAsAction="ifRoom" android:title="About" />
+    android:showAsAction="collapseActionView" android:title="About" />
 </menu>
