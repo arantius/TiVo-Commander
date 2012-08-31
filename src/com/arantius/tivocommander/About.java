@@ -32,7 +32,7 @@ public class About extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.about);
 
-    TextView title = (TextView) findViewById(R.id.textView1);
+    TextView title = (TextView) findViewById(R.id.about_version);
     title.setText(title.getText() + Utils.getVersion(this));
 
     Utils.activateHomeButton(this);

@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
 <resources>
-  <string name="app_name">DVR Commander for TiVo</string>
+  <string name="app_name">DVR Commander for TiVo®</string>
   <string name="pref_mak_instructions">"Log in to tivo.com, then open the 'View media access key' section to find this value."</string>
   <string name="pref_tsn_instructions">"Log in to tivo.com, then open the 'DVR preferences' section to find this value; it should be like 'tsn:###' with 15 digits and no hyphens."</string>
   <string name="error_addr">"Missing TiVo's address."</string>
