@@ -39,17 +39,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     <activity android:name="Explore"></activity>
     <activity android:name="ExploreTabs"></activity>
     <activity android:name="Help"></activity>
-    <activity android:name="MyShows">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-      </intent-filter>
-    </activity>
+    <activity android:name="MyShows"></activity>
     <activity android:name="Person"></activity>
-    <activity android:name="Remote">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-      </intent-filter>
-    </activity>
+    <activity android:name="Remote"></activity>
     <activity android:name="Search">
     </activity>
     <activity android:name="Settings"></activity>

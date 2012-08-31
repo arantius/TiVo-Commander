@@ -31,6 +31,7 @@ import android.widget.TabHost.TabSpec;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
+@SuppressWarnings("deprecation")
 public class ExploreTabs extends TabActivity {
   private String mCollectionId;
   private String mContentId;

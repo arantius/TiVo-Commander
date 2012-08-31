@@ -25,6 +25,7 @@ import android.preference.PreferenceActivity;
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public class Settings extends PreferenceActivity {
+  @SuppressWarnings("deprecation")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

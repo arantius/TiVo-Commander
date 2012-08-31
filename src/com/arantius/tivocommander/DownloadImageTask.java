@@ -156,7 +156,8 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
   @Override
   protected void onPostExecute(Bitmap result) {
     if (result != null) {
-      mImageView.setImageDrawable(new BitmapDrawable(result));
+      mImageView.setImageDrawable(
+          new BitmapDrawable(mContext.getResources(), result));
     }
     if (mProgressView != null) {
       mProgressView.setVisibility(View.GONE);

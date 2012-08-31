@@ -36,7 +36,6 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -57,6 +56,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.Discover;
@@ -93,8 +93,8 @@ public enum MindRpc {
   private static Activity mOriginActivity;
   private static DataOutputStream mOutputStream;
   private static MindRpcOutput mOutputThread;
-  private static HashMap<Integer, MindRpcResponseListener> mResponseListenerMap =
-      new HashMap<Integer, MindRpcResponseListener>();
+  private static SparseArray<MindRpcResponseListener> mResponseListenerMap =
+      new SparseArray<MindRpcResponseListener>();
   private static volatile int mRpcId = 1;
   private static volatile int mSessionId;
   private static Socket mSocket;
@@ -383,7 +383,7 @@ public enum MindRpc {
 
   protected static void dispatchResponse(final MindRpcResponse response) {
     final Integer rpcId = response.getRpcId();
-    if (!mResponseListenerMap.containsKey(rpcId)) {
+    if (mResponseListenerMap.get(rpcId) == null) {
       return;
     }
 

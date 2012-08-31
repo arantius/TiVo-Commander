@@ -54,6 +54,9 @@ public class MindRpcInput extends Thread {
       }
 
       try {
+        // Use deprecated readline on DataInputStream, because later I have to
+        // read _bytes_ from it.
+        @SuppressWarnings("deprecation")
         String respLine = mStream.readLine();
         if (respLine == null) {
           // The socket has closed.

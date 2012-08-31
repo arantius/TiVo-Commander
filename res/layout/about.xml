@@ -27,6 +27,7 @@ xmlns:tools="http://schemas.android.com/tools">
     android:orientation="vertical" tools:ignore="HardcodedText"
   >
     <ImageView android:src="@drawable/app_icon"
+      android:contentDescription="DVR Commander for TiVo® icon"
       android:layout_width="fill_parent" android:layout_height="fill_parent"
       android:layout_marginBottom="6dip" android:layout_marginTop="12dip"
     ></ImageView>
