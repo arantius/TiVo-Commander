@@ -56,6 +56,14 @@ public class Utils {
   private static final ObjectWriter mMapperPretty = mMapper
       .defaultPrettyPrintingWriter();
 
+  @TargetApi(11)
+  public final static void activateHomeButton(Activity activity) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+      ActionBar ab = activity.getActionBar();
+      ab.setDisplayHomeAsUpEnabled(true);
+    }
+  }
+
   public final static void debugLog(String message) {
     if (DEBUG) {
       log(message);
@@ -145,14 +153,6 @@ public class Utils {
     }
   }
 
-  @TargetApi(11)
-  public final static void activateHomeButton(Activity activity) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-      ActionBar ab = activity.getActionBar();
-      ab.setDisplayHomeAsUpEnabled(true);
-    }
-  }
-
   public final static boolean onCreateOptionsMenu(Menu menu, Activity activity) {
     Utils.activateHomeButton(activity);
     // TODO: Not show the current activity.
@@ -200,6 +200,14 @@ public class Utils {
     return parseDateTimeStr(dateParser, dateStr);
   }
 
+  private final static Date parseDateTimeStr(SimpleDateFormat dateParser,
+      String dateStr) {
+    TimeZone tz = TimeZone.getTimeZone("UTC");
+    dateParser.setTimeZone(tz);
+    ParsePosition pp = new ParsePosition(0);
+    return dateParser.parse(dateStr, pp);
+  }
+
   public final static Date parseDateTimeStr(String dateStr) {
     SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     return parseDateTimeStr(dateParser, dateStr);
@@ -223,25 +231,6 @@ public class Utils {
     return stringifyToJson(obj, false);
   }
 
-  public final static String stringifyToPrettyJson(Object obj) {
-    return stringifyToJson(obj, true);
-  }
-
-  public final static String ucFirst(String s) {
-    if (s == null) {
-      return null;
-    }
-    return s.substring(0, 1).toUpperCase() + s.substring(1);
-  }
-
-  private final static Date parseDateTimeStr(SimpleDateFormat dateParser,
-      String dateStr) {
-    TimeZone tz = TimeZone.getTimeZone("UTC");
-    dateParser.setTimeZone(tz);
-    ParsePosition pp = new ParsePosition(0);
-    return dateParser.parse(dateStr, pp);
-  }
-
   private final static String stringifyToJson(Object obj, boolean pretty) {
     try {
       if (pretty) {
@@ -257,5 +246,16 @@ public class Utils {
       Log.e(LOG_TAG, "stringifyToJson failure", e);
     }
     return null;
+  }
+
+  public final static String stringifyToPrettyJson(Object obj) {
+    return stringifyToJson(obj, true);
+  }
+
+  public final static String ucFirst(String s) {
+    if (s == null) {
+      return null;
+    }
+    return s.substring(0, 1).toUpperCase() + s.substring(1);
   }
 }
