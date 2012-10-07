@@ -35,6 +35,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -45,7 +46,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -155,43 +155,34 @@ public class Utils {
 
   public final static boolean onCreateOptionsMenu(Menu menu, Activity activity) {
     Utils.activateHomeButton(activity);
-    // TODO: Not show the current activity.
-    MenuInflater inflater = activity.getMenuInflater();
-    inflater.inflate(R.menu.main, menu);
+
+    addToMenu(menu, activity, R.id.menu_item_remote, R.drawable.icon_remote,
+        "Remote", MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    addToMenu(menu, activity, R.id.menu_item_my_shows, R.drawable.icon_tv32,
+        "My Shows", MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    addToMenu(menu, activity, R.id.menu_item_search, R.drawable.icon_search,
+        "Search", MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    addToMenu(menu, activity, R.id.menu_item_settings, R.drawable.icon_cog,
+        "Settings", MenuItem.SHOW_AS_ACTION_NEVER);
+    addToMenu(menu, activity, R.id.menu_item_help, R.drawable.icon_help,
+        "Help", MenuItem.SHOW_AS_ACTION_NEVER);
+    addToMenu(menu, activity, R.id.menu_item_about, R.drawable.icon_info,
+        "About", MenuItem.SHOW_AS_ACTION_NEVER);
+
     return true;
   }
 
   public final static boolean onOptionsItemSelected(MenuItem item,
-      Activity activity) {
-    Intent intent = null;
-    switch (item.getItemId()) {
-    case android.R.id.home:
-      intent = new Intent(activity, Catalog.class);
-      break;
-    case R.id.menu_item_remote:
-      intent = new Intent(activity, Remote.class);
-      break;
-    case R.id.menu_item_my_shows:
-      intent = new Intent(activity, MyShows.class);
-      break;
-    case R.id.menu_item_search:
-      intent = new Intent(activity, Search.class);
-      break;
-    case R.id.menu_item_settings:
-      intent = new Intent(activity, Discover.class);
-      break;
-    case R.id.menu_item_help:
-      intent = new Intent(activity, Help.class);
-      break;
-    case R.id.menu_item_about:
-      intent = new Intent(activity, About.class);
-      break;
-    default:
+      Activity srcActivity) {
+    Class<? extends Activity> targetActivity =
+        Utils.activityForMenuId(item.getItemId());
+    if (targetActivity == null) {
       Utils.logError("Unknown item ID: " + Integer.toString(item.getItemId()));
       return false;
     }
+    Intent intent = new Intent(srcActivity, targetActivity);
     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    activity.startActivity(intent);
+    srcActivity.startActivity(intent);
     return true;
   }
 
@@ -229,6 +220,39 @@ public class Utils {
 
   public final static String stringifyToJson(Object obj) {
     return stringifyToJson(obj, false);
+  }
+
+  private final static Class<? extends Activity> activityForMenuId(int menuId) {
+    switch (menuId) {
+    case android.R.id.home:
+      return Catalog.class;
+    case R.id.menu_item_remote:
+      return Remote.class;
+    case R.id.menu_item_my_shows:
+      return MyShows.class;
+    case R.id.menu_item_search:
+      return Search.class;
+    case R.id.menu_item_settings:
+      return Discover.class;
+    case R.id.menu_item_help:
+      return Help.class;
+    case R.id.menu_item_about:
+      return About.class;
+    }
+    return null;
+  }
+
+  @SuppressLint("NewApi")
+  private final static void addToMenu(Menu menu, Activity activity, int itemId,
+      int iconId, String title, int showAsAction) {
+    if (Utils.activityForMenuId(itemId) == activity.getClass()) {
+      return;
+    }
+    MenuItem menuitem = menu.add(Menu.NONE, itemId, Menu.NONE, title);
+    menuitem.setIcon(iconId);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+      menuitem.setShowAsAction(showAsAction);
+    }
   }
 
   private final static String stringifyToJson(Object obj, boolean pretty) {
