@@ -170,6 +170,7 @@ public class Utils {
       break;
     case R.id.menu_item_remote:
       intent = new Intent(activity, Remote.class);
+      break;
     case R.id.menu_item_my_shows:
       intent = new Intent(activity, MyShows.class);
       break;
