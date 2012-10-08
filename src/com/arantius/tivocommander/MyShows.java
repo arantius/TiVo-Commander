@@ -323,10 +323,14 @@ public class MyShows extends ListActivity {
   }
 
   private void finishWithRefresh() {
+    setRefreshResult();
+    finish();
+  }
+
+  private void setRefreshResult() {
     Intent resultIntent = new Intent();
     resultIntent.putExtra("refresh", true);
     setResult(Activity.RESULT_OK, resultIntent);
-    finish();
   }
 
   private void startRequest() {
@@ -345,6 +349,7 @@ public class MyShows extends ListActivity {
 
     if (EXPECT_REFRESH_INTENT_ID == requestCode) {
       if (data.getBooleanExtra("refresh", false)) {
+        setRefreshResult();
         if (mShowData.size() == 1) {
           // We deleted the last show! Go up a level.
           finishWithRefresh();
