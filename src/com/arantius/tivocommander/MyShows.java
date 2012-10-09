@@ -22,7 +22,6 @@ package com.arantius.tivocommander;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 import org.codehaus.jackson.JsonNode;
 
@@ -34,6 +33,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -299,8 +299,8 @@ public class MyShows extends ListActivity {
   private final String[] mOrderLabels = new String[] { "Date", "A-Z" };
   private final String[] mOrderValues = new String[] { "startTime", "title" };
   private int mRequestCount = 0;
-  private final HashMap<Integer, ArrayList<Integer>> mRequestSlotMap =
-      new HashMap<Integer, ArrayList<Integer>>();
+  private final SparseArray<ArrayList<Integer>> mRequestSlotMap =
+      new SparseArray<ArrayList<Integer>>();
   private final ArrayList<JsonNode> mShowData = new ArrayList<JsonNode>();
   private JsonNode mShowIds;
   private final ArrayList<ShowStatus> mShowStatus = new ArrayList<ShowStatus>();
