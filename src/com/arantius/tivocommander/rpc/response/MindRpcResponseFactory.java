@@ -52,7 +52,7 @@ public class MindRpcResponseFactory {
       Utils.logError("Parse failure; response body");
       return null;
     } else {
-      if (bodyObj.path("type").getValueAsText().equals("error")) {
+      if (bodyObj.path("type").asText().equals("error")) {
         Utils.logError("Response type is error! " + bodyStr);
       }
 

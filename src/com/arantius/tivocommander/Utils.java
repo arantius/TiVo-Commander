@@ -54,7 +54,7 @@ public class Utils {
   private static final String LOG_TAG = "tivo_commander";
   private static final ObjectMapper mMapper = new ObjectMapper();
   private static final ObjectWriter mMapperPretty = mMapper
-      .defaultPrettyPrintingWriter();
+      .writerWithDefaultPrettyPrinter();
 
   @TargetApi(11)
   public final static void activateHomeButton(Activity activity) {

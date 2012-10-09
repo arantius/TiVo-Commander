@@ -37,7 +37,7 @@ abstract public class ExploreCommon extends Activity {
   private final MindRpcResponseListener mListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          if ("error".equals(response.getBody().path("type").getValueAsText())) {
+          if ("error".equals(response.getBody().path("type").asText())) {
             if ("staleData".equals(response.getBody().path("code"))) {
               Toast.makeText(getBaseContext(), "Stale data error, panicing.",
                   Toast.LENGTH_SHORT).show();

@@ -202,8 +202,8 @@ public class MyShows extends ListActivity {
           ProgressBar mMeter = (ProgressBar) findViewById(R.id.meter);
           TextView mMeterText = (TextView) findViewById(R.id.meter_text);
           JsonNode bodyConfig = response.getBody().path("bodyConfig").path(0);
-          int used = bodyConfig.path("userDiskUsed").getValueAsInt();
-          int size = bodyConfig.path("userDiskSize").getValueAsInt();
+          int used = bodyConfig.path("userDiskUsed").asInt();
+          int size = bodyConfig.path("userDiskSize").asInt();
 
           mMeter.setMax(size);
           mMeter.setProgress(used);
@@ -274,12 +274,12 @@ public class MyShows extends ListActivity {
           }
 
           JsonNode countNode = item.path("folderItemCount");
-          if (countNode != null && countNode.getValueAsInt() > 0) {
+          if (countNode != null && countNode.asInt() > 0) {
             // Navigate to 'my shows' for this folder.
             Intent intent = new Intent(MyShows.this, MyShows.class);
             intent.putExtra("folderId", item.path("recordingFolderItemId")
-                .getValueAsText());
-            intent.putExtra("folderName", item.path("title").getValueAsText());
+                .asText());
+            intent.putExtra("folderName", item.path("title").asText());
             startActivityForResult(intent, EXPECT_REFRESH_INTENT_ID);
           } else {
             JsonNode recording = item.path("recordingForChildRecordingId");
