@@ -17,14 +17,13 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
-<LinearLayout android:id="@+id/linearLayout1"
+<LinearLayout android:orientation="vertical" android:layout_height="fill_parent"
   android:layout_width="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical" android:layout_height="fill_parent"
 >
   <AutoCompleteTextView android:layout_width="fill_parent"
     android:text="" android:layout_height="40dip" android:id="@+id/search_box" />
   <ListView android:id="@android:id/android:list"
     android:layout_weight="1" android:layout_width="fill_parent"
-    android:layout_height="fill_parent" />
+    android:layout_height="0dp" />
   <include layout="@layout/no_results" />
 </LinearLayout>

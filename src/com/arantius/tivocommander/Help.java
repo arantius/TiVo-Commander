@@ -22,7 +22,7 @@ public class Help extends Activity {
     Bundle bundle = getIntent().getExtras();
     if (bundle != null) {
       ((TextView) findViewById(R.id.note)).setText(bundle.getString("note"));
-      findViewById(R.id.note_layout).setVisibility(View.VISIBLE);
+      findViewById(R.id.note).setVisibility(View.VISIBLE);
     }
 
     Utils.activateHomeButton(this);

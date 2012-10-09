@@ -189,7 +189,7 @@ public class SubscribeCollection extends SubscribeBase {
     setContentView(R.layout.subscribe_conflicts);
 
     if (mPriority == 1) {
-      findViewById(R.id.button2).setVisibility(View.GONE);
+      findViewById(R.id.button_get_all).setVisibility(View.GONE);
     }
 
     // "Will Record" list.

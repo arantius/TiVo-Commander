@@ -203,7 +203,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     mHostAdapter.notifyDataSetChanged();
 
     setProgressBarIndeterminateVisibility(true);
-    findViewById(R.id.button1).setEnabled(false);
+    findViewById(R.id.refresh_button).setEnabled(false);
 
     final Discover that = this;
     Thread jmdnsThread = new Thread(new Runnable() {
@@ -287,7 +287,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     mHostAdapter =
         new SimpleAdapter(this, mHosts, R.layout.item_discover, new String[] {
             "name", "warn_icon" },
-            new int[] { R.id.textView1, R.id.imageView1 });
+            new int[] { R.id.discover_name, R.id.discover_warn_icon });
     setListAdapter(mHostAdapter);
 
     getListView().setOnItemClickListener(this);
@@ -311,7 +311,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     runOnUiThread(new Runnable() {
       public void run() {
         setProgressBarIndeterminateVisibility(false);
-        findViewById(R.id.button1).setEnabled(true);
+        findViewById(R.id.refresh_button).setEnabled(true);
         mEmpty.setText("No results found.");
       }
     });

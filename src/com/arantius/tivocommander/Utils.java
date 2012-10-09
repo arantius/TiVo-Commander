@@ -64,6 +64,39 @@ public class Utils {
     }
   }
 
+  private final static Class<? extends Activity> activityForMenuId(int menuId) {
+    switch (menuId) {
+    case android.R.id.home:
+      return Catalog.class;
+    case R.id.menu_item_remote:
+      return Remote.class;
+    case R.id.menu_item_my_shows:
+      return MyShows.class;
+    case R.id.menu_item_search:
+      return Search.class;
+    case R.id.menu_item_settings:
+      return Discover.class;
+    case R.id.menu_item_help:
+      return Help.class;
+    case R.id.menu_item_about:
+      return About.class;
+    }
+    return null;
+  }
+
+  @SuppressLint("NewApi")
+  private final static void addToMenu(Menu menu, Activity activity, int itemId,
+      int iconId, String title, int showAsAction) {
+    if (Utils.activityForMenuId(itemId) == activity.getClass()) {
+      return;
+    }
+    MenuItem menuitem = menu.add(Menu.NONE, itemId, Menu.NONE, title);
+    menuitem.setIcon(iconId);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+      menuitem.setShowAsAction(showAsAction);
+    }
+  }
+
   public final static void debugLog(String message) {
     if (DEBUG) {
       log(message);
@@ -220,39 +253,6 @@ public class Utils {
 
   public final static String stringifyToJson(Object obj) {
     return stringifyToJson(obj, false);
-  }
-
-  private final static Class<? extends Activity> activityForMenuId(int menuId) {
-    switch (menuId) {
-    case android.R.id.home:
-      return Catalog.class;
-    case R.id.menu_item_remote:
-      return Remote.class;
-    case R.id.menu_item_my_shows:
-      return MyShows.class;
-    case R.id.menu_item_search:
-      return Search.class;
-    case R.id.menu_item_settings:
-      return Discover.class;
-    case R.id.menu_item_help:
-      return Help.class;
-    case R.id.menu_item_about:
-      return About.class;
-    }
-    return null;
-  }
-
-  @SuppressLint("NewApi")
-  private final static void addToMenu(Menu menu, Activity activity, int itemId,
-      int iconId, String title, int showAsAction) {
-    if (Utils.activityForMenuId(itemId) == activity.getClass()) {
-      return;
-    }
-    MenuItem menuitem = menu.add(Menu.NONE, itemId, Menu.NONE, title);
-    menuitem.setIcon(iconId);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-      menuitem.setShowAsAction(showAsAction);
-    }
   }
 
   private final static String stringifyToJson(Object obj, boolean pretty) {

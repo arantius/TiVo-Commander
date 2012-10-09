@@ -17,77 +17,70 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
-<LinearLayout android:id="@+id/linearLayout1"
-  android:layout_width="fill_parent" android:layout_height="fill_parent"
+<LinearLayout
+  android:layout_width="match_parent" android:layout_height="fill_parent"
   android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android"
 >
-  <ScrollView android:id="@+id/scrollView1"
-    android:layout_width="fill_parent" android:layout_height="fill_parent"
+  <ScrollView
+    android:layout_width="match_parent" android:layout_height="0dp"
     android:layout_weight="1"
   >
-    <LinearLayout android:id="@+id/linearLayout1"
-      android:layout_width="fill_parent" android:layout_height="fill_parent"
+    <LinearLayout
+      android:layout_width="match_parent" android:layout_height="wrap_content"
       android:layout_margin="6dip" android:orientation="vertical"
     >
-      <TextView android:id="@+id/textView1" android:text="Got problems?"
-        android:layout_width="wrap_content" android:layout_height="fill_parent"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+      <TextView android:layout_width="wrap_content" android:text="Got problems?"
+        android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_gravity="center" android:layout_margin="8dip" />
 
-      <LinearLayout android:id="@+id/note_layout"
-        android:layout_width="fill_parent" android:layout_height="wrap_content"
-        android:visibility="gone"
-      >
-        <ImageView android:id="@+id/imageView1"
-          android:layout_width="wrap_content" android:layout_height="wrap_content"
-          android:src="@android:drawable/ic_dialog_alert" />
-        <TextView android:id="@+id/note" android:textColor="#ECF76A"
-          android:layout_width="wrap_content" android:layout_height="wrap_content"
-          android:layout_marginBottom="6dip" android:gravity="center_vertical"
-          android:minHeight="30dip" android:layout_marginLeft="6dip" />
-      </LinearLayout>
+      <TextView android:id="@+id/note" android:textColor="#ECF76A"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginBottom="6dip" android:gravity="center_vertical"
+        android:minHeight="30dip" android:layout_marginLeft="6dip"
+        android:drawableLeft="@android:drawable/ic_dialog_alert"
+        android:visibility="gone" />
 
-      <TextView android:id="@+id/header_wifi" android:text="Is your TiVo is not found?"
+      <TextView android:text="Is your TiVo is not found?"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
-      <TextView android:id="@+id/wifi"
+      <TextView
         android:text="WiFi should be on.  If the TiVo is still not found, you're probably not connected to the right network.  Read on to troubleshoot."
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="6dip" />
 
-      <TextView android:id="@+id/header_net_remote"
+      <TextView
         android:text="Do you get a connection error?"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
-      <TextView android:id="@+id/net_remote"
+      <TextView
         android:text="On your TiVo, check the Settings &amp; Messages > Remote, CableCARD &amp; Devices > Network Remote Control setting.  Make sure it is enabled."
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="6dip" />
 
-      <TextView android:id="@+id/header_authentication"
+      <TextView
         android:text="Do you get an authentication error?"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
-      <TextView android:id="@+id/authentication"
+      <TextView
         android:text="On your TiVo, open Settings &amp; Messages > Account &amp; System Information > Media Access Key.  Double check that you've entered this value for the MAK."
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="6dip" />
-      <TextView android:id="@+id/authentication2"
+      <TextView
         android:text="Is the MAK not displayed here (or, just to be sure)?  Log into your tivo.com account and check that the &quot;Video Sharing&quot; option is enabled.  According to TiVo, this setting can take up to 24 hours to take effect.  Maybe less."
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="6dip" />
 
-      <TextView android:id="@+id/header_last_resort"
+      <TextView
         android:text="What, it STILL doesn&apos;t work?"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
-      <TextView android:id="@+id/net_remote"
+      <TextView
         android:text="Ok, as a really last resort: From TiVo Central, go to > Settings &amp; messages > Settings > Network &amp; Phone.  Read the &quot;Ip addr&quot; there, and put it in via the custom settings button.  If THAT doesn't work, something's really wrong.  Drat."
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="6dip" />
     </LinearLayout>
   </ScrollView>
-  <Button android:id="@+id/button1" android:text="Custom Settings"
+  <Button android:text="Custom Settings"
     android:layout_width="fill_parent" android:layout_height="wrap_content"
     android:layout_gravity="center" android:onClick="customSettings" />
 </LinearLayout>

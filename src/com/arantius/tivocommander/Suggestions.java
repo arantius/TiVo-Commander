@@ -63,8 +63,8 @@ public class Suggestions extends Activity {
         v = vi.inflate(R.layout.item_show, null);
       }
 
-      ImageView iv = (ImageView) v.findViewById(R.id.imageView1);
-      View pv = v.findViewById(R.id.progressBar1);
+      ImageView iv = (ImageView) v.findViewById(R.id.image_show);
+      View pv = v.findViewById(R.id.image_show_progress);
 
       if (convertView != null) {
         iv.setImageDrawable(mDrawable);
@@ -81,7 +81,7 @@ public class Suggestions extends Activity {
         new DownloadImageTask(Suggestions.this, iv, pv).execute(imgUrl);
       }
 
-      ((TextView) v.findViewById(R.id.textView1)).setText(item.path("title")
+      ((TextView) v.findViewById(R.id.show_name)).setText(item.path("title")
           .getTextValue());
 
       return v;
@@ -119,7 +119,7 @@ public class Suggestions extends Activity {
               shows[i++] = show;
             }
 
-            ListView lv = (ListView) findViewById(R.id.listView1);
+            ListView lv = (ListView) findViewById(R.id.list_explore);
             ShowAdapter adapter =
                 new ShowAdapter(Suggestions.this, R.layout.item_show, shows);
             lv.setAdapter(adapter);

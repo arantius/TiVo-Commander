@@ -17,25 +17,23 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
-<LinearLayout android:id="@+id/linearLayout1"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android"
 >
-  <FrameLayout android:id="@+id/frameLayout1"
+  <FrameLayout android:paddingRight="4dip"
     android:layout_width="wrap_content" android:layout_height="wrap_content"
-    android:paddingRight="4dip"
   >
-    <ImageView android:id="@+id/imageView1" android:src="@drawable/content_banner"
+    <ImageView android:id="@+id/image_show" android:src="@drawable/content_banner"
       android:layout_height="75dip" android:layout_width="100dip"
       android:layout_gravity="center" />
-    <ProgressBar android:id="@+id/progressBar1"
+    <ProgressBar android:id="@+id/image_show_progress"
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       style="?android:attr/progressBarStyleSmall"
       android:layout_gravity="center" />
   </FrameLayout>
   <TextView android:text="Name" android:paddingBottom="4dip"
     android:textColor="#FFFFFF" android:layout_height="wrap_content"
-    android:id="@+id/textView1" android:layout_width="wrap_content"
+    android:id="@+id/show_name" android:layout_width="0dp"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:textAppearance="?android:attr/textAppearanceLarge"
     android:gravity="center_vertical" android:layout_weight="1"

@@ -18,17 +18,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/linearLayout1" android:orientation="vertical"
   android:layout_width="fill_parent" android:layout_height="fill_parent"
+  android:orientation="vertical"
 >
-  <TextView android:id="@+id/textView1" android:text="TiVo Device Search"
+  <TextView android:text="TiVo Device Search" android:padding="2dip"
     android:textAppearance="?android:attr/textAppearanceMedium"
-    android:layout_width="wrap_content" android:layout_height="wrap_content"
-    android:padding="2dip" />
-  <Button android:id="@+id/button3" android:text="Help!"
-    android:layout_width="fill_parent" android:layout_height="wrap_content"
-    android:onClick="showHelp"
-  />
+    android:layout_width="wrap_content" android:layout_height="wrap_content" />
+  <Button android:text="Help!" android:onClick="showHelp"
+    android:layout_width="fill_parent" android:layout_height="wrap_content" />
 
   <ListView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" android:layout_height="fill_parent"
@@ -39,14 +36,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     android:textAppearance="?android:attr/textAppearanceMedium"
     android:gravity="center" android:layout_weight="1" />
 
-  <LinearLayout android:id="@+id/linearLayout2"
+  <LinearLayout
     android:layout_height="wrap_content" android:layout_width="fill_parent"
   >
-    <Button android:id="@+id/button1" android:text="Refresh"
+    <Button android:id="@+id/refresh_button" android:text="Refresh"
       android:layout_width="fill_parent" android:layout_height="wrap_content"
       android:layout_gravity="center" android:onClick="startQuery"
       android:layout_weight="1" />
-    <Button android:id="@+id/button2" android:text="Custom Settings"
+    <Button android:id="@+id/custom_button" android:text="Custom Settings"
       android:layout_width="fill_parent" android:layout_height="wrap_content"
       android:layout_gravity="center" android:onClick="customSettings"
       android:layout_weight="1" />

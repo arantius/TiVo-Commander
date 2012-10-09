@@ -107,7 +107,7 @@ public class Upcoming extends ListActivity {
               listItem.put("title", item.has("subtitle") ? item
                   .path("subtitle").getTextValue() : item.path("title")
                   .getTextValue());
-              listItem.put("index", new Integer(i));
+              listItem.put("index", Integer.valueOf(i));
               listItems.add(listItem);
             } catch (DateInPast e) {
               // No-op. Just don't show past items.

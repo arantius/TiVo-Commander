@@ -74,13 +74,13 @@ public class Person extends ListActivity {
         v = vi.inflate(mResource, null);
       }
 
-      ImageView iv = (ImageView) v.findViewById(R.id.imageView1);
-      View pv = v.findViewById(R.id.progressBar1);
+      ImageView iv = (ImageView) v.findViewById(R.id.person_image);
+      View pv = v.findViewById(R.id.person_image_progress);
 
       if (convertView != null) {
         iv.setImageDrawable(mDrawable);
         pv.setVisibility(View.VISIBLE);
-        v.findViewById(R.id.textView2).setVisibility(View.VISIBLE);
+        v.findViewById(R.id.person_role).setVisibility(View.VISIBLE);
       }
 
       JsonNode item = mCredits[position];
@@ -93,9 +93,9 @@ public class Person extends ListActivity {
         new DownloadImageTask(Person.this, iv, pv).execute(imgUrl);
       }
 
-      ((TextView) v.findViewById(R.id.textView1)).setText(item.path("title")
+      ((TextView) v.findViewById(R.id.person_name)).setText(item.path("title")
           .getTextValue());
-      ((TextView) v.findViewById(R.id.textView2)).setText(Utils
+      ((TextView) v.findViewById(R.id.person_role)).setText(Utils
           .ucFirst(findRole(item.path("credit"))));
       // TODO: Can we display / sort by the year?
 
@@ -212,8 +212,8 @@ public class Person extends ListActivity {
       birthplaceView.setVisibility(View.GONE);
     }
 
-    ImageView iv = (ImageView) findViewById(R.id.imageView1);
-    View pv = findViewById(R.id.progressBar1);
+    ImageView iv = (ImageView) findViewById(R.id.person_image);
+    View pv = findViewById(R.id.person_image_progress);
     String imgUrl = Utils.findImageUrl(mPerson);
     new DownloadImageTask(this, iv, pv).execute(imgUrl);
   }

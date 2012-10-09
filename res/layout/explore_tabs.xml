@@ -21,7 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   android:layout_width="fill_parent" android:layout_height="fill_parent"
   android:id="@android:id/tabhost"
 >
-  <LinearLayout android:id="@+id/explore_tabs_layout"
+  <LinearLayout
     android:layout_width="fill_parent" android:layout_height="fill_parent"
     android:orientation="vertical"
   >

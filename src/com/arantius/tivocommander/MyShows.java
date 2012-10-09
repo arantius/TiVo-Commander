@@ -382,7 +382,7 @@ public class MyShows extends ListActivity {
     setContentView(R.layout.list_my_shows);
 
     if (mFolderId != null) {
-      findViewById(R.id.button1).setVisibility(View.GONE);
+      findViewById(R.id.sort_button).setVisibility(View.GONE);
     }
 
     mListAdapter = new ShowsAdapter(this);

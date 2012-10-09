@@ -77,8 +77,8 @@ public class Search extends ListActivity {
         v = vi.inflate(R.layout.item_show, null);
       }
 
-      ImageView iv = (ImageView) v.findViewById(R.id.imageView1);
-      View pv = v.findViewById(R.id.progressBar1);
+      ImageView iv = (ImageView) v.findViewById(R.id.image_show);
+      View pv = v.findViewById(R.id.image_show_progress);
 
       if (convertView != null) {
         iv.setImageDrawable(mDrawable);
@@ -113,7 +113,7 @@ public class Search extends ListActivity {
         return v;
       }
 
-      ((TextView) v.findViewById(R.id.textView1)).setText(title);
+      ((TextView) v.findViewById(R.id.show_name)).setText(title);
 
       return v;
     }

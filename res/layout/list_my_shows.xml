@@ -29,7 +29,7 @@ which requires calling setContentView(), thus we need content.
     android:layout_width="fill_parent" android:layout_height="wrap_content"
   >
     <FrameLayout android:layout_weight="1"
-      android:layout_height="fill_parent" android:layout_width="wrap_content"
+      android:layout_height="fill_parent" android:layout_width="0dp"
     >
       <ProgressBar android:id="@+id/meter"
         style="@android:style/Widget.ProgressBar.Horizontal"
@@ -41,7 +41,7 @@ which requires calling setContentView(), thus we need content.
         android:text="" android:gravity="center_vertical"
         android:paddingLeft="10dip" android:textColor="#0040bb" />
     </FrameLayout>
-    <Button android:id="@+id/button1" android:text="Sort"
+    <Button android:id="@+id/sort_button" android:text="Sort"
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:onClick="doSort" />
   </LinearLayout>

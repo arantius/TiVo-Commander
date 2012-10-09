@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/linearLayout1" android:orientation="horizontal"
+  android:orientation="horizontal"
   android:layout_width="fill_parent" android:layout_height="wrap_content"
   android:minHeight="?android:attr/listPreferredItemHeight"
 >
@@ -26,8 +26,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:layout_gravity="center" />
   <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linearLayout1" android:orientation="vertical"
-    android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_width="0dp" android:layout_height="wrap_content"
     android:layout_marginLeft="6dip" android:layout_marginTop="6dip"
     android:layout_marginBottom="6dip" android:layout_weight="1"
   >

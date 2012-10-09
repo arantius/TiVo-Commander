@@ -1,17 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/linearLayout1" android:orientation="vertical"
-  android:layout_width="fill_parent" android:layout_height="fill_parent"
+  android:layout_width="fill_parent" android:layout_height="match_parent"
+  android:orientation="vertical"
 >
-  <ScrollView android:id="@+id/scrollView1"
-    android:layout_width="fill_parent" android:layout_height="fill_parent"
-    android:layout_weight="1"
+  <ScrollView android:layout_weight="1"
+    android:layout_width="fill_parent" android:layout_height="0dp"
   >
-    <LinearLayout android:id="@+id/linearLayout2"
-      android:layout_width="fill_parent" android:layout_height="fill_parent"
+    <LinearLayout
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
       android:orientation="vertical"
     >
-      <TextView android:id="@+id/label_channel" android:text="@string/channel"
+      <TextView android:text="@string/channel"
         style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:layout_marginBottom="4dip" />
@@ -24,14 +41,14 @@
       <Spinner android:id="@+id/channel" android:prompt="@string/channel"
         android:layout_width="fill_parent" android:layout_height="wrap_content" />
 
-      <TextView android:id="@+id/label_record_which" android:text="@string/record_which"
+      <TextView android:text="@string/record_which"
         style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:layout_marginBottom="4dip" />
       <Spinner android:id="@+id/record_which" android:prompt="@string/record_which"
         android:layout_width="fill_parent" android:layout_height="wrap_content" />
 
-      <TextView android:id="@+id/label_record_max" android:text="@string/record_max"
+      <TextView android:text="@string/record_max"
         style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:layout_marginBottom="4dip" />
@@ -41,7 +58,7 @@
       <include layout="@layout/subscribe_base" />
     </LinearLayout>
   </ScrollView>
-  <Button android:id="@+id/button1" android:text="OK"
+  <Button android:text="OK"
     android:layout_width="fill_parent" android:layout_height="wrap_content"
     android:onClick="doSubscribe" />
 </LinearLayout>

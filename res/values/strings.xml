@@ -26,7 +26,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <string name="error_mak">"Please provide your TiVo's Media Access Key."</string>
   <string name="error_connect">Could not connect; check host &amp; port settings.</string>
   <string name="error_auth">Authentication failed; check MAK settings.</string>
-  <string name="error_reading_content_id">Error reading content ID</string>
   <string name="keep_until">Keep Until</string>
   <string name="start_recording">Start Recording</string>
   <string name="stop_recording">Stop Recording</string>

@@ -19,13 +19,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent" android:layout_height="fill_parent"
-  android:id="@+id/linearLayout1" android:orientation="vertical"
+  android:orientation="vertical"
 >
-  <LinearLayout android:id="@+id/linearLayout2"
+  <LinearLayout android:baselineAligned="false"
     android:layout_width="fill_parent" android:layout_height="wrap_content"
   >
-    <LinearLayout android:id="@+id/linearLayout3"
-      android:layout_width="wrap_content" android:layout_height="wrap_content"
+    <LinearLayout
+      android:layout_width="0dp" android:layout_height="wrap_content"
       android:orientation="vertical" android:layout_weight="1"
     >
       <TextView android:id="@+id/person_name"
@@ -42,12 +42,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:textColor="#6F8CAF" android:text="Birthplace" />
     </LinearLayout>
-    <FrameLayout android:id="@+id/frameLayout1"
+    <FrameLayout
       android:layout_width="wrap_content" android:layout_height="wrap_content"
     >
-      <ImageView android:id="@+id/imageView1" android:src="@drawable/person"
+      <ImageView android:id="@+id/person_image" android:src="@drawable/person"
         android:layout_width="75dip" android:layout_height="100dip" />
-      <ProgressBar android:id="@+id/progressBar1"
+      <ProgressBar android:id="@+id/person_image_progress"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_gravity="center" />
     </FrameLayout>

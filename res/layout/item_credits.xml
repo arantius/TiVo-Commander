@@ -17,37 +17,34 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
-<LinearLayout android:id="@+id/linearLayout1"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android"
 >
-  <FrameLayout android:id="@+id/frameLayout1"
+  <FrameLayout android:paddingRight="4dip"
     android:layout_width="wrap_content" android:layout_height="wrap_content"
-    android:paddingRight="4dip"
   >
-    <ImageView android:id="@+id/imageView1" android:src="@drawable/person"
+    <ImageView android:id="@+id/person_image" android:src="@drawable/person"
       android:layout_height="75dip" android:layout_width="61dip"
       android:layout_gravity="center"
     />
-    <ProgressBar android:id="@+id/progressBar1"
+    <ProgressBar android:id="@+id/person_image_progress"
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       style="?android:attr/progressBarStyleSmall"
       android:layout_gravity="center"
     />
   </FrameLayout>
-  <LinearLayout android:id="@+id/linearLayout2"
+  <LinearLayout android:orientation="vertical"
     android:layout_width="wrap_content" android:layout_height="wrap_content"
-    android:orientation="vertical"
   >
-    <TextView android:id="@+id/textView1" android:text="Name"
+    <TextView android:id="@+id/person_name" android:text="Name"
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:textColor="#FFFFFF" android:paddingBottom="4dip"
     />
-    <TextView android:id="@+id/textView2" android:text="&quot;Character&quot;"
+    <TextView android:id="@+id/person_char" android:text="&quot;Character&quot;"
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:textColor="#6F8CAF" android:paddingBottom="4dip"
     />
-    <TextView android:id="@+id/textView3" android:text="Role"
+    <TextView android:id="@+id/person_role" android:text="Role"
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:textColor="#FF9500" />
   </LinearLayout>

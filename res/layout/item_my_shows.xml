@@ -42,7 +42,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   >
     <TextView android:id="@+id/show_title"
       android:textAppearance="?android:attr/textAppearanceLarge"
-      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_width="fill_parent" android:layout_height="0dp"
       android:gravity="center_vertical" android:layout_weight="1"
       android:focusable="false" android:focusableInTouchMode="false"
       android:text="Title" />

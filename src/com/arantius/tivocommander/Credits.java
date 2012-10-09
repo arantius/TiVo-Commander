@@ -59,13 +59,13 @@ public class Credits extends ExploreCommon {
         v = vi.inflate(R.layout.item_credits, null);
       }
 
-      ImageView iv = (ImageView) v.findViewById(R.id.imageView1);
-      View pv = v.findViewById(R.id.progressBar1);
+      ImageView iv = (ImageView) v.findViewById(R.id.person_image);
+      View pv = v.findViewById(R.id.person_image_progress);
 
       if (convertView != null) {
         iv.setImageDrawable(mPersonDrawable);
         pv.setVisibility(View.VISIBLE);
-        v.findViewById(R.id.textView2).setVisibility(View.VISIBLE);
+        v.findViewById(R.id.person_name).setVisibility(View.VISIBLE);
       }
 
       JsonNode item = mCredits[position];
@@ -80,17 +80,17 @@ public class Credits extends ExploreCommon {
         new DownloadImageTask(Credits.this, iv, pv).execute(imgUrl);
       }
 
-      ((TextView) v.findViewById(R.id.textView1)).setText(item.path("first")
+      ((TextView) v.findViewById(R.id.person_name)).setText(item.path("first")
           .getTextValue() + " " + item.path("last").getTextValue());
       if (item.has("characterName")) {
-        ((TextView) v.findViewById(R.id.textView2)).setText("\""
+        ((TextView) v.findViewById(R.id.person_char)).setText("\""
             + item.path("characterName").getTextValue() + "\"");
       } else {
-        v.findViewById(R.id.textView2).setVisibility(View.GONE);
+        v.findViewById(R.id.person_char).setVisibility(View.GONE);
       }
       String role = Utils.ucFirst(item.path("role").getTextValue());
       role = role.replaceAll("(?=[A-Z])", " ").trim();
-      ((TextView) v.findViewById(R.id.textView3)).setText(role);
+      ((TextView) v.findViewById(R.id.person_role)).setText(role);
 
       return v;
     }
@@ -134,7 +134,7 @@ public class Credits extends ExploreCommon {
       }
 
       setContentView(R.layout.list_explore);
-      ListView lv = (ListView) findViewById(R.id.listView1);
+      ListView lv = (ListView) findViewById(R.id.list_explore);
       CreditsAdapter adapter =
           new CreditsAdapter(this, R.layout.item_credits, credits);
       lv.setAdapter(adapter);
