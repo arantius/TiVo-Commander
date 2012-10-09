@@ -8,7 +8,7 @@ import android.widget.Spinner;
 
 import com.arantius.tivocommander.rpc.request.Subscribe;
 
-public class SubscribeBase extends Activity {
+abstract public class SubscribeBase extends Activity {
   protected final static String[] mStartLabels = new String[] { "On time",
       "1 minute early", "2 minutes early", "3 minutes early",
       "4 minutes early", "5 minutes early", "10 minutes early" };
