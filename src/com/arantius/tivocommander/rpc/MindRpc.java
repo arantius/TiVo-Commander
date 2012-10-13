@@ -85,9 +85,9 @@ public enum MindRpc {
     }
   }
 
-  public static String mBodyId = "-";
-
   private static final String LOG_TAG = "tivo_commander";
+
+  public static String mBodyId = "-";
   private static DataInputStream mInputStream;
   private static MindRpcInput mInputThread;
   private static Activity mOriginActivity;
@@ -125,112 +125,6 @@ public enum MindRpc {
     if (listener != null) {
       mResponseListenerMap.put(request.getRpcId(), listener);
     }
-  }
-
-  public static void disconnect() {
-    Thread disconnectThread = new Thread(new Runnable() {
-      public void run() {
-        // TODO: Do disconnect on close (after N idle seconds?).
-        stopThreads();
-        if (mSocket != null) {
-          try {
-            mSocket.close();
-          } catch (IOException e) {
-            Log.e(LOG_TAG, "disconnect() socket", e);
-          }
-        }
-        if (mInputStream != null) {
-          try {
-            mInputStream.close();
-          } catch (IOException e) {
-            Log.e(LOG_TAG, "disconnect() input stream", e);
-          }
-        }
-        if (mOutputStream != null) {
-          try {
-            mOutputStream.close();
-          } catch (IOException e) {
-            Log.e(LOG_TAG, "disconnect() output stream", e);
-          }
-        }
-      }
-    });
-    disconnectThread.start();
-    try {
-      disconnectThread.join();
-    } catch (InterruptedException e) {
-      Log.e(LOG_TAG, "disconnect() interrupted exception", e);
-    }
-  }
-
-  public static int getRpcId() {
-    return mRpcId++;
-  }
-
-  public static int getSessionId() {
-    return mSessionId;
-  }
-
-  public static void init(final Activity originActivity) {
-    mOriginActivity = originActivity;
-
-    if (checkConnected()) {
-      // Already connected? Great.
-      return;
-    }
-
-    stopThreads();
-    disconnect();
-
-    if (!checkSettings(originActivity)) {
-      return;
-    }
-
-    if (!connect(originActivity)) {
-      settingsError(originActivity, R.string.error_connect);
-      return;
-    }
-
-    mInputThread = new MindRpcInput(mInputStream);
-    mInputThread.start();
-
-    mOutputThread = new MindRpcOutput(mOutputStream);
-    mOutputThread.start();
-
-    addRequest(new BodyAuthenticate(mTivoMak), new MindRpcResponseListener() {
-      public void onResponse(MindRpcResponse response) {
-        if ("failure".equals(response.getBody().path("status").getTextValue())) {
-          settingsError(originActivity, R.string.error_auth);
-        }
-      }
-    });
-  }
-
-  public static void saveBodyId(String bodyId) {
-    if (bodyId == null || bodyId == "" || bodyId == mBodyId) {
-      return;
-    }
-
-    mBodyId = bodyId;
-    SharedPreferences prefs =
-        PreferenceManager.getDefaultSharedPreferences(mOriginActivity
-            .getBaseContext());
-    Editor edit = prefs.edit();
-    edit.putString("tivo_tsn", bodyId);
-    edit.commit();
-  }
-
-  public static void settingsError(Activity activity, int messageId) {
-    Utils.log("Settings: " + activity.getResources().getString(messageId));
-    Toast.makeText(activity.getBaseContext(), messageId, Toast.LENGTH_SHORT)
-        .show();
-    Intent i;
-    if (activity.getClass() == Discover.class) {
-      i = new Intent(activity.getBaseContext(), Settings.class);
-    } else {
-      i = new Intent(activity.getBaseContext(), Discover.class);
-    }
-    activity.startActivity(i);
   }
 
   private static boolean checkConnected() {
@@ -355,29 +249,39 @@ public enum MindRpc {
     return null;
   }
 
-  private static String readPassword(Context ctx) {
-    InputStream inputStream = ctx.getResources().openRawResource(
-        R.raw.cdata_pass);
-    BufferedReader reader = new BufferedReader(
-        new InputStreamReader(inputStream));
+  public static void disconnect() {
+    Thread disconnectThread = new Thread(new Runnable() {
+      public void run() {
+        // TODO: Do disconnect on close (after N idle seconds?).
+        stopThreads();
+        if (mSocket != null) {
+          try {
+            mSocket.close();
+          } catch (IOException e) {
+            Log.e(LOG_TAG, "disconnect() socket", e);
+          }
+        }
+        if (mInputStream != null) {
+          try {
+            mInputStream.close();
+          } catch (IOException e) {
+            Log.e(LOG_TAG, "disconnect() input stream", e);
+          }
+        }
+        if (mOutputStream != null) {
+          try {
+            mOutputStream.close();
+          } catch (IOException e) {
+            Log.e(LOG_TAG, "disconnect() output stream", e);
+          }
+        }
+      }
+    });
+    disconnectThread.start();
     try {
-      return reader.readLine();
-    } catch (IOException e) {
-      Log.e(LOG_TAG, "readpassword: IOException!", e);
-      return "";
-    }
-  }
-
-  private static void stopThreads() {
-    if (mInputThread != null) {
-      mInputThread.mStopFlag = true;
-      mInputThread.interrupt();
-      mInputThread = null;
-    }
-    if (mOutputThread != null) {
-      mOutputThread.mStopFlag = true;
-      mOutputThread.interrupt();
-      mOutputThread = null;
+      disconnectThread.join();
+    } catch (InterruptedException e) {
+      Log.e(LOG_TAG, "disconnect() interrupted exception", e);
     }
   }
 
@@ -394,5 +298,101 @@ public enum MindRpc {
         mResponseListenerMap.remove(rpcId);
       }
     });
+  }
+
+  public static int getRpcId() {
+    return mRpcId++;
+  }
+
+  public static int getSessionId() {
+    return mSessionId;
+  }
+
+  public static void init(final Activity originActivity) {
+    mOriginActivity = originActivity;
+
+    if (checkConnected()) {
+      // Already connected? Great.
+      return;
+    }
+
+    stopThreads();
+    disconnect();
+
+    if (!checkSettings(originActivity)) {
+      return;
+    }
+
+    if (!connect(originActivity)) {
+      settingsError(originActivity, R.string.error_connect);
+      return;
+    }
+
+    mInputThread = new MindRpcInput(mInputStream);
+    mInputThread.start();
+
+    mOutputThread = new MindRpcOutput(mOutputStream);
+    mOutputThread.start();
+
+    addRequest(new BodyAuthenticate(mTivoMak), new MindRpcResponseListener() {
+      public void onResponse(MindRpcResponse response) {
+        if ("failure".equals(response.getBody().path("status").getTextValue())) {
+          settingsError(originActivity, R.string.error_auth);
+        }
+      }
+    });
+  }
+
+  private static String readPassword(Context ctx) {
+    InputStream inputStream = ctx.getResources().openRawResource(
+        R.raw.cdata_pass);
+    BufferedReader reader = new BufferedReader(
+        new InputStreamReader(inputStream));
+    try {
+      return reader.readLine();
+    } catch (IOException e) {
+      Log.e(LOG_TAG, "readpassword: IOException!", e);
+      return "";
+    }
+  }
+
+  public static void saveBodyId(String bodyId) {
+    if (bodyId == null || bodyId == "" || bodyId == mBodyId) {
+      return;
+    }
+
+    mBodyId = bodyId;
+    SharedPreferences prefs =
+        PreferenceManager.getDefaultSharedPreferences(mOriginActivity
+            .getBaseContext());
+    Editor edit = prefs.edit();
+    edit.putString("tivo_tsn", bodyId);
+    edit.commit();
+  }
+
+  public static void settingsError(Activity activity, int messageId) {
+    Utils.log("Settings: " + activity.getResources().getString(messageId));
+    Toast.makeText(activity.getBaseContext(), messageId, Toast.LENGTH_SHORT)
+        .show();
+    Intent i;
+    if (activity.getClass() == Discover.class) {
+      i = new Intent(activity.getBaseContext(), Settings.class);
+    } else {
+      i = new Intent(activity.getBaseContext(), Discover.class);
+    }
+    activity.startActivity(i);
+  }
+
+  private static void stopThreads() {
+    if (mInputThread != null) {
+      mInputThread.mStopFlag = true;
+      mInputThread.interrupt();
+      mInputThread = null;
+    }
+    if (mOutputThread != null) {
+      mOutputThread.mStopFlag = true;
+      mOutputThread.interrupt();
+      mOutputThread = null;
+    }
   }
 }
