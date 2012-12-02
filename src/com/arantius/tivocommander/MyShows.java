@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -49,7 +50,9 @@ import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.BodyConfigSearch;
+import com.arantius.tivocommander.rpc.request.MindRpcRequest;
 import com.arantius.tivocommander.rpc.request.RecordingFolderItemSearch;
+import com.arantius.tivocommander.rpc.request.RecordingSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
@@ -71,21 +74,35 @@ public class MyShows extends ListActivity {
         int i = position;
         while (i < mShowStatus.size()) {
           if (mShowStatus.get(i) == ShowStatus.MISSING) {
-            showIds.add(mShowIds.get(i));
-            slots.add(i);
-            mShowStatus.set(i, ShowStatus.LOADING);
-            if (showIds.size() >= MAX_SHOW_REQUEST_BATCH) {
-              break;
+            JsonNode showId = mShowIds.get(i);
+            if ("deleted".equals(showId.asText())) {
+              mShowData.set(i, mDeletedItem);
+              mShowStatus.set(i, ShowStatus.LOADED);
+            } else {
+              showIds.add(showId);
+              slots.add(i);
+              mShowStatus.set(i, ShowStatus.LOADING);
+              if (showIds.size() >= MAX_SHOW_REQUEST_BATCH) {
+                break;
+              }
             }
           }
           i++;
         }
 
-        RecordingFolderItemSearch req =
-            new RecordingFolderItemSearch(showIds, mOrderBy);
-        mRequestSlotMap.put(req.getRpcId(), slots);
-        MindRpc.addRequest(req, mDetailCallback);
-        setProgressIndicator(1);
+        // We could rarely have no shows, if the "recently deleted" item
+        // which we don't fetch falls right on the border.
+        if (showIds.size() > 0) {
+          MindRpcRequest req;
+          if ("deleted".equals(mFolderId)) {
+            req = new RecordingSearch(showIds);
+          } else {
+            req = new RecordingFolderItemSearch(showIds, mOrderBy);
+          }
+          mRequestSlotMap.put(req.getRpcId(), slots);
+          MindRpc.addRequest(req, mDetailCallback);
+          setProgressIndicator(1);
+        }
       }
 
       LayoutInflater vi =
@@ -94,7 +111,7 @@ public class MyShows extends ListActivity {
         // If this item is available, display it.
         v = vi.inflate(R.layout.item_my_shows, null);
         final JsonNode item = mShowData.get(position);
-        final JsonNode recording = item.path("recordingForChildRecordingId");
+        final JsonNode recording = getRecordingFromItem(item);
 
         String title = item.path("title").getTextValue();
         if ('"' == title.charAt(0) && '"' == title.charAt(title.length() - 1)) {
@@ -131,7 +148,7 @@ public class MyShows extends ListActivity {
               .format(startTime));
         }
 
-        int iconId = MyShows.getIconForItem(item);
+        final int iconId = MyShows.getIconForItem(item);
         ((ImageView) v.findViewById(R.id.show_icon))
             .setImageDrawable(getResources().getDrawable(iconId));
       } else {
@@ -149,6 +166,10 @@ public class MyShows extends ListActivity {
 
   private final static int EXPECT_REFRESH_INTENT_ID = 1;
   private final static int MAX_SHOW_REQUEST_BATCH = 5;
+  private final JsonNode mDeletedItem = Utils
+      .parseJson("{\"folderTransportType\":[\"deletedFolder\"]"
+          + ",\"recordingFolderItemId\":\"deleted\""
+          + ",\"title\":\"Recently Deleted\"}");
 
   protected final static int getIconForItem(JsonNode item) {
     String folderTransportType =
@@ -157,6 +178,8 @@ public class MyShows extends ListActivity {
       return R.drawable.folder_downloading;
     } else if ("stream".equals(folderTransportType)) {
       return R.drawable.folder_recording;
+    } else if ("deletedFolder".equals(folderTransportType)) {
+      return R.drawable.folder;
     }
 
     if (item.has("folderItemCount")) {
@@ -191,6 +214,10 @@ public class MyShows extends ListActivity {
       return R.drawable.recording;
     }
 
+    if ("deleted".equals(item.path("state").asText())) {
+      return R.drawable.recording_deleted;
+    }
+
     return R.drawable.blank;
   }
 
@@ -217,14 +244,20 @@ public class MyShows extends ListActivity {
         public void onResponse(MindRpcResponse response) {
           setProgressIndicator(-1);
 
-          JsonNode items = response.getBody().path("recordingFolderItem");
+          String itemId = "recordingFolderItem";
+          if ("deleted".equals(mFolderId)) {
+            itemId = "recording";
+          }
+          final JsonNode items = response.getBody().path(itemId);
+
           ArrayList<Integer> slotMap = mRequestSlotMap.get(response.getRpcId());
 
           MindRpc.saveBodyId(items.path(0).path("bodyId").getTextValue());
 
           for (int i = 0; i < items.size(); i++) {
             int pos = slotMap.get(i);
-            mShowData.set(pos, items.get(i));
+            JsonNode item = items.get(i);
+            mShowData.set(pos, item);
             mShowStatus.set(pos, ShowStatus.LOADED);
           }
 
@@ -246,7 +279,10 @@ public class MyShows extends ListActivity {
           }
 
           setProgressIndicator(-1);
-          mShowIds = body.findValue("objectIdAndType");
+          mShowIds = (ArrayNode) body.findValue("objectIdAndType");
+          if (mFolderId == null) {
+            mShowIds.add("deleted");
+          }
 
           // Start from nothing ...
           mShowData.clear();
@@ -268,13 +304,14 @@ public class MyShows extends ListActivity {
       new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position,
             long id) {
-          JsonNode item = mShowData.get(position);
+          final JsonNode item = mShowData.get(position);
           if (item == null) {
             return;
           }
 
-          JsonNode countNode = item.path("folderItemCount");
-          if (countNode != null && countNode.asInt() > 0) {
+          final JsonNode countNode = item.path("folderItemCount");
+          if (mDeletedItem == item
+              || (countNode != null && countNode.asInt() > 0)) {
             // Navigate to 'my shows' for this folder.
             Intent intent = new Intent(MyShows.this, MyShows.class);
             intent.putExtra("folderId", item.path("recordingFolderItemId")
@@ -282,7 +319,7 @@ public class MyShows extends ListActivity {
             intent.putExtra("folderName", item.path("title").asText());
             startActivityForResult(intent, EXPECT_REFRESH_INTENT_ID);
           } else {
-            JsonNode recording = item.path("recordingForChildRecordingId");
+            final JsonNode recording = getRecordingFromItem(item);
 
             Intent intent = new Intent(MyShows.this, ExploreTabs.class);
             intent.putExtra("contentId", recording.path("contentId")
@@ -302,7 +339,7 @@ public class MyShows extends ListActivity {
   private final SparseArray<ArrayList<Integer>> mRequestSlotMap =
       new SparseArray<ArrayList<Integer>>();
   private final ArrayList<JsonNode> mShowData = new ArrayList<JsonNode>();
-  private JsonNode mShowIds;
+  private ArrayNode mShowIds;
   private final ArrayList<ShowStatus> mShowStatus = new ArrayList<ShowStatus>();
 
   public void doSort(View v) {
@@ -334,8 +371,12 @@ public class MyShows extends ListActivity {
   }
 
   private void startRequest() {
-    MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId, mOrderBy),
-        mIdSequenceCallback);
+    if ("deleted".equals(mFolderId)) {
+      MindRpc.addRequest(new RecordingSearch(mFolderId), mIdSequenceCallback);
+    } else {
+      MindRpc.addRequest(new RecordingFolderItemSearch(mFolderId, mOrderBy),
+          mIdSequenceCallback);
+    }
     setProgressIndicator(1);
     MindRpc.addRequest(new BodyConfigSearch(), mBodyConfigCallback);
     setProgressIndicator(1);
@@ -418,5 +459,15 @@ public class MyShows extends ListActivity {
   protected void setProgressIndicator(int change) {
     mRequestCount += change;
     setProgressBarIndeterminateVisibility(mRequestCount > 0);
+  }
+
+  private JsonNode getRecordingFromItem(JsonNode item) {
+    if ("deleted".equals(mFolderId)) {
+      // In deleted mode, we directly fetch recordings.
+      return item;
+    } else {
+      // Otherwise we've got recordings wrapped in folders.
+      return item.path("recordingForChildRecordingId");
+    }
   }
 }
