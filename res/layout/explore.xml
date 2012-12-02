@@ -82,6 +82,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     <Button android:id="@+id/explore_btn_delete" android:text="Delete"
       android:layout_width="fill_parent" android:layout_height="wrap_content"
       android:onClick="doDelete" />
+    <Button android:id="@+id/explore_btn_undelete" android:text="Undelete"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:onClick="doDelete" />
     <Button android:id="@+id/explore_btn_upcoming" android:text="Upcoming"
       android:layout_width="fill_parent" android:layout_height="wrap_content"
       android:onClick="doUpcoming" />

@@ -98,8 +98,12 @@ public class Explore extends ExploreCommon {
   public void doDelete(View v) {
     // FIXME: Fails when deleting the currently-playing show.
     getParent().setProgressBarIndeterminateVisibility(true);
-    // Delete the recording ...
-    MindRpc.addRequest(new RecordingUpdate(mRecordingId, "deleted"),
+    String newState = "deleted";
+    if (v.getId() == R.id.explore_btn_undelete) {
+      newState = "complete";
+    }
+    // (Un-)Delete the recording ...
+    MindRpc.addRequest(new RecordingUpdate(mRecordingId, newState),
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             getParent().setProgressBarIndeterminateVisibility(false);
@@ -248,10 +252,19 @@ public class Explore extends ExploreCommon {
 
     // Show only appropriate buttons.
     hideViewIfNull(R.id.explore_btn_watch, mRecordingId);
-    hideViewIfNull(R.id.explore_btn_delete, mRecordingId);
     hideViewIfNull(R.id.explore_btn_upcoming, mCollectionId);
     if (mChoices.size() == 0) {
       findViewById(R.id.explore_btn_record).setVisibility(View.GONE);
+    }
+    // Delete / undelete buttons, gone by default, on if appropriate.
+    findViewById(R.id.explore_btn_delete).setVisibility(View.GONE);
+    findViewById(R.id.explore_btn_undelete).setVisibility(View.GONE);
+    if (mRecordingId != null) {
+      if ("deleted".equals(mRecording.path("state").asText())) {
+        findViewById(R.id.explore_btn_undelete).setVisibility(View.VISIBLE);
+      } else {
+        findViewById(R.id.explore_btn_delete).setVisibility(View.VISIBLE);
+      }
     }
 
     // Display titles.

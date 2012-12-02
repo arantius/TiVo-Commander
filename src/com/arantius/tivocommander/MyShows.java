@@ -326,8 +326,16 @@ public class MyShows extends ListActivity {
                 .getTextValue());
             intent.putExtra("collectionId", recording.path("collectionId")
                 .getTextValue());
-            intent.putExtra("recordingId", item.path("childRecordingId")
-                .getTextValue());
+
+            // Regular / deleted recordings IDs are differently located.
+            if (item.has("childRecordingId")) {
+              intent.putExtra("recordingId", item.path("childRecordingId")
+                  .getTextValue());
+            } else if (item.has("recordingId")) {
+              intent.putExtra("recordingId", item.path("recordingId")
+                  .getTextValue());
+            }
+
             startActivityForResult(intent, EXPECT_REFRESH_INTENT_ID);
           }
         }
