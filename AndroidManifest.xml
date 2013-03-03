@@ -40,7 +40,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     </activity>
     <activity android:name="Discover"></activity>
     <activity android:name="Explore"></activity>
-    <activity android:name="ExploreTabs"></activity>
+    <activity android:name="ExploreTabs">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="https" android:host="www3.tivo.com"
+          android:pathPattern="/tivo-tco/program/show.do" />
+      </intent-filter>
+    </activity>
     <activity android:name="Help"></activity>
     <activity android:name="MyShows"></activity>
     <activity android:name="Person"></activity>

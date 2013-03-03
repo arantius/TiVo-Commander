@@ -22,6 +22,7 @@ package com.arantius.tivocommander;
 import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -71,6 +72,8 @@ public class ExploreTabs extends TabActivity {
     setTitle("Explore");
 
     mTabHost = getTabHost();
+
+    // Try reading from getExtras; i.e. in-app navigation.
     Bundle bundle = getIntent().getExtras();
     try {
       mCollectionId = bundle.getString("collectionId");
@@ -94,6 +97,23 @@ public class ExploreTabs extends TabActivity {
       mRecordingId = bundle.getString("recordingId");
     } catch (NullPointerException e) {
       mRecordingId = null;
+    }
+
+    // Try reading from getData, i.e. the URL from external navigation.
+    Uri uri = getIntent().getData();
+    if (uri != null) {
+      String collectionId = uri.getQueryParameter("collectionId");
+      if (collectionId != null) {
+        mCollectionId = collectionId;
+      }
+      String contentId = uri.getQueryParameter("contentId");
+      if (contentId != null) {
+        mContentId = contentId;
+      }
+      String offerId = uri.getQueryParameter("offerId");
+      if (offerId != null) {
+        mOfferId = offerId;
+      }
     }
 
     mTabHost.addTab(makeTab("Explore", Explore.class, R.drawable.icon_tv));
