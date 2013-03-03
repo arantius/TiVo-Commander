@@ -69,12 +69,12 @@ abstract public class ExploreCommon extends Activity {
   protected String mRecordingId = null;
 
   protected MindRpcRequest getRequest() {
-    if (mContentId != null) {
+    if (mRecordingId != null) {
+      return new RecordingSearch(mRecordingId);
+    } else if (mContentId != null) {
       return new ContentSearch(mContentId);
     } else if (mCollectionId != null) {
       return new CollectionSearch(mCollectionId);
-    } else if (mRecordingId != null) {
-      return new RecordingSearch(mRecordingId);
     } else {
       final String message = "Content: Bad input!";
       Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
