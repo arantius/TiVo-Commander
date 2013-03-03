@@ -292,7 +292,7 @@ public class Explore extends ExploreCommon {
       JsonNode channel = mRecording.path("channel");
       if (!channel.isMissingNode()) {
         channelStr =
-            String.format("%s %s", channel.path("channelNumber").getTextValue(),
+            String.format("%s %s, ", channel.path("channelNumber").getTextValue(),
                 channel.path("callSign").getTextValue());
       }
 
@@ -306,7 +306,7 @@ public class Explore extends ExploreCommon {
       if (isRecordingPartial()) {
         durationStr += " (partial)";
       }
-      ((TextView) findViewById(R.id.content_time)).setText(channelStr + ", "
+      ((TextView) findViewById(R.id.content_time)).setText(channelStr
           + durationStr);
     } else {
       ((TextView) findViewById(R.id.content_time)).setVisibility(View.GONE);
@@ -331,10 +331,19 @@ public class Explore extends ExploreCommon {
     if (year != 0) {
       detailParts.add(Integer.toString(year));
     }
+
+    // Filter empty strings.
+    for(int i = detailParts.size() -1; i >=0; i--) {
+      if ("".equals(detailParts.get(i)) || null == detailParts.get(i)) {
+        detailParts.remove(i);
+      }
+    }
+    // Then format the parts into one string.
     String detail1 = "(" + Utils.join(", ", detailParts) + ") ";
     if ("() ".equals(detail1)) {
       detail1 = "";
     }
+
     String detail2 = mContent.path("description").getTextValue();
     TextView detailView = ((TextView) findViewById(R.id.content_details));
     if (detail2 == null) {
