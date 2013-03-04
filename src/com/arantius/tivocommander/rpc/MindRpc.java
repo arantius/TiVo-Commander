@@ -88,6 +88,7 @@ public enum MindRpc {
   private static final String LOG_TAG = "tivo_commander";
 
   public static String mBodyId = "-";
+  private static Boolean mBodyIsAuthed = false;
   private static DataInputStream mInputStream;
   private static MindRpcInput mInputThread;
   private static Activity mOriginActivity;
@@ -138,7 +139,7 @@ public enum MindRpc {
       return false;
     }
 
-    return true;
+    return mBodyIsAuthed;
   }
 
   private static boolean checkSettings(Activity activity) {
@@ -295,9 +296,15 @@ public enum MindRpc {
       public void run() {
         mResponseListenerMap.get(rpcId).onResponse(response);
         // TODO: Remove only when the response .isFinal().
-        mResponseListenerMap.remove(rpcId);
+        if (response.isFinal()) {
+          mResponseListenerMap.remove(rpcId);
+        }
       }
     });
+  }
+
+  public static Boolean getBodyIsAuthed() {
+    return mBodyIsAuthed;
   }
 
   public static int getRpcId() {
@@ -309,10 +316,15 @@ public enum MindRpc {
   }
 
   public static void init(final Activity originActivity) {
+    init(originActivity, null);
+  }
+
+  public static void init(final Activity originActivity, final Runnable onAuth) {
     mOriginActivity = originActivity;
 
     if (checkConnected()) {
       // Already connected? Great.
+      if (onAuth != null) onAuth.run();
       return;
     }
 
@@ -338,6 +350,9 @@ public enum MindRpc {
       public void onResponse(MindRpcResponse response) {
         if ("failure".equals(response.getBody().path("status").getTextValue())) {
           settingsError(originActivity, R.string.error_auth);
+        } else {
+          mBodyIsAuthed = true;
+          if (onAuth != null) onAuth.run();
         }
       }
     });

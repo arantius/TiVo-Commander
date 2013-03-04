@@ -104,7 +104,7 @@ public class Remote extends Activity implements OnClickListener {
     mInputManager.toggleSoftInputFromWindow(mEditText.getWindowToken(), 0, 0);
   }
 
-  private KeyEventSend viewIdToEvent(int id) {
+  public static KeyEventSend viewIdToEvent(int id) {
     String eventStr = null;
     // @formatter:off
     switch (id) {

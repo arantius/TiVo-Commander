@@ -19,6 +19,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc.request;
 
+import java.io.UnsupportedEncodingException;
+
 import com.arantius.tivocommander.Utils;
 
 public class CancelRpc extends MindRpcRequest {
@@ -30,7 +32,7 @@ public class CancelRpc extends MindRpcRequest {
   }
 
   @Override
-  public String toString() {
+  public byte[] getBytes() throws UnsupportedEncodingException {
     // @formatter:off
     String headers = Utils.join("\r\n",
         "Type: cancel",
@@ -38,7 +40,11 @@ public class CancelRpc extends MindRpcRequest {
         "SchemaVersion:7");
     // @formatter:on
     // "+ 2" is the "\r\n" we'll add next.
-    String reqLine = String.format("MRPC/2 %d 0", headers.length() + 2);
-    return Utils.join("\r\n", reqLine, headers, "");
+    String reqLine =
+        String.format("MRPC/2 %d 0", headers.getBytes("UTF-8").length + 2);
+    String request =
+        Utils.join("\r\n", reqLine, headers, "");
+    byte[] requestBytes = request.getBytes("UTF-8");
+    return requestBytes;
   }
 }

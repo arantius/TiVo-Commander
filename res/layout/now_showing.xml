@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<LinearLayout android:layout_width="match_parent"
+  android:layout_height="match_parent" xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical" android:padding="6dp"
+>
+  <ViewFlipper android:id="@+id/now_showing_detail_flipper"
+    android:layout_width="fill_parent" android:layout_height="0dp"
+    android:layout_weight="1"
+  >
+    <LinearLayout android:orientation="vertical"
+      android:layout_width="fill_parent" android:layout_height="fill_parent"
+    >
+      <TextView android:id="@+id/content_title"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FF9500" android:text="Title" />
+      <TextView android:id="@+id/content_subtitle"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FF9500" android:text="Subtitle" />
+      <LinearLayout android:orientation="horizontal"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+      >
+        <TextView android:id="@+id/content_start_time" android:text="0:00"
+          android:layout_width="wrap_content" android:layout_height="fill_parent"
+          android:gravity="center_vertical"
+          />
+        <SeekBar android:id="@+id/now_showing_seek"
+          android:layout_marginLeft="8dip" android:layout_marginRight="8dip"
+          android:layout_weight="1" android:layout_width="0dip"
+          android:layout_height="wrap_content"
+          />
+        <TextView android:id="@+id/content_end_time" android:text="-:--"
+          android:layout_width="wrap_content" android:layout_height="fill_parent"
+          android:gravity="center_vertical"
+          />
+      </LinearLayout>
+
+      <RelativeLayout android:background="@drawable/remote_play_controls"
+          android:layout_width="180dip" android:layout_height="170dip"
+          android:layout_marginTop="6dip"
+          android:layout_gravity="center_horizontal">
+        <Button android:id="@+id/remote_play"    android:text="" android:layout_marginLeft="70dip"  android:layout_marginTop="0dip"   android:layout_width="43dip" android:layout_height="39dip" android:onClick="onClickRemote" android:background="@drawable/blank" />
+        <Button android:id="@+id/remote_pause"   android:text="" android:layout_marginLeft="55dip"  android:layout_marginTop="50dip"  android:layout_width="68dip" android:layout_height="67dip" android:onClick="onClickRemote" android:background="@drawable/blank" />
+        <Button android:id="@+id/remote_reverse" android:text="" android:layout_marginLeft="0dip"   android:layout_marginTop="65dip"  android:layout_width="43dip" android:layout_height="39dip" android:onClick="onClickRemote" android:background="@drawable/blank" />
+        <Button android:id="@+id/remote_forward" android:text="" android:layout_marginLeft="140dip" android:layout_marginTop="65dip"  android:layout_width="43dip" android:layout_height="39dip" android:onClick="onClickRemote" android:background="@drawable/blank" />
+        <Button android:id="@+id/remote_slow"    android:text="" android:layout_marginLeft="70dip"  android:layout_marginTop="130dip" android:layout_width="43dip" android:layout_height="39dip" android:onClick="onClickRemote" android:background="@drawable/blank" />
+      </RelativeLayout>
+    </LinearLayout>
+    <ProgressBar style="@android:style/Widget.ProgressBar.Large"
+      android:layout_width="wrap_content" android:layout_height="fill_parent"
+      android:layout_gravity="center" />
+  </ViewFlipper>
+  <LinearLayout android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+  >
+    <LinearLayout android:orientation="horizontal"
+      android:layout_width="match_parent" android:layout_height="wrap_content"
+    >
+      <Button android:id="@+id/target_remote" android:text="Remote"
+        android:drawableTop="@drawable/icon_remote_32h" android:onClick="onClickButton"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_weight="1" android:padding="16dp" />
+      <Button android:id="@+id/target_myshows" android:text="Shows"
+        android:drawableTop="@drawable/icon_tv32" android:onClick="onClickButton"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:padding="16dp" android:layout_weight="1" />
+      <Button android:id="@+id/target_search" android:text="Search"
+        android:drawableTop="@drawable/icon_search" android:onClick="onClickButton"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_weight="1" android:padding="16dp" />
+    </LinearLayout>
+    <LinearLayout android:orientation="horizontal"
+      android:layout_width="match_parent" android:layout_height="wrap_content"
+    >
+      <Button android:id="@+id/target_settings" android:text="Settings"
+        android:drawableTop="@drawable/icon_cog" android:onClick="onClickButton"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_weight="1" android:padding="16dp" />
+      <Button android:id="@+id/target_help" android:text="Help"
+        android:drawableTop="@drawable/icon_help" android:onClick="onClickButton"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_weight="1" android:padding="16dp" />
+      <Button android:id="@+id/target_about" android:text="About"
+        android:drawableTop="@drawable/icon_info" android:onClick="onClickButton"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_weight="1" android:padding="16dp" />
+    </LinearLayout>
+  </LinearLayout>
+</LinearLayout>

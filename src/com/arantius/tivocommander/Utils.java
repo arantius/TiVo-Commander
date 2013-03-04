@@ -67,7 +67,7 @@ public class Utils {
   private final static Class<? extends Activity> activityForMenuId(int menuId) {
     switch (menuId) {
     case android.R.id.home:
-      return Catalog.class;
+      return NowShowing.class;
     case R.id.menu_item_remote:
       return Remote.class;
     case R.id.menu_item_my_shows:
@@ -186,6 +186,7 @@ public class Utils {
     }
   }
 
+  @SuppressLint("InlinedApi")
   public final static boolean onCreateOptionsMenu(Menu menu, Activity activity) {
     Utils.activateHomeButton(activity);
 

@@ -30,17 +30,18 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:icon="@drawable/app_icon" android:label="@string/app_name"
       android:allowBackup="true"
   >
-    <activity android:name="About"></activity>
-    <activity android:name="Credits"></activity>
-    <activity android:name="Catalog" android:label="@string/app_name">
+    <activity android:name=".NowShowing" android:label="@string/app_name">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-    <activity android:name="Discover"></activity>
-    <activity android:name="Explore"></activity>
-    <activity android:name="ExploreTabs">
+    <activity android:name=".About"></activity>
+    <activity android:name=".Connect"></activity>
+    <activity android:name=".Credits"></activity>
+    <activity android:name=".Discover"></activity>
+    <activity android:name=".Explore"></activity>
+    <activity android:name=".ExploreTabs">
       <intent-filter>
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
@@ -49,16 +50,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
           android:pathPattern="/tivo-tco/program/show.do" />
       </intent-filter>
     </activity>
-    <activity android:name="Help"></activity>
-    <activity android:name="MyShows"></activity>
-    <activity android:name="Person"></activity>
-    <activity android:name="Remote"></activity>
-    <activity android:name="Search">
-    </activity>
-    <activity android:name="Settings"></activity>
-    <activity android:name="SubscribeCollection"></activity>
-    <activity android:name="SubscribeOffer"></activity>
-    <activity android:name="Suggestions"></activity>
-    <activity android:name="Upcoming"></activity>
+    <activity android:name=".Help"></activity>
+    <activity android:name=".MyShows"></activity>
+    <activity android:name=".Person"></activity>
+    <activity android:name=".Remote"></activity>
+    <activity android:name=".Search"></activity>
+    <activity android:name=".Settings"></activity>
+    <activity android:name=".SubscribeCollection"></activity>
+    <activity android:name=".SubscribeOffer"></activity>
+    <activity android:name=".Suggestions"></activity>
+    <activity android:name=".Upcoming"></activity>
   </application>
 </manifest>
