@@ -36,8 +36,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#FF9500" android:text="Subtitle" />
-      <LinearLayout android:orientation="horizontal"
+      <LinearLayout android:id="@+id/seek_bar_container"
         android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal"
       >
         <TextView android:id="@+id/content_start_time" android:text="0:00"
           android:layout_width="wrap_content" android:layout_height="fill_parent"

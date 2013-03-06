@@ -16,7 +16,7 @@ public class OfferSearch extends MindRpcRequest {
     super("offerSearch");
 
     mDataMap.put("bodyId", MindRpc.mBodyId);
-    mDataMap.put("levelOfDetail", "medium");
+    mDataMap.put("levelOfDetail", "low");
     mDataMap.put("namespace", "refserver");
     mDataMap.put("note", new String[] { "recordingForContentId" });
     mDataMap.put(searchKey, new String[] { searchVal });
