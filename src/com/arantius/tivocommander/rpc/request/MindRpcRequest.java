@@ -60,6 +60,10 @@ public abstract class MindRpcRequest {
     return mRpcId;
   }
 
+  public void setLevelOfDetail(String levelOfDetail) {
+    mDataMap.put("levelOfDetail", levelOfDetail);
+  }
+
   public void setReqType(String type) {
     mReqType = type;
     mDataMap.put("type", mReqType);
