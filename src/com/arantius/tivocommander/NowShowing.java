@@ -21,6 +21,7 @@ package com.arantius.tivocommander;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -116,7 +117,7 @@ public class NowShowing extends Activity {
           JsonNode recording = response.getBody().path("recording").path(0);
 //          Utils.log(Utils.stringifyToPrettyJson(recording));
 
-          if (false) {  // Just here to enable for debugging.
+          if (true) {  // Just here to enable for debugging.
             ObjectNode filteredContent = (ObjectNode) recording;
             filteredContent.remove("category");
             filteredContent.remove("credit");
@@ -390,7 +391,12 @@ public class NowShowing extends Activity {
       activeMin = (int) (progress - mMillisPosition);
       activeMax = (int) (activeMin + mMillisRecordingEnd);
     } else {
-      // Dunno how to handle recordings yet!
+      // TODO: How do I handle if the recording began late?
+      max = (int) (mMillisContentEnd - mMillisContentBegin);
+      // TODO: Real/safe cast to int?
+      progress = (int) (mMillisPosition - 0);
+      activeMin = (int) (mMillisRecordingBegin - 0);
+      activeMax = (int) (mMillisRecordingEnd - 0);
     }
 
 
@@ -402,24 +408,36 @@ public class NowShowing extends Activity {
       activeMin = 0;
     }
 
-//    Utils.log(String.format(
-//        Locale.US,
-//        "offer [%,d %,d %,d] %,d %,d",
-//        mMillisContentBegin, millisVirtualPosition, mMillisContentEnd,
-//        mMillisContentEnd - mMillisContentBegin,
-//        mMillisContentEnd - millisVirtualPosition
-//        ));
-//    Utils.log(String.format(
-//        Locale.US,
-//        "record [%,d %,d %,d] %,d offset: %,d",
-//        mMillisRecordingBegin, mMillisPosition, mMillisRecordingEnd,
-//        mMillisRecordingEnd - mMillisRecordingBegin, mGmtOffsetMillis
-//        ));
-//    Utils.log(String.format(
-//        Locale.US,
-//        "calc %,d %,d %,d %,d",
-//        activeMin, progress, activeMax, max
-//        ));
+    // For testing, until I get a real View set up, log an ascii-art bar.
+    float scale = 60 / (float) max;
+    char[] bar = new char[60];
+    Arrays.fill(bar, ' ');
+    for (int i = (int) (activeMin * scale); i < Math.floor(activeMax * scale); i++) {
+      bar[i] = '*';
+    }
+    bar[0] = '|';
+    bar[59] = '|';
+    bar[(int)(progress * scale)] = 'O';
+    Utils.log(new String(bar));
+
+    Utils.log(String.format(
+        Locale.US,
+        "offer [%,d %,d %,d] %,d %,d",
+        mMillisContentBegin, mMillisVirtualPosition, mMillisContentEnd,
+        mMillisContentEnd - mMillisContentBegin,
+        mMillisContentEnd - mMillisVirtualPosition
+        ));
+    Utils.log(String.format(
+        Locale.US,
+        "record [%,d %,d %,d] %,d offset: %,d",
+        mMillisRecordingBegin, mMillisPosition, mMillisRecordingEnd,
+        mMillisRecordingEnd - mMillisRecordingBegin, mGmtOffsetMillis
+        ));
+    Utils.log(String.format(
+        Locale.US,
+        "calc %,d %,d %,d %,d",
+        activeMin, progress, activeMax, max
+        ));
 
     mSeekBar.setMax(max);
     mSeekBar.setProgress(progress);
