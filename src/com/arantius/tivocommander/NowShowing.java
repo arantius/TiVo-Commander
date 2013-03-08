@@ -284,6 +284,7 @@ public class NowShowing extends Activity {
 
   /** (Re-)Initialize instance variables. */
   private void initInstanceVars() {
+    mContentId = null;
     mContentType = null;
     mMillisActualBegin = null;
     mMillisContentBegin = null;
