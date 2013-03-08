@@ -36,29 +36,24 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#FF9500" android:text="Subtitle" />
-      <LinearLayout android:id="@+id/seek_bar_container"
+      <FrameLayout
         android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="horizontal"
       >
+        <com.arantius.tivocommander.views.TivoScrubBar
+            android:id="@+id/tivo_scrub_bar"
+            android:layout_width="fill_parent" android:layout_height="56dip"
+            />
         <TextView android:id="@+id/content_start_time" android:text="0:00"
-          android:layout_width="wrap_content" android:layout_height="fill_parent"
-          android:gravity="center_vertical"
-          />
-        <SeekBar android:id="@+id/now_showing_seek"
-          android:layout_marginLeft="8dip" android:layout_marginRight="8dip"
-          android:layout_weight="1" android:layout_width="0dip"
-          android:layout_height="wrap_content"
+          android:layout_width="wrap_content" android:layout_height="wrap_content"
+          android:paddingLeft="6dip" android:paddingTop="10dip"
+          android:textSize="12sp"
           />
         <TextView android:id="@+id/content_end_time" android:text="-:--"
-          android:layout_width="wrap_content" android:layout_height="fill_parent"
-          android:gravity="center_vertical"
+          android:layout_width="wrap_content" android:layout_height="wrap_content"
+          android:paddingRight="6dip" android:paddingTop="10dip"
+          android:textSize="12sp" android:layout_gravity="right"
           />
-      </LinearLayout>
-
-      <com.arantius.tivocommander.views.TivoScrubBar
-          android:id="@+id/tivo_scrub_bar"
-          android:layout_width="fill_parent" android:layout_height="wrap_content"
-          />
+      </FrameLayout>
 
       <RelativeLayout android:background="@drawable/remote_play_controls"
           android:layout_width="180dip" android:layout_height="170dip"

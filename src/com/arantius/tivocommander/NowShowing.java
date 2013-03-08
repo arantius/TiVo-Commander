@@ -30,7 +30,6 @@ import org.codehaus.jackson.JsonNode;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -89,7 +88,6 @@ public class NowShowing extends Activity {
   private Integer mRpcIdPlaybackInfo = null;
   private Integer mRpcIdWhatsOn = null;
   private TivoScrubBar mScrubBar = null;
-  private SeekBar mSeekBar = null;
 
   private final MindRpcResponseListener mOfferCallback =
       new MindRpcResponseListener() {
@@ -340,7 +338,6 @@ public class NowShowing extends Activity {
     setTitle("Now Showing");
 
     mScrubBar = (TivoScrubBar) findViewById(R.id.tivo_scrub_bar);
-    mSeekBar = (SeekBar) findViewById(R.id.now_showing_seek);
     TimeZone gmtTz = TimeZone.getTimeZone("GMT");
     mDateFormat.setTimeZone(gmtTz);
 
@@ -415,7 +412,7 @@ public class NowShowing extends Activity {
       // Show only duration as end time.
       startLabel.setVisibility(View.GONE);
 
-      final int millis = mMillisRecordingEnd - mMillisRecordingBegin;
+      final int millis = (int) (mMillisContentEnd - mMillisContentBegin);
       int minutes = (int) Math.ceil((millis) / (1000 * 60));
       String dur = "";
       if (minutes >= 60) {
@@ -433,8 +430,6 @@ public class NowShowing extends Activity {
 
     mScrubBar.setRange(range.activeMin, range.progress, range.activeMax,
         range.max);
-    mSeekBar.setMax(range.max);
-    mSeekBar.setProgress(range.progress);
   }
 
   private void setTitleFromContent(JsonNode content) {
