@@ -55,6 +55,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
           />
       </LinearLayout>
 
+      <com.arantius.tivocommander.views.TivoScrubBar
+          android:layout_width="fill_parent" android:layout_height="wrap_content"
+          />
+
       <RelativeLayout android:background="@drawable/remote_play_controls"
           android:layout_width="180dip" android:layout_height="170dip"
           android:layout_marginTop="6dip"
