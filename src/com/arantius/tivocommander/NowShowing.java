@@ -21,7 +21,6 @@ package com.arantius.tivocommander;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -258,10 +257,10 @@ public class NowShowing extends Activity {
       range.progress = range.activeMin + mMillisPosition;
     }
 
-    // If the recording extends beyond the scheduled period extend the
-    // scrub bar by half an hour.
+    // If the recording extends beyond the scheduled period (by more than half
+    // a minute) extend the scrub bar by half an hour.
     // TODO: Do these need to be whiles in case of big padding?
-    if (range.activeMin < 0) {
+    if (range.activeMin < -30000) {
       Utils.log(String.format(Locale.US,
           "Adjusting beginning back becase %d < 0", range.activeMin));
       range.absoluteBegin -= millisHalfHour;
@@ -270,12 +269,16 @@ public class NowShowing extends Activity {
       range.progress += millisHalfHour;
       range.activeMin += millisHalfHour;
       range.activeMax += millisHalfHour;
+    } else if (range.activeMin < 0) {
+      range.activeMin = 0;
     }
-    if (range.activeMax > range.max) {
+    if (range.activeMax > range.max + 30000) {
       Utils.log(String.format(Locale.US,
           "Adjusting end forward becase %d > %d", range.activeMax, range.max));
       range.absoluteEnd += millisHalfHour;
       range.max += millisHalfHour;
+    } else if (range.activeMax > range.max) {
+      range.activeMax = range.max;
     }
 
     return range;
