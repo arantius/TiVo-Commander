@@ -385,17 +385,22 @@ public enum MindRpc {
     edit.commit();
   }
 
-  public static void settingsError(Activity activity, int messageId) {
+  public static void settingsError(final Activity activity, final int messageId) {
     Utils.log("Settings: " + activity.getResources().getString(messageId));
-    Toast.makeText(activity.getBaseContext(), messageId, Toast.LENGTH_SHORT)
-        .show();
-    Intent i;
-    if (activity.getClass() == Discover.class) {
-      i = new Intent(activity.getBaseContext(), Settings.class);
-    } else {
-      i = new Intent(activity.getBaseContext(), Discover.class);
-    }
-    activity.startActivity(i);
+    activity.runOnUiThread(new Runnable() {
+      public void run() {
+        Toast
+            .makeText(activity.getBaseContext(), messageId, Toast.LENGTH_SHORT)
+            .show();
+        Intent i;
+        if (activity.getClass() == Discover.class) {
+          i = new Intent(activity.getBaseContext(), Settings.class);
+        } else {
+          i = new Intent(activity.getBaseContext(), Discover.class);
+        }
+        activity.startActivity(i);
+      }
+    });
   }
 
   private static void stopThreads() {
