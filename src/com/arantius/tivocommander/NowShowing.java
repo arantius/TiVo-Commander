@@ -44,6 +44,7 @@ import com.arantius.tivocommander.rpc.request.VideoPlaybackInfoEventRegister;
 import com.arantius.tivocommander.rpc.request.WhatsOnSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
+import com.arantius.tivocommander.views.TivoScrubBar;
 
 public class NowShowing extends Activity {
   private enum ContentType {
@@ -88,6 +89,7 @@ public class NowShowing extends Activity {
   private boolean mRpcComplete = false;
   private Integer mRpcIdPlaybackInfo = null;
   private Integer mRpcIdWhatsOn = null;
+  private TivoScrubBar mScrubBar = null;
   private SeekBar mSeekBar = null;
 
   private final MindRpcResponseListener mOfferCallback =
@@ -337,6 +339,7 @@ public class NowShowing extends Activity {
     setContentView(R.layout.now_showing);
     setTitle("Now Showing");
 
+    mScrubBar = (TivoScrubBar) findViewById(R.id.tivo_scrub_bar);
     mSeekBar = (SeekBar) findViewById(R.id.now_showing_seek);
     TimeZone gmtTz = TimeZone.getTimeZone("GMT");
     mDateFormat.setTimeZone(gmtTz);
@@ -454,6 +457,8 @@ public class NowShowing extends Activity {
     bar[Math.min(59, (int) (range.progress * scale))] = 'O';
     Utils.log(new String(bar));
 
+    mScrubBar.setRange(range.activeMin, range.progress, range.activeMax,
+        range.max);
     mSeekBar.setMax(range.max);
     mSeekBar.setProgress(range.progress);
   }

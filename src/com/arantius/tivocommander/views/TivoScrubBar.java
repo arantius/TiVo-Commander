@@ -45,26 +45,37 @@ public class TivoScrubBar extends View {
   private Bitmap mBitmapBarEndLeft;
   private Bitmap mBitmapBarEndRight;
   private Bitmap mBitmapBarMid;
+  private Bitmap mBitmapThumb;
 
   private Paint mPaintActiveSection;
   private Paint mPaintBarEndLeft;
   private Paint mPaintBarEndRight;
-  private Paint mPaintBarMid;
+  private Paint mPaintBar;
   private Paint mPaintTextPaint;
   private Paint mPaintThumb;
 
   private Rect mRectBarMid = new Rect();
 
-  final private int mSizeEndWid = 65;
-  final private int mSizeHei = 36;
-  private int mSizeWid;
+  final private int mSizeBarEndWid = 65;
+  private int mSizeBarWid = 0;
+  final private int mSizeHeiBar = 36;
+  final private int mSizeHeiBarPad = 10;
+  final private int mSizeThumbPad = 27;
+  final private int mSizeThumbHei = 55;
+  final private int mSizeThumbWid = 55;
+  final private int mSizeViewHei = 56;
+  private int mSizeViewWid;
+
+  final private int mCoordBarLeft = mSizeBarEndWid;
+  private int mCoordBarRight;
+  private int mCoordThumbLeft = mSizeBarEndWid - mSizeThumbPad;
 
   public TivoScrubBar(Context context) {
     this(context, null);
   }
 
   public TivoScrubBar(Context context, AttributeSet attrs) {
-    super(context);
+    super(context, attrs);
 
     // TODO: Custom attrs if necessary.
     // http://developer.android.com/training/custom-views/create-view.html#applyattr
@@ -75,6 +86,8 @@ public class TivoScrubBar extends View {
         BitmapFactory.decodeResource(getResources(), R.drawable.scrub_right);
     mBitmapBarMid =
         BitmapFactory.decodeResource(getResources(), R.drawable.scrub_mid);
+    mBitmapThumb =
+        BitmapFactory.decodeResource(getResources(), R.drawable.scrub_thumb);
 
     mPaintActiveSection = new Paint();
     mPaintActiveSection.setStyle(Paint.Style.FILL);
@@ -86,9 +99,12 @@ public class TivoScrubBar extends View {
 
   @Override
   protected void onDraw(Canvas canvas) {
-    canvas.drawBitmap(mBitmapBarEndLeft, 0, 0, null);
-    canvas.drawBitmap(mBitmapBarEndRight, mSizeWid - mSizeEndWid, 0, null);
+    canvas.drawBitmap(mBitmapBarEndLeft, 0, mSizeHeiBarPad, null);
+    canvas.drawBitmap(mBitmapBarEndRight, mSizeViewWid - mSizeBarEndWid,
+        mSizeHeiBarPad, null);
     canvas.drawBitmap(mBitmapBarMid, null, mRectBarMid, null);
+
+    canvas.drawBitmap(mBitmapThumb, mCoordThumbLeft, 0, null);
   }
 
   @Override
@@ -96,17 +112,21 @@ public class TivoScrubBar extends View {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
     // Force fill_parent width, fixed content height (by images).
-    mSizeWid = MeasureSpec.getSize(widthMeasureSpec);
-    this.setMeasuredDimension(mSizeWid, mSizeHei);
+    mSizeViewWid = MeasureSpec.getSize(widthMeasureSpec);
+    mSizeBarWid = mSizeViewWid - (mSizeBarEndWid * 2);
+    this.setMeasuredDimension(mSizeViewWid, mSizeViewHei);
 
     // Fix the rect which scales the middle of our bar, with this width info.
-    mRectBarMid.set(mSizeEndWid, 0, mSizeWid - mSizeEndWid, mSizeHei);
+    mCoordBarRight = mSizeViewWid - mSizeBarEndWid;
+    mRectBarMid.set(mSizeBarEndWid, mSizeHeiBarPad, mCoordBarRight, mSizeHeiBarPad
+        + mSizeHeiBar);
   }
 
   /** Set all the properties that affect the range this view presents. */
   public void setRange(int availableMin, int progress, int availableMax, int max) {
     boolean doDraw = false;
 
+    // Save inputs.
     //@formatter:off
     if (mAvailableMin != availableMin) doDraw = true;
     this.mAvailableMin = availableMin;
@@ -117,6 +137,11 @@ public class TivoScrubBar extends View {
     if (mMax != max) doDraw = true;
     this.mMax = max;
     //@formatter:on
+
+    // Derive layout from inputs.
+    float scale = (float) mSizeBarWid / max;
+    mCoordThumbLeft = (int) Math.floor(
+        mSizeBarEndWid + (progress * scale) - mSizeThumbPad);
 
     if (doDraw) {
       invalidate();

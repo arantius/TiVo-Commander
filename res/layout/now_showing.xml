@@ -56,6 +56,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       </LinearLayout>
 
       <com.arantius.tivocommander.views.TivoScrubBar
+          android:id="@+id/tivo_scrub_bar"
           android:layout_width="fill_parent" android:layout_height="wrap_content"
           />
 
