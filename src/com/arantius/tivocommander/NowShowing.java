@@ -27,7 +27,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ObjectNode;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -51,31 +50,63 @@ public class NowShowing extends Activity {
     LIVE, RECORDING;
   }
 
+  private class PlaybackRange {
+    public long absoluteBegin;
+    public long absoluteEnd;
+    public int activeMin;
+    public int progress;
+    public int activeMax;
+    public int max;
+  }
+
   private final MindRpcResponseListener mBodyConfigCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           final JsonNode bodyConfig =
               response.getBody().path("bodyConfig").path(0);
           MindRpc.saveBodyId(bodyConfig.path("bodyId").getTextValue());
-
           int gmtOffsetSeconds = bodyConfig.path("secondsFromGmt").asInt();
           mGmtOffsetMillis = gmtOffsetSeconds * 1000;
-
           rpcComplete();
         }
       };
+  private String mContentId = null;
+  private ContentType mContentType = null;
+  final private SimpleDateFormat mDateFormat = new SimpleDateFormat(
+      "yyyy-MM-dd HH:mm:ss", Locale.US);
+  final private SimpleDateFormat mDisplayTimeFormat = new SimpleDateFormat(
+      "hh:mm", Locale.US);
+
+  private Integer mGmtOffsetMillis = null;
+  private Long mMillisActualBegin = null;
+  private Long mMillisContentBegin = null;
+  private Long mMillisContentEnd = null;
+  private Integer mMillisPosition = null;
+  private Integer mMillisRecordingBegin = null;
+  private Integer mMillisRecordingEnd = null;
+  private Long mMillisVirtualPosition = null;
+  private boolean mRpcComplete = false;
+  private Integer mRpcIdPlaybackInfo = null;
+  private Integer mRpcIdWhatsOn = null;
+  private SeekBar mSeekBar = null;
+
   private final MindRpcResponseListener mOfferCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           JsonNode offer = response.getBody().path("offer").path(0);
-//          Utils.log(Utils.stringifyToPrettyJson(offer));
+          setTitleFromContent(offer);
 
-          Date now = new Date();
-          Utils.log("offer; current time       " + mDateFormat.format(now));
+          final Integer durationSec = offer.path("duration").asInt();
+          final String startTimeStr = offer.path("startTime").asText();
+          try {
+            Date beginDate = mDateFormat.parse(startTimeStr);
+            mMillisContentBegin = beginDate.getTime();
+          } catch (ParseException e) {
+            Utils.logError("Failed to parse start time " + startTimeStr, e);
+            mMillisContentBegin = 0L;
+          }
+          mMillisContentEnd = mMillisContentBegin + (durationSec * 1000);
 
-          setMembersFromContent(offer, offer.path("startTime").asText());
-
-          setSeekbarLabels();
           rpcComplete();
         };
       };
@@ -83,55 +114,61 @@ public class NowShowing extends Activity {
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           JsonNode playbackInfo = response.getBody();
-//          Utils.log(Utils.stringifyToPrettyJson(playbackInfo));
 
-          mMillisPosition = playbackInfo.path("position").asLong();
-          mMillisRecordingBegin = playbackInfo.path("begin").asLong();
-          mMillisRecordingEnd = playbackInfo.path("end").asLong();
-          mMillisVirtualPosition = playbackInfo.path("virtualPosition").asLong();
+          mMillisPosition = playbackInfo.path("position").asInt();
+          mMillisRecordingBegin = playbackInfo.path("begin").asInt();
+          mMillisRecordingEnd = playbackInfo.path("end").asInt();
+          mMillisVirtualPosition =
+              playbackInfo.path("virtualPosition").asLong();
 
-          Utils.log(String.format(Locale.US,
-              "playback info [%d %d %d]",
-              mMillisRecordingBegin, mMillisPosition, mMillisRecordingEnd
-              ));
-          Utils.log(String.format(Locale.US,
-              "virt. pos.  %d %s",
-              mMillisVirtualPosition,
-              mDateFormat.format(new Date(mMillisVirtualPosition))
-              ));
-
-          if (mMillisRecordingBegin != 0) {
-            // Normal for (e.g. live) recording that started late?
-            Utils.log("PlaybackInfo with non-0 begin:");
-            Utils.log(Utils.stringifyToPrettyJson(playbackInfo));
-          }
-
-          setSeekbarPositions();
           rpcComplete();
+
+          // Update these every time, not just the first via rpcComplete().
+          // Even labels; they can change as a live recording moves forward
+          // through time.
+          setSeekbarLabels();
+          setSeekbarPositions();
         };
       };
   private final MindRpcResponseListener mRecordingCallback =
       new MindRpcResponseListener() {
-        @SuppressWarnings("unused")
         public void onResponse(MindRpcResponse response) {
           JsonNode recording = response.getBody().path("recording").path(0);
-//          Utils.log(Utils.stringifyToPrettyJson(recording));
 
-          if (true) {  // Just here to enable for debugging.
-            ObjectNode filteredContent = (ObjectNode) recording;
-            filteredContent.remove("category");
-            filteredContent.remove("credit");
-            filteredContent.remove("image");
-            Utils.log(Utils.stringifyToPrettyJson((JsonNode) filteredContent));
+          setTitleFromContent(recording);
+
+          // The time that this recording actually started.
+          final String actualBeginTimeStr =
+              recording.path("actualStartTime").asText();
+          try {
+            mMillisActualBegin =
+                mDateFormat.parse(actualBeginTimeStr).getTime();
+          } catch (ParseException e) {
+            Utils.logError("Failed to parse start time " + actualBeginTimeStr,
+                e);
+            mMillisActualBegin = 0L;
           }
 
-          Date now = new Date();
-          Utils.log("recording; current time     " + mDateFormat.format(now));
+          // The time this recording (content?) was scheduled to begin.
+          final String beginTimeStr =
+              recording.path("scheduledStartTime").asText();
+          try {
+            mMillisContentBegin = mDateFormat.parse(beginTimeStr).getTime();
+          } catch (ParseException e) {
+            Utils.logError("Failed to parse start time " + beginTimeStr, e);
+            mMillisContentBegin = 0L;
+          }
 
-          setMembersFromContent(
-              recording, recording.path("actualStartTime").asText());
+          // The time this recording (content?) was scheduled to end.
+          final String endTimeStr = recording.path("scheduledEndTime").asText();
+          try {
+            final Date endDate = mDateFormat.parse(endTimeStr);
+            mMillisContentEnd = endDate.getTime();
+          } catch (ParseException e) {
+            Utils.logError("Failed to parse start time " + endTimeStr, e);
+            mMillisContentEnd = 0L;
+          }
 
-          setSeekbarLabels();
           rpcComplete();
         }
       };
@@ -139,7 +176,6 @@ public class NowShowing extends Activity {
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           JsonNode whatsOn = response.getBody().path("whatsOn").path(0);
-//          Utils.log(Utils.stringifyToPrettyJson(whatsOn));
 
           String playbackType = whatsOn.path("playbackType").asText();
           String contentId = null;
@@ -177,25 +213,6 @@ public class NowShowing extends Activity {
         };
       };
 
-  final private SimpleDateFormat mDateFormat = new SimpleDateFormat(
-      "yyyy-MM-dd HH:mm:ss", Locale.US);
-  final private SimpleDateFormat mDisplayTimeFormat = new SimpleDateFormat(
-      "hh:mm", Locale.US);
-  private Integer mGmtOffsetMillis = null;
-
-  private ContentType mContentType = null;
-  private SeekBar mSeekBar = null;
-  private Long mMillisContentBegin = null;
-  private Long mMillisContentEnd = null;
-  private Long mMillisPosition = null;
-  private Long mMillisRecordingBegin = null;
-  private Long mMillisRecordingEnd = null;
-  private Long mMillisVirtualPosition = null;
-  private String mContentId = null;
-  private boolean mRpcComplete = false;
-  private Integer mRpcIdPlaybackInfo = null;
-  private Integer mRpcIdWhatsOn = null;
-
   public final void cancelOutstandingRpcs(View v) {
     if (mRpcIdPlaybackInfo != null) {
       MindRpc.addRequest(new CancelRpc(mRpcIdPlaybackInfo), null);
@@ -206,6 +223,72 @@ public class NowShowing extends Activity {
       MindRpc.addRequest(new CancelRpc(mRpcIdWhatsOn), null);
     }
     mRpcIdWhatsOn = null;
+  }
+
+  /**
+   * Calculate everything about the range we should display.  Absolute start
+   * and end times of the whole bar, the active range that is recorded, and
+   * the progress through that range.
+   */
+  private PlaybackRange getPlaybackRange() {
+    final int millisHalfHour = 1000 * 60 * 30;
+    PlaybackRange range = new PlaybackRange();
+
+    range.absoluteBegin = mMillisContentBegin;
+    range.absoluteEnd = mMillisContentEnd;
+    range.max = (int) (mMillisContentEnd - mMillisContentBegin);
+
+    if (mContentType == ContentType.LIVE) {
+      // TODO: Recording starts 1/2 hour+ after absolute begin.
+      range.progress = (int) (mMillisVirtualPosition - mMillisContentBegin);
+      range.activeMin = range.progress - mMillisPosition;
+      range.activeMax = range.activeMin + mMillisRecordingEnd;
+
+      // If the active range is too far from the content beginning, shrink
+      // the range to hold it.
+      while (range.activeMin > millisHalfHour) {
+        range.absoluteBegin += millisHalfHour;
+        range.activeMin -= millisHalfHour;
+        range.progress -= millisHalfHour;
+        range.activeMax -= millisHalfHour;
+        range.max -= millisHalfHour;
+      }
+    } else {
+      range.activeMin = (int) (mMillisActualBegin - mMillisContentBegin);
+      range.activeMax = range.activeMin + mMillisRecordingEnd;
+      range.progress = range.activeMin + mMillisPosition;
+    }
+
+    // If the recording extends beyond the scheduled period extend the
+    // scrub bar by half an hour.
+    // TODO: Do these need to be whiles in case of big padding?
+    if (range.activeMin < 0) {
+      Utils.log(String.format(Locale.US,
+          "Adjusting beginning back becase %d < 0", range.activeMin));
+      range.absoluteBegin -= millisHalfHour;
+      // Since min must be 0, actually shift everything else forward.
+      range.max += millisHalfHour;
+      range.progress += millisHalfHour;
+      range.activeMin += millisHalfHour;
+      range.activeMax += millisHalfHour;
+    }
+    if (range.activeMax > range.max) {
+      Utils.log(String.format(Locale.US,
+          "Adjusting end forward becase %d > %d", range.activeMax, range.max));
+      range.absoluteEnd += millisHalfHour;
+      range.max += millisHalfHour;
+    }
+
+    return range;
+  }
+
+  /** (Re-)Initialize instance variables. */
+  private void initInstanceVars() {
+    mContentType = null;
+    mMillisActualBegin = null;
+    mMillisContentBegin = null;
+    mMillisContentEnd = null;
+    mRpcComplete = false;
   }
 
   public void onClickButton(View target) {
@@ -281,72 +364,26 @@ public class NowShowing extends Activity {
     MindRpc.addRequest(playbackInfoRequest, mPlaybackInfoCallback);
   }
 
-  /** Initialize instance variables. */
-  private void initInstanceVars() {
-    mContentType = null;
-    mMillisContentBegin = null;
-    mMillisContentEnd = null;
-    mMillisPosition = null;
-    mMillisRecordingBegin = null;
-    mMillisRecordingEnd = null;
-    mMillisVirtualPosition = null;
-    mRpcComplete = false;
-  }
-
-  private void setMembersFromContent(JsonNode content, String startTimeStr) {
-    // Set title and subtitle.
-    ((TextView) findViewById(R.id.content_title)).setText(content.path(
-        "title").asText());
-    String subtitle = content.path("subtitle").asText();
-    TextView subtitleView = (TextView) findViewById(R.id.content_subtitle);
-    if (null == subtitle || "".equals(subtitle)) {
-      subtitleView.setVisibility(View.GONE);
-    } else {
-      subtitleView.setVisibility(View.VISIBLE);
-      subtitleView.setText(subtitle);
-    }
-
-    Utils.log(String.format(Locale.US,
-        "Time from content:          %s; %d",
-        startTimeStr, content.path("duration").asLong()));
-
-    // Calculate absolute start and end times.
-    final Integer durationSec = content.path("duration").asInt();
-    try {
-      Date beginDate = mDateFormat.parse(startTimeStr);
-      mMillisContentBegin = beginDate.getTime();
-    } catch (ParseException e) {
-      Utils.logError(
-          "Failed to parse start time " + startTimeStr, e);
-      mMillisContentBegin = 0L;
-    }
-    mMillisContentEnd = mMillisContentBegin + (durationSec * 1000);
-
-    Utils.log(String.format(Locale.US,
-        "content begin %d %s",
-        mMillisContentBegin, mDateFormat.format(new Date(mMillisContentBegin))
-        ));
-    Utils.log(String.format(Locale.US,
-        "content end   %d %s",
-        mMillisContentEnd, mDateFormat.format(new Date(mMillisContentEnd))
-        ));
-  }
-
   /** After any given RPC completes, check state (given all) and continue. */
   private void rpcComplete() {
+    // @formatter:off
     if (mRpcComplete) return;
 
     if (mGmtOffsetMillis == null) return;
     if (mMillisContentBegin == null) return;
     if (mMillisContentEnd == null) return;
+    if (mContentType == ContentType.RECORDING) {
+      if (mMillisActualBegin == null) return;
+    }
     if (mMillisPosition == null) return;
     if (mMillisRecordingBegin == null) return;
     if (mMillisRecordingEnd == null) return;
     if (mMillisVirtualPosition == null) return;
+    // @formatter:on
 
     mRpcComplete = true;
 
-    // Ensure these have been run, regardless of previous ordering.
+    // Ensure these have been run, regardless of RPC completion ordering.
     setSeekbarLabels();
     setSeekbarPositions();
     // Then make them visible.
@@ -356,90 +393,82 @@ public class NowShowing extends Activity {
 
   /** Set the start/end time labels of the seek bar. */
   private void setSeekbarLabels() {
+    if (!mRpcComplete) {
+      return;
+    }
+    PlaybackRange range = getPlaybackRange();
+
     final TextView startLabel =
         (TextView) findViewById(R.id.content_start_time);
-    final TextView endLabel =
-        (TextView) findViewById(R.id.content_end_time);
+    final TextView endLabel = (TextView) findViewById(R.id.content_end_time);
 
     if (mContentType == ContentType.LIVE) {
-      Date beginDate = new Date(mMillisContentBegin + mGmtOffsetMillis);
-      Date endDate = new Date(mMillisContentEnd + mGmtOffsetMillis);
-
       // Show absolute start and end time.
+      Date beginDate = new Date(range.absoluteBegin);
+      Date endDate = new Date(range.absoluteEnd);
       startLabel.setVisibility(View.VISIBLE);
       startLabel.setText(mDisplayTimeFormat.format(beginDate));
       endLabel.setText(mDisplayTimeFormat.format(endDate));
     } else if (mContentType == ContentType.RECORDING) {
-      Date durationDate = new Date(mMillisContentEnd - mMillisContentBegin);
-      // Just show duration as end time.
+      // Show only duration as end time.
       startLabel.setVisibility(View.GONE);
-      endLabel.setText(mDisplayTimeFormat.format(durationDate));
+
+      final int millis = mMillisRecordingEnd - mMillisRecordingBegin;
+      int minutes = (int) Math.ceil((millis) / (1000 * 60));
+      String dur = "";
+      if (minutes >= 60) {
+        dur += String.format(Locale.US, "%dh", (minutes / 60));
+      }
+      minutes %= 60;
+      if (minutes != 0) {
+        if (!"".equals(dur)) {
+          dur += " ";
+        }
+        dur += String.format(Locale.US, "%dm", minutes);
+      }
+      endLabel.setText(dur);
     }
   }
 
   /** Set the current, and available start/end positions, of the seek bar. */
   private void setSeekbarPositions() {
-    if (!mRpcComplete) return;
-
-    int activeMin = 0;
-    int progress = 0;
-    int activeMax = 0;
-    int max = 0;
-    if (mContentType == ContentType.LIVE) {
-      max = (int) (mMillisContentEnd - mMillisContentBegin);
-      progress = (int) (mMillisVirtualPosition - mMillisContentBegin);
-      activeMin = (int) (progress - mMillisPosition);
-      activeMax = (int) (activeMin + mMillisRecordingEnd);
-    } else {
-      // TODO: How do I handle if the recording began late?
-      max = (int) (mMillisContentEnd - mMillisContentBegin);
-      // TODO: Real/safe cast to int?
-      progress = (int) (mMillisPosition - 0);
-      activeMin = (int) (mMillisRecordingBegin - 0);
-      activeMax = (int) (mMillisRecordingEnd - 0);
+    if (!mRpcComplete) {
+      return;
     }
-
-
-    // Live shows sometime have a bit of the previous show recorded also.
-    // The TiVo displays a seek bar with the whole recorded range; for now,
-    // we just truncate for simplicity.
-    if (activeMin < 0) {
-      activeMax += activeMin;
-      activeMin = 0;
-    }
+    PlaybackRange range = getPlaybackRange();
 
     // For testing, until I get a real View set up, log an ascii-art bar.
-    float scale = 60 / (float) max;
+    float scale = 60 / (float) range.max;
+    int scaledActiveMin = (int) (range.activeMin * scale);
+    int scaledActiveMax = (int) Math.floor(range.activeMax * scale);
+    if (scaledActiveMax >= 60) {
+      scaledActiveMax = 59;
+    }
     char[] bar = new char[60];
     Arrays.fill(bar, ' ');
-    for (int i = (int) (activeMin * scale); i < Math.floor(activeMax * scale); i++) {
+    for (int i = scaledActiveMin; i < scaledActiveMax; i++) {
       bar[i] = '*';
     }
     bar[0] = '|';
     bar[59] = '|';
-    bar[(int)(progress * scale)] = 'O';
+    bar[Math.min(59, (int) (range.progress * scale))] = 'O';
     Utils.log(new String(bar));
 
-    Utils.log(String.format(
-        Locale.US,
-        "offer [%,d %,d %,d] %,d %,d",
-        mMillisContentBegin, mMillisVirtualPosition, mMillisContentEnd,
-        mMillisContentEnd - mMillisContentBegin,
-        mMillisContentEnd - mMillisVirtualPosition
-        ));
-    Utils.log(String.format(
-        Locale.US,
-        "record [%,d %,d %,d] %,d offset: %,d",
-        mMillisRecordingBegin, mMillisPosition, mMillisRecordingEnd,
-        mMillisRecordingEnd - mMillisRecordingBegin, mGmtOffsetMillis
-        ));
-    Utils.log(String.format(
-        Locale.US,
-        "calc %,d %,d %,d %,d",
-        activeMin, progress, activeMax, max
-        ));
+    mSeekBar.setMax(range.max);
+    mSeekBar.setProgress(range.progress);
+  }
 
-    mSeekBar.setMax(max);
-    mSeekBar.setProgress(progress);
+  private void setTitleFromContent(JsonNode content) {
+    String title = content.path("title").asText();
+    ((TextView) findViewById(R.id.content_title)).setText(title);
+
+    String subtitle = content.path("subtitle").asText();
+    TextView subtitleView = (TextView) findViewById(R.id.content_subtitle);
+    if (null == subtitle || "".equals(subtitle)) {
+      subtitleView.setVisibility(View.GONE);
+    } else {
+      subtitleView.setVisibility(View.VISIBLE);
+      subtitleView.setText(subtitle);
+    }
   }
 }
