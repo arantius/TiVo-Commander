@@ -74,7 +74,7 @@ public class NowShowing extends Activity {
   final private SimpleDateFormat mDateFormat = new SimpleDateFormat(
       "yyyy-MM-dd HH:mm:ss", Locale.US);
   final private SimpleDateFormat mDisplayTimeFormat = new SimpleDateFormat(
-      "hh:mm", Locale.US);
+      "h:mm", Locale.US);
 
   private Integer mGmtOffsetMillis = null;
   private Long mMillisActualBegin = null;
