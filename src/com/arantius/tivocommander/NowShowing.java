@@ -126,10 +126,7 @@ public class NowShowing extends Activity {
           rpcComplete();
 
           // Update these every time, not just the first via rpcComplete().
-          // Even labels; they can change as a live recording moves forward
-          // through time.
-          setSeekbarLabels();
-          setSeekbarPositions();
+          setScrubBar();
         };
       };
   private final MindRpcResponseListener mRecordingCallback =
@@ -386,16 +383,15 @@ public class NowShowing extends Activity {
 
     mRpcComplete = true;
 
-    // Ensure these have been run, regardless of RPC completion ordering.
-    setSeekbarLabels();
-    setSeekbarPositions();
+    // Run this for sure once.
+    setScrubBar();
     // Then make them visible.
     ((ViewFlipper) findViewById(R.id.now_showing_detail_flipper))
         .setDisplayedChild(0);
   }
 
   /** Set the start/end time labels of the seek bar. */
-  private void setSeekbarLabels() {
+  private void setScrubBar() {
     if (!mRpcComplete) {
       return;
     }
@@ -431,31 +427,6 @@ public class NowShowing extends Activity {
       }
       endLabel.setText(dur);
     }
-  }
-
-  /** Set the current, and available start/end positions, of the seek bar. */
-  private void setSeekbarPositions() {
-    if (!mRpcComplete) {
-      return;
-    }
-    PlaybackRange range = getPlaybackRange();
-
-    // For testing, until I get a real View set up, log an ascii-art bar.
-    float scale = 60 / (float) range.max;
-    int scaledActiveMin = (int) (range.activeMin * scale);
-    int scaledActiveMax = (int) Math.floor(range.activeMax * scale);
-    if (scaledActiveMax >= 60) {
-      scaledActiveMax = 59;
-    }
-    char[] bar = new char[60];
-    Arrays.fill(bar, ' ');
-    for (int i = scaledActiveMin; i < scaledActiveMax; i++) {
-      bar[i] = '*';
-    }
-    bar[0] = '|';
-    bar[59] = '|';
-    bar[Math.min(59, (int) (range.progress * scale))] = 'O';
-    Utils.log(new String(bar));
 
     mScrubBar.setRange(range.activeMin, range.progress, range.activeMax,
         range.max);
