@@ -413,8 +413,9 @@ public class MyShows extends ListActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
     Bundle bundle = getIntent().getExtras();
+    if (MindRpc.init(this, bundle)) return;
+
     if (bundle != null) {
       mFolderId = bundle.getString("folderId");
       setTitle(bundle.getString("folderName"));
@@ -424,8 +425,6 @@ public class MyShows extends ListActivity {
     }
 
     Utils.log(String.format("MyShows: folderId:%s", mFolderId));
-
-    MindRpc.init(this);
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.list_my_shows);
@@ -461,7 +460,7 @@ public class MyShows extends ListActivity {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:MyShows");
-    MindRpc.init(this);
+    MindRpc.init(this, null);
   }
 
   protected void setProgressIndicator(int change) {

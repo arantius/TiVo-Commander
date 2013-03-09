@@ -154,7 +154,7 @@ public class Credits extends ExploreCommon {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Credits");
-    MindRpc.init(this);
+    if (MindRpc.init(this, null)) return;
   }
 
   @Override

@@ -89,9 +89,9 @@ abstract public class ExploreCommon extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    MindRpc.init(this);
-
     Bundle bundle = getIntent().getExtras();
+    if (MindRpc.init(this, bundle)) return;
+
     if (bundle != null) {
       mCollectionId = bundle.getString("collectionId");
       mContentId = bundle.getString("contentId");
@@ -101,8 +101,6 @@ abstract public class ExploreCommon extends Activity {
 
     getParent().setProgressBarIndeterminateVisibility(true);
     MindRpcRequest req = getRequest();
-    if (req != null) { // Because of bad input?
-      MindRpc.addRequest(req, mListener);
-    }
+    MindRpc.addRequest(req, mListener);
   }
 }

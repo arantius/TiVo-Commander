@@ -41,14 +41,7 @@ public class Connect extends Activity {
     final Connect that = this;
     new Thread(new Runnable() {
       public void run() {
-        Runnable onAuth = new Runnable() {
-          public void run() {
-            // TODO: Finish by starting the source intent, to not
-            // break the back button.
-            finish();
-          }
-        };
-        MindRpc.init(that, onAuth);
+        MindRpc.initContinue(that);
       }
     }).start();
   }

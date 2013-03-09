@@ -270,7 +270,7 @@ public class Search extends ListActivity {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Search");
-    MindRpc.init(this);
+    MindRpc.init(this, null);
   }
 
   @Override

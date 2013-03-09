@@ -133,9 +133,9 @@ public class Suggestions extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    MindRpc.init(this);
-
     Bundle bundle = getIntent().getExtras();
+    MindRpc.init(this, bundle);
+
     String collectionId = null;
 
     if (bundle != null) {
@@ -157,7 +157,7 @@ public class Suggestions extends Activity {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Suggestions");
-    MindRpc.init(this);
+    MindRpc.init(this, getIntent().getExtras());
   }
 
   @Override

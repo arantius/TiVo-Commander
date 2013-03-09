@@ -405,6 +405,6 @@ public class Explore extends ExploreCommon {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Explore");
-    MindRpc.init(this);
+    if (MindRpc.init(this, null)) return;
   }
 }

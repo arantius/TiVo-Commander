@@ -65,7 +65,16 @@ public class ExploreTabs extends TabActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    MindRpc.init(this);
+    Bundle bundle = getIntent().getExtras();
+
+    // Put the URI details, if any, in the bundle.  Where we'll read them
+    // later, even if MindRpc.init() restarts us with only bundle data.
+    Uri uri = getIntent().getData();
+    if (uri != null) {
+      uriToBundle(uri, bundle);
+    }
+
+    if (MindRpc.init(this, bundle)) return;
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.explore_tabs);
@@ -73,8 +82,6 @@ public class ExploreTabs extends TabActivity {
 
     mTabHost = getTabHost();
 
-    // Try reading from getExtras; i.e. in-app navigation.
-    Bundle bundle = getIntent().getExtras();
     try {
       mCollectionId = bundle.getString("collectionId");
       if ("tivo:cl.0".equals(mCollectionId)) {
@@ -99,23 +106,6 @@ public class ExploreTabs extends TabActivity {
       mRecordingId = null;
     }
 
-    // Try reading from getData, i.e. the URL from external navigation.
-    Uri uri = getIntent().getData();
-    if (uri != null) {
-      String collectionId = uri.getQueryParameter("collectionId");
-      if (collectionId != null) {
-        mCollectionId = collectionId;
-      }
-      String contentId = uri.getQueryParameter("contentId");
-      if (contentId != null) {
-        mContentId = contentId;
-      }
-      String offerId = uri.getQueryParameter("offerId");
-      if (offerId != null) {
-        mOfferId = offerId;
-      }
-    }
-
     mTabHost.addTab(makeTab("Explore", Explore.class, R.drawable.icon_tv));
     if (mCollectionId != null) {
       mTabHost
@@ -133,5 +123,18 @@ public class ExploreTabs extends TabActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     return Utils.onOptionsItemSelected(item, this);
+  }
+
+  /** Parse a TiVo URL in a Uri object into an extras bundle. */
+  private void uriToBundle(Uri uri, Bundle bundle) {
+    final String[] keys = new String[] {
+        "collectionId", "contentId", "offerId",
+    };
+    for (String key : keys) {
+      String val = uri.getQueryParameter(key);
+      if (val != null) {
+        bundle.putString(key, val);
+      }
+    }
   }
 }

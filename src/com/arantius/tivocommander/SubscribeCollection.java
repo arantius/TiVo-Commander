@@ -274,6 +274,8 @@ public class SubscribeCollection extends SubscribeBase {
     super.onCreate(savedInstanceState);
 
     Bundle bundle = getIntent().getExtras();
+    if (!MindRpc.init(this, bundle)) return;
+
     mCollectionId = bundle.getString("collectionId");
 
     OfferSearch request = new OfferSearch();
@@ -290,7 +292,7 @@ public class SubscribeCollection extends SubscribeBase {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:SubscribeCollection");
-    MindRpc.init(this);
+    MindRpc.init(this, null);
   }
 
   @Override

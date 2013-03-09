@@ -54,11 +54,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
 
+import com.arantius.tivocommander.Connect;
 import com.arantius.tivocommander.Discover;
 import com.arantius.tivocommander.R;
 import com.arantius.tivocommander.Settings;
@@ -92,6 +94,7 @@ public enum MindRpc {
   private static DataInputStream mInputStream;
   private static MindRpcInput mInputThread;
   private static Activity mOriginActivity;
+  private static Bundle mOriginExtras;
   private static DataOutputStream mOutputStream;
   private static MindRpcOutput mOutputThread;
   private static SparseArray<MindRpcResponseListener> mResponseListenerMap =
@@ -110,7 +113,7 @@ public enum MindRpc {
    * @param request The request to be sent.
    * @param listener The object to notify when the response(s) come back.
    */
-  public static void addRequest(MindRpcRequest request,
+  public synchronized static void addRequest(MindRpcRequest request,
       MindRpcResponseListener listener) {
     if (mOutputThread == null) {
       if (mOriginActivity == null) {
@@ -318,28 +321,34 @@ public enum MindRpc {
     return mSessionId;
   }
 
-  public static void init(final Activity originActivity) {
-    init(originActivity, null);
-  }
-
-  public static void init(final Activity originActivity, final Runnable onAuth) {
+  public static boolean init(final Activity originActivity, Bundle originExtras) {
+    mOriginExtras = originExtras;
     mOriginActivity = originActivity;
 
-    if (isConnected()) {
-      // Already connected? Great.
-      if (onAuth != null) onAuth.run();
-      return;
+    if (!checkSettings(originActivity)) {
+      originActivity.finish();
+      return true;
     }
 
+    if (isConnected()) {
+      // Already connected?  No-op.
+      return false;
+    }
+
+    // Otherwise, start the connection, by firing off the "Connect" activity.
+    Intent intent =
+        new Intent(originActivity.getBaseContext(), Connect.class);
+    originActivity.startActivity(intent);
+    originActivity.finish();
+    return true;
+  }
+
+  public static void initContinue(final Activity activity) {
     stopThreads();
     disconnect();
 
-    if (!checkSettings(originActivity)) {
-      return;
-    }
-
-    if (!connect(originActivity)) {
-      settingsError(originActivity, R.string.error_connect);
+    if (!connect(activity)) {
+      settingsError(activity, R.string.error_connect);
       return;
     }
 
@@ -352,10 +361,17 @@ public enum MindRpc {
     addRequest(new BodyAuthenticate(mTivoMak), new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
         if ("failure".equals(response.getBody().path("status").getTextValue())) {
-          settingsError(originActivity, R.string.error_auth);
+          settingsError(activity, R.string.error_auth);
         } else {
           mBodyIsAuthed = true;
-          if (onAuth != null) onAuth.run();
+          Intent intent =
+              new Intent(activity.getBaseContext(), mOriginActivity.getClass());
+          if (mOriginExtras != null) {
+            intent.putExtras(mOriginExtras);
+          }
+          mOriginExtras = null;
+          activity.startActivity(intent);
+          activity.finish();
         }
       }
     });

@@ -335,18 +335,15 @@ public class NowShowing extends Activity {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:NowPlaying");
+
+    if (MindRpc.init(this, null)) return;
+
     setContentView(R.layout.now_showing);
     setTitle("Now Showing");
 
     mScrubBar = (TivoScrubBar) findViewById(R.id.tivo_scrub_bar);
     TimeZone gmtTz = TimeZone.getTimeZone("GMT");
     mDateFormat.setTimeZone(gmtTz);
-
-    if (!MindRpc.isConnected()) {
-      Intent intent = new Intent(getBaseContext(), Connect.class);
-      startActivity(intent);
-      return;
-    }
 
     // Turn on loading indicator.
     ((ViewFlipper) findViewById(R.id.now_showing_detail_flipper))

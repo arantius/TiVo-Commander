@@ -228,17 +228,15 @@ public class Person extends ListActivity {
       finish();
       return;
     }
+    MindRpc.init(this, bundle);
 
     mName = bundle.getString("fName");
     if (bundle.getString("lName") != null) {
       mName += " " + bundle.getString("lName");
     }
     mPersonId = bundle.getString("personId");
-
     Utils.log(String.format("Person: " + "name:%s personId:%s", mName,
         mPersonId));
-
-    MindRpc.init(this);
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.list);
@@ -256,7 +254,6 @@ public class Person extends ListActivity {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Person");
-    MindRpc.init(this);
   }
 
   @Override

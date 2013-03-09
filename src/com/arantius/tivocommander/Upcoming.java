@@ -129,13 +129,13 @@ public class Upcoming extends ListActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    MindRpc.init(this);
+    Bundle bundle = getIntent().getExtras();
+    MindRpc.init(this, bundle);
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.list_empty);
     findViewById(android.R.id.empty).setVisibility(View.GONE);
 
-    Bundle bundle = getIntent().getExtras();
     String collectionId = null;
 
     if (bundle != null) {
@@ -157,7 +157,7 @@ public class Upcoming extends ListActivity {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Upcoming");
-    MindRpc.init(this);
+    MindRpc.init(this, getIntent().getExtras());
   }
 
   protected String formatTime(JsonNode item) throws DateInPast {

@@ -13,8 +13,8 @@ public class SubscribeOffer extends SubscribeBase {
     getValues();
 
     Subscribe request = new Subscribe();
-    Bundle b = getIntent().getExtras();
-    request.setOffer(b.getString("offerId"), b.getString("contentId"));
+    Bundle bundle = getIntent().getExtras();
+    request.setOffer(bundle.getString("offerId"), bundle.getString("contentId"));
     subscribeRequestCommon(request);
 
     setProgressBarIndeterminateVisibility(true);
@@ -28,6 +28,7 @@ public class SubscribeOffer extends SubscribeBase {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    MindRpc.init(this, getIntent().getExtras());
 
     setContentView(R.layout.subscribe_offer);
     setUpSpinner(R.id.until, mUntilLabels);
@@ -39,7 +40,7 @@ public class SubscribeOffer extends SubscribeBase {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:SubscribeOffer");
-    MindRpc.init(this);
+    MindRpc.init(this, getIntent().getExtras());
   }
 
   @Override

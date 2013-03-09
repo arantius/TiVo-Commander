@@ -47,7 +47,6 @@ public class About extends Activity {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:About");
-    MindRpc.init(this);
   }
 
   @Override

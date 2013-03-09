@@ -167,7 +167,7 @@ public class Remote extends Activity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    MindRpc.init(this);
+    MindRpc.init(this, null);
 
     setContentView(R.layout.remote);
     setTitle("Remote");
@@ -198,7 +198,7 @@ public class Remote extends Activity implements OnClickListener {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Remote");
-    MindRpc.init(this);
+    MindRpc.init(this, null);
   }
 
   @Override
