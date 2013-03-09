@@ -30,11 +30,8 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -201,20 +198,9 @@ public class Explore extends ExploreCommon {
   }
 
   public void doWatch(View v) {
-    final SharedPreferences prefs =
-        PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-    if (!prefs.getBoolean("seen_stream_warning", false)) {
-      new AlertDialog.Builder(this).setTitle("No Streaming")
-          .setMessage(getResources().getString(R.string.stream_warning))
-          .setPositiveButton("I Get It", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-              Editor editor = prefs.edit();
-              editor.putBoolean("seen_stream_warning", true);
-              editor.commit();
-            }
-          }).create().show();
-    }
     MindRpc.addRequest(new UiNavigate(mRecordingId), null);
+    Intent intent = new Intent(this, NowShowing.class);
+    startActivity(intent);
   }
 
   protected void finishRequest() {
