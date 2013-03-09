@@ -36,24 +36,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#FF9500" android:text="Subtitle" />
-      <FrameLayout
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-      >
-        <com.arantius.tivocommander.views.TivoScrubBar
-            android:id="@+id/tivo_scrub_bar"
-            android:layout_width="fill_parent" android:layout_height="56dip"
-            />
-        <TextView android:id="@+id/content_start_time" android:text="0:00"
-          android:layout_width="wrap_content" android:layout_height="wrap_content"
-          android:paddingLeft="6dip" android:paddingTop="10dip"
-          android:textSize="12sp"
+      <com.arantius.tivocommander.views.TivoScrubBar
+          android:id="@+id/tivo_scrub_bar"
+          android:layout_width="fill_parent" android:layout_height="56dip"
           />
-        <TextView android:id="@+id/content_end_time" android:text="-:--"
-          android:layout_width="wrap_content" android:layout_height="wrap_content"
-          android:paddingRight="6dip" android:paddingTop="10dip"
-          android:textSize="12sp" android:layout_gravity="right"
-          />
-      </FrameLayout>
 
       <RelativeLayout android:background="@drawable/remote_play_controls"
           android:layout_width="180dip" android:layout_height="170dip"

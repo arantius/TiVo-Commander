@@ -398,39 +398,31 @@ public class NowShowing extends Activity {
     }
     PlaybackRange range = getPlaybackRange();
 
-    final TextView startLabel =
-        (TextView) findViewById(R.id.content_start_time);
-    final TextView endLabel = (TextView) findViewById(R.id.content_end_time);
+    String labelLeft = null;
+    String labelRight = null;
 
     if (mContentType == ContentType.LIVE) {
       // Show absolute start and end time.
-      Date beginDate = new Date(range.absoluteBegin);
-      Date endDate = new Date(range.absoluteEnd);
-      startLabel.setVisibility(View.VISIBLE);
-      startLabel.setText(mDisplayTimeFormat.format(beginDate));
-      endLabel.setText(mDisplayTimeFormat.format(endDate));
+      labelLeft = mDisplayTimeFormat.format(new Date(range.absoluteBegin));
+      labelRight = mDisplayTimeFormat.format(new Date(range.absoluteEnd));
     } else if (mContentType == ContentType.RECORDING) {
-      // Show only duration as end time.
-      startLabel.setVisibility(View.GONE);
-
       final int millis = (int) (mMillisContentEnd - mMillisContentBegin);
       int minutes = (int) Math.ceil((millis) / (1000 * 60));
-      String dur = "";
+      labelRight = "";
       if (minutes >= 60) {
-        dur += String.format(Locale.US, "%dh", (minutes / 60));
+        labelRight += String.format(Locale.US, "%dh", (minutes / 60));
       }
       minutes %= 60;
       if (minutes != 0) {
-        if (!"".equals(dur)) {
-          dur += " ";
+        if (!"".equals(labelRight)) {
+          labelRight += " ";
         }
-        dur += String.format(Locale.US, "%dm", minutes);
+        labelRight += String.format(Locale.US, "%dm", minutes);
       }
-      endLabel.setText(dur);
     }
 
-    mScrubBar.setRange(range.activeMin, range.progress, range.activeMax,
-        range.max);
+    mScrubBar.update(range.activeMin, range.progress, range.activeMax,
+        range.max, labelLeft, labelRight);
   }
 
   private void setTitleFromContent(JsonNode content) {
