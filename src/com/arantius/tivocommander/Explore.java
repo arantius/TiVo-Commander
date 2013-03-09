@@ -21,6 +21,7 @@ package com.arantius.tivocommander;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import org.codehaus.jackson.JsonNode;
 
@@ -77,8 +78,8 @@ public class Explore extends ExploreCommon {
         public void onResponse(MindRpcResponse response) {
           mRecording = response.getBody().path("recording").path(0);
           mRecordingState = mRecording.path("state").getTextValue();
-          Utils.log(String.format("Duration: %d", mRecording.path("duration")
-              .getIntValue()));
+          Utils.log(String.format(Locale.US, "Duration: %d",
+              mRecording.path("duration").getIntValue()));
           finishRequest();
         }
       };
@@ -301,8 +302,8 @@ public class Explore extends ExploreCommon {
       final int minutes = (30 + mRecording.path("duration").getIntValue()) / 60;
 
       String durationStr =
-          minutes >= 60 ? String.format("%d hr", minutes / 60) : String.format(
-              "%d min", minutes);
+          minutes >= 60 ? String.format(Locale.US, "%d hr", minutes / 60)
+              : String.format(Locale.US, "%d min", minutes);
       if (isRecordingPartial()) {
         durationStr += " (partial)";
       }
@@ -320,10 +321,10 @@ public class Explore extends ExploreCommon {
       detailParts.add(String.format("Sea %d Ep %d", season, epNum));
     }
     if (mContent.has("mpaaRating")) {
-      detailParts.add(mContent.path("mpaaRating").getTextValue().toUpperCase());
+      detailParts.add(mContent.path("mpaaRating").getTextValue().toUpperCase(Locale.US));
     } else if (mContent.has("tvRating")) {
       detailParts.add("TV-"
-          + mContent.path("tvRating").getTextValue().toUpperCase());
+          + mContent.path("tvRating").getTextValue().toUpperCase(Locale.US));
     }
     detailParts.add(mContent.path("category").path(0).path("label")
         .getTextValue());
