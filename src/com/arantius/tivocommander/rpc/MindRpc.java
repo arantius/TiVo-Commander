@@ -88,7 +88,7 @@ public enum MindRpc {
   private static final String LOG_TAG = "tivo_commander";
 
   public static String mBodyId = "-";
-  private static Boolean mBodyIsAuthed = false;
+  public static Boolean mBodyIsAuthed = false;
   private static DataInputStream mInputStream;
   private static MindRpcInput mInputThread;
   private static Activity mOriginActivity;
@@ -128,14 +128,16 @@ public enum MindRpc {
     }
   }
 
-  private static boolean checkConnected() {
+  public static boolean isConnected() {
     if (mInputThread == null
         || mInputThread.getState() == Thread.State.TERMINATED
         || mOutputThread == null
         || mOutputThread.getState() == Thread.State.TERMINATED) {
+      mBodyIsAuthed = false;
       return false;
     }
     if (mSocket == null || mSocket.isClosed()) {
+      mBodyIsAuthed = false;
       return false;
     }
 
@@ -278,6 +280,7 @@ public enum MindRpc {
         }
       }
     });
+    mBodyIsAuthed = false;
     disconnectThread.start();
     try {
       disconnectThread.join();
@@ -322,7 +325,7 @@ public enum MindRpc {
   public static void init(final Activity originActivity, final Runnable onAuth) {
     mOriginActivity = originActivity;
 
-    if (checkConnected()) {
+    if (isConnected()) {
       // Already connected? Great.
       if (onAuth != null) onAuth.run();
       return;

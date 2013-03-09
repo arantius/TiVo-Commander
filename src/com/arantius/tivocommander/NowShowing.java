@@ -342,7 +342,7 @@ public class NowShowing extends Activity {
     TimeZone gmtTz = TimeZone.getTimeZone("GMT");
     mDateFormat.setTimeZone(gmtTz);
 
-    if (!MindRpc.getBodyIsAuthed()) {
+    if (!MindRpc.isConnected()) {
       Intent intent = new Intent(getBaseContext(), Connect.class);
       startActivity(intent);
       return;
