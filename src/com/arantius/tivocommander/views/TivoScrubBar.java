@@ -65,9 +65,11 @@ public class TivoScrubBar extends View {
   final private int mSizeViewHei = 56;
   private int mSizeViewWid;
 
+  private float mScaleHei = 1;
+
   final private int mCoordActiveTop = 12;
   final private int mCoordActiveBot = 45;
-  final private int mCoordThumbTop = 3;
+  final private int mCoordThumbTop = 2;
   private int mCoordThumbLeft = 0;
 
   private Rect mRectActive = new Rect(0, mCoordActiveTop, 0, mCoordActiveBot);
@@ -103,12 +105,12 @@ public class TivoScrubBar extends View {
 
     mPaintText = new Paint(Paint.ANTI_ALIAS_FLAG);
     mPaintText.setColor(0xFFFFFFFF);
-    mPaintText.setTextSize(mSizeTextHei);
   }
 
   @Override
   protected void onDraw(Canvas canvas) {
     // Calculate the time labels and their sizes.
+    mPaintText.setTextSize(mSizeTextHei * mScaleHei);
     if (mLabelLeft == null) {
       mLabelLeft = "";
     }
@@ -121,8 +123,8 @@ public class TivoScrubBar extends View {
         mSizeTextPadSide + (int) mPaintText.measureText(mLabelRight);
 
     // Calculate the rects for the bar pieces, based on label sizes.
-    final int barTop = mSizeHeiBarPad;
-    final int barBot = barTop + mSizeHeiBar;
+    final int barTop = (int) (mSizeHeiBarPad * mScaleHei);
+    final int barBot = (int) (barTop + (mSizeHeiBar * mScaleHei));
     mRectBarEndLeft.set(0, barTop, Math.max(16, widLabelLeft), barBot);
     mRectBarEndRight.set(mSizeViewWid - Math.max(16, widLabelRight), barTop,
         mSizeViewWid, barBot);
@@ -132,11 +134,15 @@ public class TivoScrubBar extends View {
     // Calculate the position of the active region and thumb.
     float scale = (float) (mRectBarMid.right - mRectBarMid.left) / mMax;
     mCoordThumbLeft =
-        (int) Math.floor(mRectBarEndLeft.right + (mProgress * scale)
-            - mSizeThumbPad);
-    mRectActive.set(mRectBarEndLeft.right + (int) (mAvailableMin * scale),
-        mCoordActiveTop, mRectBarEndLeft.right + (int) (mAvailableMax * scale),
-        mCoordActiveBot);
+        (int) Math.floor(mRectBarMid.left + (mProgress * scale)
+            - (int) (mSizeThumbPad * mScaleHei));
+    //@formatter:off
+    mRectActive.set(
+        mRectBarEndLeft.right + (int) (mAvailableMin * scale),
+        (int) Math.ceil(mCoordActiveTop * mScaleHei),
+        mRectBarEndLeft.right + (int) (mAvailableMax * scale),
+        (int) (mCoordActiveBot * mScaleHei));
+    //@formatter:on
 
     // Draw the green active region, first, under the bar outline, so the
     // edges show through, rounded.
@@ -146,17 +152,22 @@ public class TivoScrubBar extends View {
     int hashWid = 15 * 60 * 1000;
     // TODO: Does this limit match TiVo on screen behavior?
     while (true) {
-      // Minus 30k so that we don't draw a hash right at the end.  Not minus
+      // Minus 30k so that we don't draw a hash right at the end. Not minus
       // a full minute though, because the TiVo itself will e.g. draw the
       // 1-hour hash for a 61 min. recording.
       int numHashes = (mMax - 30000) / hashWid;
-      if (numHashes <= 10) break;
+      if (numHashes <= 10)
+        break;
       hashWid *= 2;
     }
     for (int x = hashWid; x < mMax - 30000; x += hashWid) {
       int hashLeft = mRectBarMid.left + (int) (x * scale) - (mSizeHashWid / 2);
-      mRectHash.set(hashLeft, mCoordActiveTop, hashLeft + mSizeHashWid,
-          mCoordActiveBot);
+      //@formatter:off
+      mRectHash.set(
+          hashLeft,
+          (int) Math.ceil(mCoordActiveTop * mScaleHei),
+          hashLeft + mSizeHashWid,
+          (int) (mCoordActiveBot * mScaleHei));
       canvas.drawRect(mRectHash, mPaintHash);
     }
 
@@ -166,15 +177,27 @@ public class TivoScrubBar extends View {
     canvas.drawBitmap(mBitmapBarMid, null, mRectBarMid, null);
 
     // Draw the time labels.
-    canvas.drawText(mLabelLeft, mRectBarEndLeft.left + (mSizeTextPadSide / 2),
-        mRectBarEndLeft.top + mSizeTextPadTop, mPaintText);
-    canvas.drawText(mLabelRight,
-        mRectBarEndRight.left + (mSizeTextPadSide / 2), mRectBarEndRight.top
-            + mSizeTextPadTop, mPaintText);
+    //@formatter:off
+    canvas.drawText(
+        mLabelLeft,
+        mRectBarEndLeft.left + (mSizeTextPadSide / 2),
+        mRectBarEndLeft.top + (mSizeTextPadTop * mScaleHei),
+        mPaintText);
+    canvas.drawText(
+        mLabelRight,
+        mRectBarEndRight.left + (mSizeTextPadSide / 2),
+        mRectBarEndRight.top + (mSizeTextPadTop * mScaleHei),
+        mPaintText);
+    //@formatter:on
 
     // Draw the thumb.
-    mRectThumb.set(mCoordThumbLeft, mCoordThumbTop, mCoordThumbLeft
-        + mSizeThumb, mCoordThumbTop + mSizeThumb);
+    //@formatter:off
+    mRectThumb.set(
+        mCoordThumbLeft,
+        (int) (mCoordThumbTop * mScaleHei),
+        mCoordThumbLeft + (int) (mSizeThumb * mScaleHei),
+        (int) (mCoordThumbTop + mSizeThumb * mScaleHei));
+    //@formatter:on
     canvas.drawBitmap(mBitmapThumb, null, mRectThumb, null);
   }
 
@@ -184,7 +207,9 @@ public class TivoScrubBar extends View {
 
     // Force fill_parent width, fixed content height (by images).
     mSizeViewWid = MeasureSpec.getSize(widthMeasureSpec);
-    this.setMeasuredDimension(mSizeViewWid, mSizeViewHei);
+    int viewHei = MeasureSpec.getSize(heightMeasureSpec);
+    mScaleHei = (float) viewHei / mSizeViewHei;
+    this.setMeasuredDimension(mSizeViewWid, viewHei);
   }
 
   /** Set all the properties that affect the range this view presents. */

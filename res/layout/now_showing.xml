@@ -41,7 +41,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
           android:textColor="#FF9500" android:text="Subtitle" />
         <com.arantius.tivocommander.views.TivoScrubBar
             android:id="@+id/tivo_scrub_bar"
-            android:layout_width="fill_parent" android:layout_height="56dip"
+            android:layout_width="fill_parent" android:layout_height="30dip"
             />
 
         <LinearLayout android:layout_width="fill_parent"
