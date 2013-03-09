@@ -427,6 +427,10 @@ public class NowShowing extends Activity {
 
   private void setTitleFromContent(JsonNode content) {
     String title = content.path("title").asText();
+    String movieYear = content.path("movieYear").asText();
+    if (movieYear != null && !"".equals(movieYear)) {
+      title += " (" + movieYear + ")";
+    }
     ((TextView) findViewById(R.id.content_title)).setText(title);
 
     String subtitle = content.path("subtitle").asText();
