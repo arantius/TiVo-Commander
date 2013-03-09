@@ -121,22 +121,6 @@ public enum MindRpc {
     }
   }
 
-  public static boolean isConnected() {
-    if (mInputThread == null
-        || mInputThread.getState() == Thread.State.TERMINATED
-        || mOutputThread == null
-        || mOutputThread.getState() == Thread.State.TERMINATED) {
-      mBodyIsAuthed = false;
-      return false;
-    }
-    if (mSocket == null || mSocket.isClosed()) {
-      mBodyIsAuthed = false;
-      return false;
-    }
-
-    return mBodyIsAuthed;
-  }
-
   private static boolean checkSettings(Activity activity) {
     SharedPreferences prefs =
         PreferenceManager
@@ -364,6 +348,22 @@ public enum MindRpc {
         }
       }
     });
+  }
+
+  protected static boolean isConnected() {
+    if (mInputThread == null
+        || mInputThread.getState() == Thread.State.TERMINATED
+        || mOutputThread == null
+        || mOutputThread.getState() == Thread.State.TERMINATED) {
+      mBodyIsAuthed = false;
+      return false;
+    }
+    if (mSocket == null || mSocket.isClosed()) {
+      mBodyIsAuthed = false;
+      return false;
+    }
+
+    return mBodyIsAuthed;
   }
 
   private static String readPassword(Context ctx) {
