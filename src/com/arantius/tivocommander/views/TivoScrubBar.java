@@ -43,7 +43,7 @@ public class TivoScrubBar extends View {
   /** The time label to display on the left side. */
   protected String mLabelLeft;
   /** The time label to display on the right side. */
-  protected String mLabelRight;
+  protected String mLabelRight = "30m";
 
   private Bitmap mBitmapBarEndLeft;
   private Bitmap mBitmapBarEndRight;
@@ -51,22 +51,22 @@ public class TivoScrubBar extends View {
   private Bitmap mBitmapThumb;
 
   private Paint mPaintActiveSection;
-  private Paint mPaintTextPaint;
+  private Paint mPaintText;
 
-  final private int mSizeActivePad = 54;
-  final private int mSizeBarEndWid = 65;
   final private int mSizeHeiBar = 36;
   final private int mSizeHeiBarPad = 10;
+  final private int mSizeTextPadSide = 20;
+  final private int mSizeTextPadTop = 25;
+  final private int mSizeTextHei = 22;
   final private int mSizeThumb = 55;
   final private int mSizeThumbPad = 27;
   final private int mSizeViewHei = 56;
   private int mSizeViewWid;
 
-  private int mCoordActiveTop = 15;
-  private int mCoordActiveBot = 42;
-  private int mCoordBarRight;
+  final private int mCoordActiveTop = 12;
+  final private int mCoordActiveBot = 45;
   final private int mCoordThumbTop = 3;
-  private int mCoordThumbLeft = mSizeBarEndWid - mSizeThumbPad;
+  private int mCoordThumbLeft = 0;
 
   private Rect mRectActive = new Rect(0, mCoordActiveTop, 0, mCoordActiveBot);
   private Rect mRectBarEndLeft = new Rect();
@@ -92,23 +92,43 @@ public class TivoScrubBar extends View {
 
     mPaintActiveSection = new Paint();
     mPaintActiveSection.setStyle(Paint.Style.FILL);
-    mPaintActiveSection.setColor(0xFF5EFF44); // Green?
+    mPaintActiveSection.setColor(0xFF66FF44);
 
-    mPaintTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    mPaintTextPaint.setColor(0xFFFFFFFF); // White?
+    mPaintText = new Paint(Paint.ANTI_ALIAS_FLAG);
+    mPaintText.setColor(0xFFFFFFFF);
+    mPaintText.setTextSize(mSizeTextHei);
   }
 
   @Override
   protected void onDraw(Canvas canvas) {
-    // TODO: Calculate appropriate space for text on either end.
+    // Calculate the time labels and their sizes.
+    if (mLabelLeft == null) {
+      mLabelLeft = "";
+    }
+    int widLabelLeft =
+        mSizeTextPadSide + (int) mPaintText.measureText(mLabelLeft);
+    if (mLabelRight == null) {
+      mLabelRight = "";
+    }
+    int widLabelRight =
+        mSizeTextPadSide + (int) mPaintText.measureText(mLabelRight);
 
-    float scale = (float) (mSizeViewWid - mSizeActivePad * 2) / mMax;
-    mCoordThumbLeft = (int) Math.floor(
-        mSizeBarEndWid + (mProgress * scale) - mSizeThumbPad);
-    mRectActive.set(
-        mSizeActivePad + (int) (mAvailableMin * scale),
-        mCoordActiveTop,
-        mSizeActivePad + (int) (mAvailableMax * scale),
+    // Calculate the rects for the bar pieces, based on label sizes.
+    final int barTop = mSizeHeiBarPad;
+    final int barBot = barTop + mSizeHeiBar;
+    mRectBarEndLeft.set(0, barTop, Math.max(16, widLabelLeft), barBot);
+    mRectBarEndRight.set(mSizeViewWid - Math.max(16, widLabelRight), barTop,
+        mSizeViewWid, barBot);
+    mRectBarMid.set(mRectBarEndLeft.right, barTop, mRectBarEndRight.left,
+        barBot);
+
+    // Calculate the position of the active region and thumb.
+    float scale = (float) (mRectBarMid.right - mRectBarMid.left) / mMax;
+    mCoordThumbLeft =
+        (int) Math.floor(mRectBarEndLeft.right + (mProgress * scale)
+            - mSizeThumbPad);
+    mRectActive.set(mRectBarEndLeft.right + (int) (mAvailableMin * scale),
+        mCoordActiveTop, mRectBarEndLeft.right + (int) (mAvailableMax * scale),
         mCoordActiveBot);
 
     // Draw the green active region, first, under the bar outline, so the
@@ -118,15 +138,16 @@ public class TivoScrubBar extends View {
     // TODO: Draw the 15-min hash marks.
 
     // Draw the outline of the bar.
-    final int barTop = mSizeHeiBarPad;
-    final int barBot = barTop + mSizeHeiBar;
-    mRectBarEndLeft.set(0, barTop, mSizeBarEndWid, barBot);
     canvas.drawBitmap(mBitmapBarEndLeft, null, mRectBarEndLeft, null);
-    mRectBarEndRight.set(mSizeViewWid - mSizeBarEndWid, barTop, mSizeViewWid, barBot);
     canvas.drawBitmap(mBitmapBarEndRight, null, mRectBarEndRight, null);
     canvas.drawBitmap(mBitmapBarMid, null, mRectBarMid, null);
 
-    // TODO: Draw the text.
+    // Draw the time labels.
+    canvas.drawText(mLabelLeft, mRectBarEndLeft.left + (mSizeTextPadSide / 2),
+        mRectBarEndLeft.top + mSizeTextPadTop, mPaintText);
+    canvas.drawText(mLabelRight,
+        mRectBarEndRight.left + (mSizeTextPadSide / 2), mRectBarEndRight.top
+            + mSizeTextPadTop, mPaintText);
 
     // Draw the thumb.
     mRectThumb.set(mCoordThumbLeft, mCoordThumbTop, mCoordThumbLeft
@@ -141,11 +162,6 @@ public class TivoScrubBar extends View {
     // Force fill_parent width, fixed content height (by images).
     mSizeViewWid = MeasureSpec.getSize(widthMeasureSpec);
     this.setMeasuredDimension(mSizeViewWid, mSizeViewHei);
-
-    // Fix the rect which scales the middle of our bar, with this width info.
-    mCoordBarRight = mSizeViewWid - mSizeBarEndWid;
-    mRectBarMid.set(mSizeBarEndWid, mSizeHeiBarPad, mCoordBarRight,
-        mSizeHeiBarPad + mSizeHeiBar);
   }
 
   /** Set all the properties that affect the range this view presents. */
