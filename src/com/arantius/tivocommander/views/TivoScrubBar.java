@@ -32,18 +32,18 @@ import com.arantius.tivocommander.R;
 
 /** A scrub bar to display/control playback like the native TiVo interface. */
 public class TivoScrubBar extends View {
-  /** The max value for the available section of the recording. */
-  protected int mAvailableMax = 75;
-  /** The min value for the available section of the recording. */
-  protected int mAvailableMin = 25;
-  /** The maximum point possible within this recording. */
-  protected int mMax = 100;
-  /** The current point of playback; between available range. */
-  protected int mProgress = 50;
+  /** The max value for the available section of the recording; milliseconds. */
+  protected int mAvailableMax = 2400000;
+  /** The min value for the available section of the recording; milliseconds. */
+  protected int mAvailableMin = 600000;
+  /** The maximum point possible within this recording; milliseconds. */
+  protected int mMax = 5400000;
+  /** The current point of playback; milliseconds; inside available range. */
+  protected int mProgress = 1700000;
   /** The time label to display on the left side. */
-  protected String mLabelLeft;
+  protected String mLabelLeft = "";
   /** The time label to display on the right side. */
-  protected String mLabelRight = "30m";
+  protected String mLabelRight = "1h 30m";
 
   private Bitmap mBitmapBarEndLeft;
   private Bitmap mBitmapBarEndRight;
@@ -51,8 +51,10 @@ public class TivoScrubBar extends View {
   private Bitmap mBitmapThumb;
 
   private Paint mPaintActiveSection;
+  private Paint mPaintHash;
   private Paint mPaintText;
 
+  final private int mSizeHashWid = 4;
   final private int mSizeHeiBar = 36;
   final private int mSizeHeiBarPad = 10;
   final private int mSizeTextPadSide = 20;
@@ -72,6 +74,7 @@ public class TivoScrubBar extends View {
   private Rect mRectBarEndLeft = new Rect();
   private Rect mRectBarEndRight = new Rect();
   private Rect mRectBarMid = new Rect();
+  private Rect mRectHash = new Rect();
   private Rect mRectThumb = new Rect();
 
   public TivoScrubBar(Context context) {
@@ -92,7 +95,11 @@ public class TivoScrubBar extends View {
 
     mPaintActiveSection = new Paint();
     mPaintActiveSection.setStyle(Paint.Style.FILL);
-    mPaintActiveSection.setColor(0xFF66FF44);
+    mPaintActiveSection.setColor(0xFF348E26);
+
+    mPaintHash = new Paint();
+    mPaintHash.setStyle(Paint.Style.FILL);
+    mPaintHash.setColor(0xFFFFFFFF);
 
     mPaintText = new Paint(Paint.ANTI_ALIAS_FLAG);
     mPaintText.setColor(0xFFFFFFFF);
@@ -135,7 +142,23 @@ public class TivoScrubBar extends View {
     // edges show through, rounded.
     canvas.drawRect(mRectActive, mPaintActiveSection);
 
-    // TODO: Draw the 15-min hash marks.
+    // Draw the hash marks.
+    int hashWid = 15 * 60 * 1000;
+    // TODO: Does this limit match TiVo on screen behavior?
+    while (true) {
+      // Minus 30k so that we don't draw a hash right at the end.  Not minus
+      // a full minute though, because the TiVo itself will e.g. draw the
+      // 1-hour hash for a 61 min. recording.
+      int numHashes = (mMax - 30000) / hashWid;
+      if (numHashes <= 10) break;
+      hashWid *= 2;
+    }
+    for (int x = hashWid; x < mMax - 30000; x += hashWid) {
+      int hashLeft = mRectBarMid.left + (int) (x * scale) - (mSizeHashWid / 2);
+      mRectHash.set(hashLeft, mCoordActiveTop, hashLeft + mSizeHashWid,
+          mCoordActiveBot);
+      canvas.drawRect(mRectHash, mPaintHash);
+    }
 
     // Draw the outline of the bar.
     canvas.drawBitmap(mBitmapBarEndLeft, null, mRectBarEndLeft, null);
