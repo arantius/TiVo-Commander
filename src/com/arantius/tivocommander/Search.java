@@ -46,7 +46,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
-import com.arantius.tivocommander.rpc.request.CancelRpc;
 import com.arantius.tivocommander.rpc.request.UnifiedItemSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
@@ -139,8 +138,8 @@ public class Search extends ListActivity {
         }
       });
 
-      mRequest = new UnifiedItemSearch(params[0] + "*");
-      MindRpc.addRequest(mRequest, mSearchListener);
+      UnifiedItemSearch request = new UnifiedItemSearch(params[0] + "*");
+      MindRpc.addRequest(request, mSearchListener);
       return null;
     }
   }
@@ -172,19 +171,11 @@ public class Search extends ListActivity {
           }
         }
       };
-  private UnifiedItemSearch mRequest = null;
   private final ArrayList<JsonNode> mResults = new ArrayList<JsonNode>();
 
   private final MindRpcResponseListener mSearchListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          if (mRequest != null) {
-            if (response.getRpcId() != mRequest.getRpcId()) {
-              Utils.log("Got response for non-current search request!");
-              return;
-            }
-          }
-          mRequest = null;
           mEmptyView.setVisibility(View.VISIBLE);
 
           JsonNode resultsNode = response.getBody().path("unifiedItem");
@@ -214,10 +205,7 @@ public class Search extends ListActivity {
         mSearchTask.cancel(true);
         mSearchTask = null;
       }
-      if (mRequest != null) {
-        MindRpc.addRequest(new CancelRpc(mRequest.getRpcId()), null);
-        mRequest = null;
-      }
+      MindRpc.cancelAll();
 
       // Handle empty input.
       if ("".equals(s.toString())) {

@@ -37,6 +37,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -57,7 +58,6 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.Connect;
@@ -66,6 +66,7 @@ import com.arantius.tivocommander.R;
 import com.arantius.tivocommander.Settings;
 import com.arantius.tivocommander.Utils;
 import com.arantius.tivocommander.rpc.request.BodyAuthenticate;
+import com.arantius.tivocommander.rpc.request.CancelRpc;
 import com.arantius.tivocommander.rpc.request.MindRpcRequest;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
@@ -97,8 +98,8 @@ public enum MindRpc {
   private static Bundle mOriginExtras;
   private static DataOutputStream mOutputStream;
   private static MindRpcOutput mOutputThread;
-  private static SparseArray<MindRpcResponseListener> mResponseListenerMap =
-      new SparseArray<MindRpcResponseListener>();
+  private static TreeMap<Integer,MindRpcResponseListener> mResponseListenerMap =
+      new TreeMap<Integer,MindRpcResponseListener>();
   private static volatile int mRpcId = 1;
   private static volatile int mSessionId;
   private static Socket mSocket;
@@ -227,6 +228,15 @@ public enum MindRpc {
       Log.e(LOG_TAG, "createSocketFactory: UnrecoverableKeyException!", e);
     }
     return null;
+  }
+
+  /** Cancel all outstanding RPCs with response listeners. */
+  public static void cancelAll() {
+    for (Integer i : mResponseListenerMap.keySet()) {
+      addRequest(new CancelRpc(i), null);
+    }
+//    mResponseListenerMap.remove(i);
+    mResponseListenerMap.clear();
   }
 
   public static void disconnect() {

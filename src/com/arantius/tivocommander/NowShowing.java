@@ -35,7 +35,6 @@ import android.widget.ViewFlipper;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.BodyConfigSearch;
-import com.arantius.tivocommander.rpc.request.CancelRpc;
 import com.arantius.tivocommander.rpc.request.OfferSearch;
 import com.arantius.tivocommander.rpc.request.RecordingSearch;
 import com.arantius.tivocommander.rpc.request.VideoPlaybackInfoEventRegister;
@@ -85,8 +84,6 @@ public class NowShowing extends Activity {
   private Integer mMillisRecordingEnd = null;
   private Long mMillisVirtualPosition = null;
   private boolean mRpcComplete = false;
-  private Integer mRpcIdPlaybackInfo = null;
-  private Integer mRpcIdWhatsOn = null;
   private TivoScrubBar mScrubBar = null;
 
   private final MindRpcResponseListener mOfferCallback =
@@ -209,18 +206,6 @@ public class NowShowing extends Activity {
         };
       };
 
-  public final void cancelOutstandingRpcs(View v) {
-    if (mRpcIdPlaybackInfo != null) {
-      MindRpc.addRequest(new CancelRpc(mRpcIdPlaybackInfo), null);
-    }
-    mRpcIdPlaybackInfo = null;
-
-    if (mRpcIdWhatsOn != null) {
-      MindRpc.addRequest(new CancelRpc(mRpcIdWhatsOn), null);
-    }
-    mRpcIdWhatsOn = null;
-  }
-
   /**
    * Calculate everything about the range we should display.  Absolute start
    * and end times of the whole bar, the active range that is recorded, and
@@ -328,7 +313,7 @@ public class NowShowing extends Activity {
   protected void onPause() {
     super.onPause();
     Utils.log("Activity:Pause:NowPlaying");
-    cancelOutstandingRpcs(null);
+    MindRpc.cancelAll();
   }
 
   @Override
@@ -353,12 +338,10 @@ public class NowShowing extends Activity {
     MindRpc.addRequest(new BodyConfigSearch(), mBodyConfigCallback);
 
     WhatsOnSearch whatsOnRequest = new WhatsOnSearch();
-    mRpcIdWhatsOn = whatsOnRequest.getRpcId();
     MindRpc.addRequest(whatsOnRequest, mWhatsOnCallback);
 
     VideoPlaybackInfoEventRegister playbackInfoRequest =
         new VideoPlaybackInfoEventRegister(1001);
-    mRpcIdPlaybackInfo = playbackInfoRequest.getRpcId();
     MindRpc.addRequest(playbackInfoRequest, mPlaybackInfoCallback);
   }
 
