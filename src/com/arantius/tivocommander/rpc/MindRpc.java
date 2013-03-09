@@ -291,7 +291,6 @@ public enum MindRpc {
     mOriginActivity.runOnUiThread(new Runnable() {
       public void run() {
         mResponseListenerMap.get(rpcId).onResponse(response);
-        // TODO: Remove only when the response .isFinal().
         if (response.isFinal()) {
           mResponseListenerMap.remove(rpcId);
         }
