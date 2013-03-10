@@ -37,6 +37,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -230,6 +231,9 @@ public class Search extends ListActivity {
     setTitle("Search");
 
     final EditText searchBox = (EditText) findViewById(R.id.search_box);
+    getWindow().setSoftInputMode(
+        WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
     mAdapter = new SearchAdapter(this, R.layout.item_show, mResults);
 
     setListAdapter(mAdapter);
