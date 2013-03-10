@@ -114,27 +114,6 @@ public class SubscribeCollection extends SubscribeBase {
   private JsonNode mSubscription = null;
   private String mWhich;
 
-  public void doSubscribe(View v) {
-    getValues();
-    doSubscribe(false);
-  }
-
-  public void doSubscribeAll(View v) {
-    // Conflict dialog. Either boost priority or, if we already did that, also
-    // ignore conflicts.
-    if (mPriority == 0) {
-      doSubscribe(true);
-    } else {
-      mPriority++;
-      doSubscribe(false);
-    }
-  }
-
-  public void doSubscribeAsIs(View v) {
-    // Conflict dialog, do a ignore-conflicts subscribe.
-    doSubscribe(true);
-  }
-
   private HashMap<String, String> conflictListItem(JsonNode conflict,
       String prefix, boolean fullDate, String titleField) {
     HashMap<String, String> listItem = new HashMap<String, String>();
@@ -184,6 +163,49 @@ public class SubscribeCollection extends SubscribeBase {
         }
       }
     });
+  }
+
+  public void doSubscribe(View v) {
+    getValues();
+    doSubscribe(false);
+  }
+
+  public void doSubscribeAll(View v) {
+    // Conflict dialog. Either boost priority or, if we already did that, also
+    // ignore conflicts.
+    if (mPriority == 0) {
+      doSubscribe(true);
+    } else {
+      mPriority++;
+      doSubscribe(false);
+    }
+  }
+
+  public void doSubscribeAsIs(View v) {
+    // Conflict dialog, do a ignore-conflicts subscribe.
+    doSubscribe(true);
+  }
+
+  @Override
+  protected void getValues() {
+    super.getValues();
+    int pos;
+    pos = ((Spinner) findViewById(R.id.channel)).getSelectedItemPosition();
+    try {
+      mChannel = mChannelNodes.get(pos);
+    } catch (IndexOutOfBoundsException e) {
+      Utils.log(Utils.join(" / ", mChannelNames));
+      Utils.logError("Couldn't get channel", e);
+      Toast.makeText(this, "Oops, something weird happened with the channels.",
+          Toast.LENGTH_SHORT).show();
+      finish();
+    }
+
+    pos = ((Spinner) findViewById(R.id.record_max)).getSelectedItemPosition();
+    mMax = mMaxValues[pos];
+
+    pos = ((Spinner) findViewById(R.id.record_which)).getSelectedItemPosition();
+    mWhich = mWhichValues[pos];
   }
 
   private void handleConflicts(JsonNode conflicts) {
@@ -242,35 +264,6 @@ public class SubscribeCollection extends SubscribeBase {
             R.id.show_name, R.id.show_time }));
   }
 
-  private void setSpinner(int spinnerId, Object[] values, Object value) {
-    int i = Arrays.asList(values).indexOf(value);
-    if (i != -1) {
-      ((Spinner) findViewById(spinnerId)).setSelection(i);
-    }
-  }
-
-  @Override
-  protected void getValues() {
-    super.getValues();
-    int pos;
-    pos = ((Spinner) findViewById(R.id.channel)).getSelectedItemPosition();
-    try {
-      mChannel = mChannelNodes.get(pos);
-    } catch (IndexOutOfBoundsException e) {
-      Utils.log(Utils.join(" / ", mChannelNames));
-      Utils.logError("Couldn't get channel", e);
-      Toast.makeText(this, "Oops, something weird happened with the channels.",
-          Toast.LENGTH_SHORT).show();
-      finish();
-    }
-
-    pos = ((Spinner) findViewById(R.id.record_max)).getSelectedItemPosition();
-    mMax = mMaxValues[pos];
-
-    pos = ((Spinner) findViewById(R.id.record_which)).getSelectedItemPosition();
-    mWhich = mWhichValues[pos];
-  }
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -292,15 +285,22 @@ public class SubscribeCollection extends SubscribeBase {
   }
 
   @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:SubscribeCollection");
+  }
+
+  @Override
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:SubscribeCollection");
     MindRpc.init(this, null);
   }
 
-  @Override
-  protected void onPause() {
-    super.onPause();
-    Utils.log("Activity:Pause:SubscribeCollection");
+  private void setSpinner(int spinnerId, Object[] values, Object value) {
+    int i = Arrays.asList(values).indexOf(value);
+    if (i != -1) {
+      ((Spinner) findViewById(spinnerId)).setSelection(i);
+    }
   }
 }

@@ -93,6 +93,24 @@ public class Discover extends ListActivity implements OnItemClickListener,
     finish();
   }
 
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    MindRpc.disconnect();
+
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    setContentView(R.layout.list_discover);
+
+    mEmpty = ((TextView) findViewById(android.R.id.empty));
+    mHostAdapter =
+        new SimpleAdapter(this, mHosts, R.layout.item_discover, new String[] {
+            "name", "warn_icon" },
+            new int[] { R.id.discover_name, R.id.discover_warn_icon });
+    setListAdapter(mHostAdapter);
+
+    getListView().setOnItemClickListener(this);
+  }
+
   public void onItemClick(AdapterView<?> parent, View view, int position,
       long id) {
     final HashMap<String, Object> item = mHosts.get(position);
@@ -127,6 +145,20 @@ public class Discover extends ListActivity implements OnItemClickListener,
             Discover.this.finish();
           }
         }).setNegativeButton("Cancel", null).create().show();
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Discover");
+    stopQuery();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:Discover");
+    startQuery(null);
   }
 
   /** ServiceListener */
@@ -192,6 +224,15 @@ public class Discover extends ListActivity implements OnItemClickListener,
     runOnUiThread(new DvrListUpdater(listItem, oldIndex));
   }
 
+  private final void showHelp(int messageId) {
+    stopQuery();
+    String message = getResources().getString(messageId);
+    Utils.log("Showing help because:\n" + message);
+    Intent intent = new Intent(Discover.this, Help.class);
+    intent.putExtra("note", message);
+    startActivity(intent);
+  }
+
   public final void showHelp(View V) {
     stopQuery();
     Intent intent = new Intent(Discover.this, Help.class);
@@ -217,7 +258,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
         int intaddr = wifiInfo.getIpAddress();
         byte[] byteaddr =
             new byte[] { (byte) (intaddr & 0xff), (byte) (intaddr >> 8 & 0xff),
-            (byte) (intaddr >> 16 & 0xff), (byte) (intaddr >> 24 & 0xff) };
+                (byte) (intaddr >> 16 & 0xff), (byte) (intaddr >> 24 & 0xff) };
         InetAddress addr;
         try {
           addr = InetAddress.getByAddress(byteaddr);
@@ -227,7 +268,8 @@ public class Discover extends ListActivity implements OnItemClickListener,
           return;
         }
 
-        mMulticastLock = wifi.createMulticastLock("DVR Commander for TiVo Lock");
+        mMulticastLock =
+            wifi.createMulticastLock("DVR Commander for TiVo Lock");
         mMulticastLock.setReferenceCounted(true);
         try {
           mMulticastLock.acquire();
@@ -270,47 +312,6 @@ public class Discover extends ListActivity implements OnItemClickListener,
     }).start();
   }
 
-  private final void showHelp(int messageId) {
-    stopQuery();
-    String message = getResources().getString(messageId);
-    Utils.log("Showing help because:\n" + message);
-    Intent intent = new Intent(Discover.this, Help.class);
-    intent.putExtra("note", message);
-    startActivity(intent);
-  }
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    MindRpc.disconnect();
-
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.list_discover);
-
-    mEmpty = ((TextView) findViewById(android.R.id.empty));
-    mHostAdapter =
-        new SimpleAdapter(this, mHosts, R.layout.item_discover, new String[] {
-            "name", "warn_icon" },
-            new int[] { R.id.discover_name, R.id.discover_warn_icon });
-    setListAdapter(mHostAdapter);
-
-    getListView().setOnItemClickListener(this);
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    Utils.log("Activity:Pause:Discover");
-    stopQuery();
-  }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    Utils.log("Activity:Resume:Discover");
-    startQuery(null);
-  }
-
   protected final void stopQuery() {
     runOnUiThread(new Runnable() {
       public void run() {
@@ -344,7 +345,8 @@ public class Discover extends ListActivity implements OnItemClickListener,
       try {
         mMulticastLock.release();
       } catch (RuntimeException e) {
-        // Ignore. Likely "MulticastLock under-locked DVR Commander for TiVo Lock".
+        // Ignore. Likely
+        // "MulticastLock under-locked DVR Commander for TiVo Lock".
       }
       mMulticastLock = null;
     }

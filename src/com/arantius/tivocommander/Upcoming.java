@@ -68,6 +68,7 @@ public class Upcoming extends ListActivity {
           startActivity(intent);
         }
       };
+
   private final MindRpcResponseListener mUpcomingListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
@@ -127,6 +128,22 @@ public class Upcoming extends ListActivity {
 
   protected JsonNode mShows;
 
+  protected String formatTime(JsonNode item) throws DateInPast {
+    String timeIn = item.path("startTime").getTextValue();
+    if (timeIn == null) {
+      return null;
+    }
+
+    Date playTime = Utils.parseDateTimeStr(timeIn);
+    if (playTime.before(new Date())) {
+      throw new DateInPast();
+    }
+    SimpleDateFormat dateFormatter =
+        new SimpleDateFormat("EEE M/d hh:mm a", Locale.US);
+    dateFormatter.setTimeZone(TimeZone.getDefault());
+    return dateFormatter.format(playTime);
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -155,31 +172,15 @@ public class Upcoming extends ListActivity {
   }
 
   @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Upcoming");
+  }
+
+  @Override
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Upcoming");
     MindRpc.init(this, getIntent().getExtras());
-  }
-
-  protected String formatTime(JsonNode item) throws DateInPast {
-    String timeIn = item.path("startTime").getTextValue();
-    if (timeIn == null) {
-      return null;
-    }
-
-    Date playTime = Utils.parseDateTimeStr(timeIn);
-    if (playTime.before(new Date())) {
-      throw new DateInPast();
-    }
-    SimpleDateFormat dateFormatter =
-        new SimpleDateFormat("EEE M/d hh:mm a", Locale.US);
-    dateFormatter.setTimeZone(TimeZone.getDefault());
-    return dateFormatter.format(playTime);
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    Utils.log("Activity:Pause:Upcoming");
   }
 }

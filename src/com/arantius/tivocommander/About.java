@@ -42,14 +42,14 @@ public class About extends Activity {
   }
 
   @Override
-  protected void onResume() {
-    super.onResume();
-    Utils.log("Activity:Resume:About");
-  }
-
-  @Override
   protected void onPause() {
     super.onPause();
     Utils.log("Activity:Pause:About");
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:About");
   }
 }

@@ -145,6 +145,50 @@ public class Person extends ListActivity {
     return null;
   }
 
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    Bundle bundle = getIntent().getExtras();
+    if (bundle == null) {
+      Utils.log("Person: null bundle!");
+      finish();
+      return;
+    }
+    MindRpc.init(this, bundle);
+
+    mName = bundle.getString("fName");
+    if (bundle.getString("lName") != null) {
+      mName += " " + bundle.getString("lName");
+    }
+    mPersonId = bundle.getString("personId");
+    Utils.log(String.format("Person: " + "name:%s personId:%s", mName,
+        mPersonId));
+
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    setContentView(R.layout.list);
+
+    MindRpc.addRequest(new PersonSearch(mPersonId), mPersonListener);
+    mOutstandingRequests++;
+    MindRpc.addRequest(new PersonCreditsSearch(mPersonId),
+        mPersonCreditsListener);
+    mOutstandingRequests++;
+
+    setProgressBarIndeterminateVisibility(true);
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Person");
+  };
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:Person");
+  }
+
   private void requestFinished() {
     if (--mOutstandingRequests > 0) {
       return;
@@ -218,49 +262,5 @@ public class Person extends ListActivity {
     View pv = findViewById(R.id.person_image_progress);
     String imgUrl = Utils.findImageUrl(mPerson);
     new DownloadImageTask(this, iv, pv).execute(imgUrl);
-  }
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-
-    Bundle bundle = getIntent().getExtras();
-    if (bundle == null) {
-      Utils.log("Person: null bundle!");
-      finish();
-      return;
-    }
-    MindRpc.init(this, bundle);
-
-    mName = bundle.getString("fName");
-    if (bundle.getString("lName") != null) {
-      mName += " " + bundle.getString("lName");
-    }
-    mPersonId = bundle.getString("personId");
-    Utils.log(String.format("Person: " + "name:%s personId:%s", mName,
-        mPersonId));
-
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    setContentView(R.layout.list);
-
-    MindRpc.addRequest(new PersonSearch(mPersonId), mPersonListener);
-    mOutstandingRequests++;
-    MindRpc.addRequest(new PersonCreditsSearch(mPersonId),
-        mPersonCreditsListener);
-    mOutstandingRequests++;
-
-    setProgressBarIndeterminateVisibility(true);
-  };
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    Utils.log("Activity:Resume:Person");
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    Utils.log("Activity:Pause:Person");
   }
 }

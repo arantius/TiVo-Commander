@@ -67,14 +67,16 @@ public class ExploreTabs extends TabActivity {
     super.onCreate(savedInstanceState);
     Bundle bundle = getIntent().getExtras();
 
-    // Put the URI details, if any, in the bundle.  Where we'll read them
+    // Put the URI details, if any, in the bundle. Where we'll read them
     // later, even if MindRpc.init() restarts us with only bundle data.
     Uri uri = getIntent().getData();
     if (uri != null) {
       uriToBundle(uri, bundle);
     }
 
-    if (MindRpc.init(this, bundle)) return;
+    if (MindRpc.init(this, bundle)) {
+      return;
+    }
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.explore_tabs);

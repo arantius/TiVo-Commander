@@ -52,9 +52,9 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class Explore extends ExploreCommon {
   enum RecordActions {
-    RECORD("Record this episode"), SP_ADD("Add season pass"), SP_CANCEL(
-        "Cancel season pass"), SP_MODIFY("Modify season pass"), RECORD_STOP(
-        "Stop recording in progress");
+    RECORD("Record this episode"), RECORD_STOP(
+        "Stop recording in progress"), SP_ADD("Add season pass"), SP_CANCEL(
+        "Cancel season pass"), SP_MODIFY("Modify season pass");
 
     private final String mText;
 
@@ -68,30 +68,50 @@ public class Explore extends ExploreCommon {
     }
   }
 
-  private final ArrayList<String> mChoices = new ArrayList<String>();
-  private JsonNode mRecording = null;
-  private final MindRpcResponseListener mRecordingListener =
+  private final MindRpcResponseListener mDeleteListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          mRecording = response.getBody().path("recording").path(0);
-          mRecordingState = mRecording.path("state").getTextValue();
-          Utils.log(String.format(Locale.US, "Duration: %d",
-              mRecording.path("duration").getIntValue()));
-          finishRequest();
+          getParent().setProgressBarIndeterminateVisibility(false);
+          if (!("success".equals(response.getRespType()))) {
+            Utils.logError("Delete attempt failed!");
+            Toast.makeText(getBaseContext(), "Delete failed!.",
+                Toast.LENGTH_SHORT).show();
+            return;
+          }
+          // .. and tell the show list to refresh itself.
+          Intent resultIntent = new Intent();
+          resultIntent.putExtra("refresh", true);
+          getParent().setResult(Activity.RESULT_OK, resultIntent);
+          finish();
         }
       };
+
+  private final MindRpcResponseListener mRecordingListener =
+      new MindRpcResponseListener() {
+    public void onResponse(MindRpcResponse response) {
+      mRecording = response.getBody().path("recording").path(0);
+      mRecordingState = mRecording.path("state").getTextValue();
+      Utils.log(String.format(Locale.US, "Duration: %d",
+          mRecording.path("duration").getIntValue()));
+      finishRequest();
+    }
+  };
+
+  private final MindRpcResponseListener mSubscriptionListener =
+      new MindRpcResponseListener() {
+    public void onResponse(MindRpcResponse response) {
+      mSubscription = response.getBody().path("subscription").path(0);
+      mSubscriptionId = mSubscription.path("subscriptionId").getTextValue();
+      finishRequest();
+    }
+  };
+
+  private final ArrayList<String> mChoices = new ArrayList<String>();
+  private JsonNode mRecording = null;
   private String mRecordingState = null;
   private int mRequestCount = 0;
   private JsonNode mSubscription = null;
   private String mSubscriptionId = null;
-  private final MindRpcResponseListener mSubscriptionListener =
-      new MindRpcResponseListener() {
-        public void onResponse(MindRpcResponse response) {
-          mSubscription = response.getBody().path("subscription").path(0);
-          mSubscriptionId = mSubscription.path("subscriptionId").getTextValue();
-          finishRequest();
-        }
-      };
 
   public void doDelete(View v) {
     // FIXME: Fails when deleting the currently-playing show.
@@ -102,38 +122,8 @@ public class Explore extends ExploreCommon {
     }
     // (Un-)Delete the recording ...
     MindRpc.addRequest(new RecordingUpdate(mRecordingId, newState),
-        new MindRpcResponseListener() {
-          public void onResponse(MindRpcResponse response) {
-            getParent().setProgressBarIndeterminateVisibility(false);
-            if (!("success".equals(response.getRespType()))) {
-              Utils.logError("Delete attempt failed!");
-              Toast.makeText(getBaseContext(), "Delete failed!.",
-                  Toast.LENGTH_SHORT).show();
-              return;
-            }
-            // .. and tell the show list to refresh itself.
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("refresh", true);
-            getParent().setResult(Activity.RESULT_OK, resultIntent);
-            finish();
-          }
-        });
-  }
-
-  private Boolean isRecordingPartial() {
-    final Date actualStart =
-        Utils.parseDateTimeStr(mRecording.path("actualStartTime")
-            .getTextValue());
-    final Date scheduledStart =
-        Utils.parseDateTimeStr(mRecording.path("scheduledStartTime")
-            .getTextValue());
-    final Date actualEnd =
-        Utils.parseDateTimeStr(mRecording.path("actualEndTime").getTextValue());
-    final Date scheduledEnd =
-        Utils.parseDateTimeStr(mRecording.path("scheduledEndTime")
-            .getTextValue());
-    return actualStart.getTime() - scheduledStart.getTime() >= 30000
-        || scheduledEnd.getTime() - actualEnd.getTime() >= 30000;
+        mDeleteListener
+        );
   }
 
   public void doRecord(View v) {
@@ -279,7 +269,8 @@ public class Explore extends ExploreCommon {
       JsonNode channel = mRecording.path("channel");
       if (!channel.isMissingNode()) {
         channelStr =
-            String.format("%s %s, ", channel.path("channelNumber").getTextValue(),
+            String.format("%s %s, ", channel.path("channelNumber")
+                .getTextValue(),
                 channel.path("callSign").getTextValue());
       }
 
@@ -307,7 +298,8 @@ public class Explore extends ExploreCommon {
       detailParts.add(String.format("Sea %d Ep %d", season, epNum));
     }
     if (mContent.has("mpaaRating")) {
-      detailParts.add(mContent.path("mpaaRating").getTextValue().toUpperCase(Locale.US));
+      detailParts.add(mContent.path("mpaaRating").getTextValue()
+          .toUpperCase(Locale.US));
     } else if (mContent.has("tvRating")) {
       detailParts.add("TV-"
           + mContent.path("tvRating").getTextValue().toUpperCase(Locale.US));
@@ -320,7 +312,7 @@ public class Explore extends ExploreCommon {
     }
 
     // Filter empty strings.
-    for(int i = detailParts.size() -1; i >=0; i--) {
+    for (int i = detailParts.size() - 1; i >= 0; i--) {
       if ("".equals(detailParts.get(i)) || null == detailParts.get(i)) {
         detailParts.remove(i);
       }
@@ -368,6 +360,22 @@ public class Explore extends ExploreCommon {
     findViewById(viewId).setVisibility(View.GONE);
   }
 
+  private Boolean isRecordingPartial() {
+    final Date actualStart =
+        Utils.parseDateTimeStr(mRecording.path("actualStartTime")
+            .getTextValue());
+    final Date scheduledStart =
+        Utils.parseDateTimeStr(mRecording.path("scheduledStartTime")
+            .getTextValue());
+    final Date actualEnd =
+        Utils.parseDateTimeStr(mRecording.path("actualEndTime").getTextValue());
+    final Date scheduledEnd =
+        Utils.parseDateTimeStr(mRecording.path("scheduledEndTime")
+            .getTextValue());
+    return actualStart.getTime() - scheduledStart.getTime() >= 30000
+        || scheduledEnd.getTime() - actualEnd.getTime() >= 30000;
+  }
+
   @Override
   protected void onContent() {
     finishRequest();
@@ -405,6 +413,7 @@ public class Explore extends ExploreCommon {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Explore");
-    if (MindRpc.init(this, null)) return;
+    if (MindRpc.init(this, null))
+      return;
   }
 }

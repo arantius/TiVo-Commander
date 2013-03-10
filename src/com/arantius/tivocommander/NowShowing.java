@@ -321,7 +321,9 @@ public class NowShowing extends Activity {
     super.onResume();
     Utils.log("Activity:Resume:NowPlaying");
 
-    if (MindRpc.init(this, null)) return;
+    if (MindRpc.init(this, null)) {
+      return;
+    }
 
     setContentView(R.layout.now_showing);
     setTitle("Now Showing");

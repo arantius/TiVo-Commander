@@ -96,6 +96,8 @@ public class Credits extends ExploreCommon {
     }
   }
 
+  protected JsonNode mCredits;
+
   private final OnItemClickListener mOnItemClickListener =
       new OnItemClickListener() {
         public void onItemClick(android.widget.AdapterView<?> parent,
@@ -108,8 +110,6 @@ public class Credits extends ExploreCommon {
           startActivity(intent);
         }
       };
-
-  protected JsonNode mCredits;
 
   @Override
   protected BaseSearch getRequest() {
@@ -151,15 +151,16 @@ public class Credits extends ExploreCommon {
   }
 
   @Override
-  protected void onResume() {
-    super.onResume();
-    Utils.log("Activity:Resume:Credits");
-    if (MindRpc.init(this, null)) return;
-  }
-
-  @Override
   protected void onPause() {
     super.onPause();
     Utils.log("Activity:Pause:Credits");
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Utils.log("Activity:Resume:Credits");
+    if (MindRpc.init(this, null))
+      return;
   }
 }

@@ -64,14 +64,14 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
       if (file.exists()) {
         return new CacheResponse() {
           @Override
-          public Map<String, List<String>> getHeaders() throws IOException {
-            return null;
-          }
-
-          @Override
           public InputStream getBody() throws IOException {
             file.setLastModified(System.currentTimeMillis());
             return new FileInputStream(file);
+          }
+
+          @Override
+          public Map<String, List<String>> getHeaders() throws IOException {
+            return null;
           }
         };
       } else {
@@ -85,6 +85,11 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
           new File(mContext.getCacheDir(), java.net.URLEncoder.encode(conn
               .getURL().toString(), "UTF-8"));
       return new CacheRequest() {
+        @Override
+        public void abort() {
+          file.delete();
+        }
+
         @Override
         public OutputStream getBody() throws IOException {
           // Maintain a maximum cache size; 5% garbage collect.
@@ -108,11 +113,6 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
           }
 
           return new FileOutputStream(file);
-        }
-
-        @Override
-        public void abort() {
-          file.delete();
         }
       };
     }

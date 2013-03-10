@@ -62,6 +62,7 @@ abstract public class ExploreCommon extends Activity {
           onContent();
         }
       };
+
   protected String mCollectionId = null;
   protected JsonNode mContent = null;
   protected String mContentId = null;
@@ -90,7 +91,8 @@ abstract public class ExploreCommon extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Bundle bundle = getIntent().getExtras();
-    if (MindRpc.init(this, bundle)) return;
+    if (MindRpc.init(this, bundle))
+      return;
 
     if (bundle != null) {
       mCollectionId = bundle.getString("collectionId");

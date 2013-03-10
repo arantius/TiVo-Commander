@@ -45,6 +45,7 @@ public class LinearListView extends LinearLayout {
       super.onInvalidated();
     }
   }
+
   Adapter adapter;
 
   Observer observer = new Observer(this);

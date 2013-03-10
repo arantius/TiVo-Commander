@@ -100,6 +100,8 @@ public class Suggestions extends Activity {
         }
       };
 
+  protected JsonNode mShows;
+
   private final MindRpcResponseListener mSuggestionListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
@@ -128,8 +130,6 @@ public class Suggestions extends Activity {
         }
       };
 
-  protected JsonNode mShows;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -154,15 +154,15 @@ public class Suggestions extends Activity {
   }
 
   @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Suggestions");
+  }
+
+  @Override
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Suggestions");
     MindRpc.init(this, getIntent().getExtras());
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    Utils.log("Activity:Pause:Suggestions");
   }
 }

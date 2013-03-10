@@ -33,6 +33,12 @@ public class Connect extends Activity {
   }
 
   @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Connect");
+  }
+
+  @Override
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Connect");
@@ -45,11 +51,5 @@ public class Connect extends Activity {
         finish();
       }
     }).start();
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    Utils.log("Activity:Pause:Connect");
   }
 }

@@ -98,12 +98,6 @@ public class Remote extends Activity implements OnClickListener {
     MindRpc.addRequest(viewIdToEvent(v.getId()), null);
   }
 
-  public void toggleKeyboard(View v) {
-    mEditText.setText("");
-    mEditText.requestFocus();
-    mInputManager.toggleSoftInputFromWindow(mEditText.getWindowToken(), 0, 0);
-  }
-
   public static KeyEventSend viewIdToEvent(int id) {
     String eventStr = null;
     // @formatter:off
@@ -195,15 +189,21 @@ public class Remote extends Activity implements OnClickListener {
   }
 
   @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:Remote");
+  }
+
+  @Override
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:Remote");
     MindRpc.init(this, null);
   }
 
-  @Override
-  protected void onPause() {
-    super.onPause();
-    Utils.log("Activity:Pause:Remote");
+  public void toggleKeyboard(View v) {
+    mEditText.setText("");
+    mEditText.requestFocus();
+    mInputManager.toggleSoftInputFromWindow(mEditText.getWindowToken(), 0, 0);
   }
 }

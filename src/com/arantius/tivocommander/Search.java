@@ -50,8 +50,6 @@ import com.arantius.tivocommander.rpc.request.UnifiedItemSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
-// TODO: Still get some strange errors when issuing many searches.
-
 public class Search extends ListActivity {
   private class SearchAdapter extends ArrayAdapter<JsonNode> {
     // TODO: Make this class DRY vs. Suggestions.ShowAdapter

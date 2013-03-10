@@ -14,7 +14,8 @@ public class SubscribeOffer extends SubscribeBase {
 
     Subscribe request = new Subscribe();
     Bundle bundle = getIntent().getExtras();
-    request.setOffer(bundle.getString("offerId"), bundle.getString("contentId"));
+    request
+        .setOffer(bundle.getString("offerId"), bundle.getString("contentId"));
     subscribeRequestCommon(request);
 
     setProgressBarIndeterminateVisibility(true);
@@ -37,15 +38,15 @@ public class SubscribeOffer extends SubscribeBase {
   }
 
   @Override
+  protected void onPause() {
+    super.onPause();
+    Utils.log("Activity:Pause:SubscribeOffer");
+  }
+
+  @Override
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:SubscribeOffer");
     MindRpc.init(this, getIntent().getExtras());
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    Utils.log("Activity:Pause:SubscribeOffer");
   }
 }
