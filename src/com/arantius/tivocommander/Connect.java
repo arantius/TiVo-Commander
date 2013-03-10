@@ -42,6 +42,7 @@ public class Connect extends Activity {
     new Thread(new Runnable() {
       public void run() {
         MindRpc.initContinue(that);
+        finish();
       }
     }).start();
   }

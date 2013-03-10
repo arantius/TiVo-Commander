@@ -110,6 +110,8 @@ public class Discover extends ListActivity implements OnItemClickListener,
     final EditText makEditText = new EditText(Discover.this);
     makEditText.setInputType(InputType.TYPE_CLASS_PHONE);
     makEditText.setText(prefs.getString("tivo_mak", ""));
+
+    final Discover that = this;
     new AlertDialog.Builder(Discover.this).setTitle("MAK")
         .setMessage(R.string.pref_mak_instructions).setView(makEditText)
         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -120,6 +122,8 @@ public class Discover extends ListActivity implements OnItemClickListener,
             String mak = makEditText.getText().toString();
             editor.putString("tivo_mak", mak);
             editor.commit();
+            Intent intent = new Intent(that, NowShowing.class);
+            startActivity(intent);
             Discover.this.finish();
           }
         }).setNegativeButton("Cancel", null).create().show();
