@@ -269,8 +269,9 @@ public class SubscribeCollection extends SubscribeBase {
     super.onCreate(savedInstanceState);
 
     Bundle bundle = getIntent().getExtras();
-    if (!MindRpc.init(this, bundle))
+    if (MindRpc.init(this, bundle)) {
       return;
+    }
 
     mCollectionId = bundle.getString("collectionId");
 
@@ -294,7 +295,7 @@ public class SubscribeCollection extends SubscribeBase {
   protected void onResume() {
     super.onResume();
     Utils.log("Activity:Resume:SubscribeCollection");
-    MindRpc.init(this, null);
+    MindRpc.init(this, getIntent().getExtras());
   }
 
   private void setSpinner(int spinnerId, Object[] values, Object value) {
