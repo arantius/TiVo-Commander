@@ -26,6 +26,7 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -181,6 +182,28 @@ public class Remote extends Activity implements OnClickListener {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     return Utils.onCreateOptionsMenu(menu, this);
+  }
+
+  @Override
+  public boolean onKeyUp(int keyCode, KeyEvent event) {
+    char sendChar = '\0';
+    if (KeyEvent.KEYCODE_0 <= keyCode && keyCode <= KeyEvent.KEYCODE_9) {
+      sendChar = (char) ((int) '0' + keyCode - KeyEvent.KEYCODE_0);
+    } else if (KeyEvent.KEYCODE_A <= keyCode && keyCode <= KeyEvent.KEYCODE_Z) {
+      sendChar = (char) ((int) 'a' + keyCode - KeyEvent.KEYCODE_A);
+    } else if (KeyEvent.KEYCODE_SPACE == keyCode) {
+      sendChar = ' ';
+    } else if (KeyEvent.KEYCODE_DEL == keyCode) {
+      MindRpc.addRequest(viewIdToEvent(R.id.remote_reverse), null);
+      return true;
+    }
+
+    if (sendChar != '\0') {
+      MindRpc.addRequest(new KeyEventSend(sendChar), null);
+      return true;
+    } else {
+      return super.onKeyUp(keyCode, event);
+    }
   }
 
   @Override
