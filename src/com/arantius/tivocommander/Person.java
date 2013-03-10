@@ -21,6 +21,7 @@ package com.arantius.tivocommander;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.codehaus.jackson.JsonNode;
@@ -188,7 +189,8 @@ public class Person extends ListActivity {
     if (mPerson.has("birthDate")) {
       Date birthdate =
           Utils.parseDateStr(mPerson.path("birthDate").getTextValue());
-      SimpleDateFormat dateFormatter = new SimpleDateFormat("MMMMM d, yyyy");
+      SimpleDateFormat dateFormatter =
+          new SimpleDateFormat("MMMMM d, yyyy", Locale.US);
       dateFormatter.setTimeZone(TimeZone.getDefault());
       Spannable birthdateStr =
           new SpannableString("Birthdate: " + dateFormatter.format(birthdate));

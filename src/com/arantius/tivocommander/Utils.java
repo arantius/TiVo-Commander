@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -221,7 +222,7 @@ public class Utils {
   }
 
   public final static Date parseDateStr(String dateStr) {
-    SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     return parseDateTimeStr(dateParser, dateStr);
   }
 
@@ -234,7 +235,8 @@ public class Utils {
   }
 
   public final static Date parseDateTimeStr(String dateStr) {
-    SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat dateParser =
+        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     return parseDateTimeStr(dateParser, dateStr);
   }
 
@@ -281,7 +283,6 @@ public class Utils {
     if (s == null) {
       return null;
     }
-    return s.substring(0, 1).toUpperCase() + s.substring(1);
+    return s.substring(0, 1).toUpperCase(Locale.US) + s.substring(1);
   }
-
 }

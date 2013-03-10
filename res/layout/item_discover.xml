@@ -18,8 +18,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools" android:orientation="horizontal"
   android:layout_width="fill_parent" android:layout_height="wrap_content"
-  android:orientation="horizontal"
+  tools:ignore="UseCompoundDrawables"
 >
   <TextView android:id="@+id/discover_name" android:text="Device Name"
     android:layout_width="0dp" android:layout_height="wrap_content"

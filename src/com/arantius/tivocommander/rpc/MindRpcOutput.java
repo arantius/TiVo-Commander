@@ -21,6 +21,7 @@ package com.arantius.tivocommander.rpc;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.util.Log;
@@ -66,7 +67,8 @@ public class MindRpcOutput extends Thread {
       try {
         if (mRequestQueue.peek() != null) {
           MindRpcRequest request = mRequestQueue.remove();
-          Utils.log(String.format("% 4d CALL %s", request.getRpcId(),
+          Utils.log(String.format(Locale.US, "% 4d CALL %s",
+              request.getRpcId(),
               request.getReqType()));
           Utils.logRpc(request.getDataMap());
           byte[] requestBytes = request.getBytes();

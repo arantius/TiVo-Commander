@@ -27,10 +27,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <Button android:text="Help!" android:onClick="showHelp"
     android:layout_width="fill_parent" android:layout_height="wrap_content" />
 
-  <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+  <ListView
     android:layout_width="fill_parent" android:layout_height="fill_parent"
     android:id="@android:id/list" android:layout_weight="1" />
-  <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+  <TextView
     android:id="@android:id/empty" android:text="Searching ..."
     android:layout_width="fill_parent" android:layout_height="fill_parent"
     android:textAppearance="?android:attr/textAppearanceMedium"

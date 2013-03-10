@@ -21,6 +21,7 @@ package com.arantius.tivocommander.rpc.request;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import com.arantius.tivocommander.Utils;
@@ -93,7 +94,8 @@ public abstract class MindRpcRequest {
     // Thus all the .getBytes() conversions to find the proper lengths.
     // "+ 2" is the "\r\n" we'll add next.
     String reqLine =
-        String.format("MRPC/2 %d %d", headers.getBytes("UTF-8").length + 2,
+        String.format(Locale.US, "MRPC/2 %d %d",
+            headers.getBytes("UTF-8").length + 2,
             body.getBytes("UTF-8").length);
     String request = Utils.join("\r\n", reqLine, headers, body);
     byte[] requestBytes = request.getBytes("UTF-8");

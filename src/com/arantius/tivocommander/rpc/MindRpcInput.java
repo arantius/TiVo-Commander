@@ -21,6 +21,7 @@ package com.arantius.tivocommander.rpc;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Locale;
 
 import android.util.Log;
 
@@ -76,7 +77,7 @@ public class MindRpcInput extends Thread {
           final MindRpcResponse response =
               mindRpcResponseFactory.create(headers, body);
           if (response != null) {
-            Utils.log(String.format("% 4d RECV %s", response.getRpcId(),
+            Utils.log(String.format(Locale.US, "% 4d RECV %s", response.getRpcId(),
                 response.getRespType()));
             Utils.logRpc(response.getBody());
             MindRpc.dispatchResponse(response);

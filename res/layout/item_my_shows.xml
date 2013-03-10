@@ -18,8 +18,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools" android:orientation="horizontal"
   android:layout_width="fill_parent" android:layout_height="wrap_content"
-  android:orientation="horizontal"
 >
   <FrameLayout android:layout_gravity="center_vertical"
     android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -31,9 +31,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     <TextView android:id="@+id/folder_num"
       android:layout_height="wrap_content" android:layout_width="wrap_content"
       android:focusable="false" android:focusableInTouchMode="false"
-      android:textColor="#000000" android:textSize="9dip"
-      android:paddingTop="10dip" android:paddingLeft="9dip"
-      android:textStyle="bold" android:text="55" />
+      android:textColor="#000000" android:textSize="9sp"
+      android:paddingTop="10dip" android:paddingLeft="9sp"
+      android:textStyle="bold" android:text="55" tools:ignore="SmallSp" />
   </FrameLayout>
   <LinearLayout android:orientation="vertical"
     android:layout_width="fill_parent" android:layout_height="wrap_content"

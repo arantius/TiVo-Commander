@@ -25,7 +25,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <ImageView android:id="@+id/upcoming_icon" android:src="@drawable/check"
     android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:layout_gravity="center" />
-  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  <LinearLayout
     android:orientation="vertical"
     android:layout_width="0dp" android:layout_height="wrap_content"
     android:layout_marginLeft="6dip" android:layout_marginTop="6dip"

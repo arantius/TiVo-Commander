@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.codehaus.jackson.JsonNode;
@@ -170,7 +171,8 @@ public class Upcoming extends ListActivity {
     if (playTime.before(new Date())) {
       throw new DateInPast();
     }
-    SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE M/d hh:mm a");
+    SimpleDateFormat dateFormatter =
+        new SimpleDateFormat("EEE M/d hh:mm a", Locale.US);
     dateFormatter.setTimeZone(TimeZone.getDefault());
     return dateFormatter.format(playTime);
   }

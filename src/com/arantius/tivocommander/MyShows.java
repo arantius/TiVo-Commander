@@ -22,6 +22,7 @@ package com.arantius.tivocommander;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
@@ -143,7 +144,8 @@ public class MyShows extends ListActivity {
         } else {
           Date startTime =
               Utils.parseDateTimeStr(startTimeStr);
-          SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE M/d");
+          SimpleDateFormat dateFormatter =
+              new SimpleDateFormat("EEE M/d", Locale.US);
           ((TextView) v.findViewById(R.id.show_time)).setText(dateFormatter
               .format(startTime));
         }
@@ -414,7 +416,8 @@ public class MyShows extends ListActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Bundle bundle = getIntent().getExtras();
-    if (MindRpc.init(this, bundle)) return;
+    if (MindRpc.init(this, bundle))
+      return;
 
     if (bundle != null) {
       mFolderId = bundle.getString("folderId");

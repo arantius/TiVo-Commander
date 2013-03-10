@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.codehaus.jackson.JsonNode;
@@ -146,13 +147,14 @@ public class SubscribeCollection extends SubscribeBase {
     Date startTime =
         Utils.parseDateTimeStr(conflict.path("startTime").getTextValue());
     SimpleDateFormat dateFormatter1 =
-        new SimpleDateFormat(fullDate ? "MMM dd  h:mm - " : "h:mm - ");
+        new SimpleDateFormat(fullDate ? "MMM dd h:mm - " : "h:mm - ",
+            Locale.US);
     dateFormatter1.setTimeZone(TimeZone.getDefault());
     String showTime = dateFormatter1.format(startTime);
     Calendar endTime = Calendar.getInstance();
     endTime.setTime(startTime);
     endTime.add(Calendar.SECOND, conflict.path("duration").getIntValue());
-    SimpleDateFormat dateFormatter2 = new SimpleDateFormat("h:mm a");
+    SimpleDateFormat dateFormatter2 = new SimpleDateFormat("h:mm a", Locale.US);
     dateFormatter2.setTimeZone(TimeZone.getDefault());
     showTime += dateFormatter2.format(endTime.getTime());
     listItem.put(prefix + "show_time", showTime);
@@ -274,7 +276,8 @@ public class SubscribeCollection extends SubscribeBase {
     super.onCreate(savedInstanceState);
 
     Bundle bundle = getIntent().getExtras();
-    if (!MindRpc.init(this, bundle)) return;
+    if (!MindRpc.init(this, bundle))
+      return;
 
     mCollectionId = bundle.getString("collectionId");
 

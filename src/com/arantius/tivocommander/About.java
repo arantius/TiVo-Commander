@@ -24,8 +24,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.arantius.tivocommander.rpc.MindRpc;
-
 public class About extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
