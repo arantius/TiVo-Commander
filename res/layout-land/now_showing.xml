@@ -18,13 +18,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical"
+  xmlns:tools="http://schemas.android.com/tools" android:orientation="horizontal"
   android:layout_width="match_parent" android:layout_height="match_parent"
-  android:padding="6dp"
+  android:padding="6dp" android:baselineAligned="false"
 >
   <ViewFlipper android:id="@+id/now_showing_detail_flipper"
-    android:layout_width="fill_parent" android:layout_height="0dp"
-    android:layout_weight="1"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:layout_weight="5"
   >
     <ScrollView android:fillViewport="true"
       android:layout_width="fill_parent" android:layout_height="fill_parent"
@@ -57,8 +57,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_width="wrap_content" android:layout_height="fill_parent"
       android:layout_gravity="center" />
   </ViewFlipper>
-  <LinearLayout android:orientation="vertical"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
+  <LinearLayout android:orientation="vertical" android:layout_weight="7"
+    android:layout_width="fill_parent" android:layout_height="match_parent"
+    android:paddingLeft="8dip" android:gravity="center"
   >
     <LinearLayout android:orientation="horizontal"
       android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -71,18 +72,22 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         android:drawableTop="@drawable/icon_tv32" android:onClick="onClickButton"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:padding="16dp" android:layout_weight="1" />
+    </LinearLayout>
+    <LinearLayout android:orientation="horizontal"
+      android:layout_width="match_parent" android:layout_height="wrap_content"
+    >
       <Button android:id="@+id/target_search" android:text="Search"
         android:drawableTop="@drawable/icon_search" android:onClick="onClickButton"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_weight="1" android:padding="16dp" />
+      <Button android:id="@+id/target_settings" android:text="Settings"
+        android:drawableTop="@drawable/icon_cog" android:onClick="onClickButton"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:layout_weight="1" android:padding="16dp" />
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
       android:layout_width="match_parent" android:layout_height="wrap_content"
     >
-      <Button android:id="@+id/target_settings" android:text="Settings"
-        android:drawableTop="@drawable/icon_cog" android:onClick="onClickButton"
-        android:layout_width="fill_parent" android:layout_height="wrap_content"
-        android:layout_weight="1" android:padding="16dp" />
       <Button android:id="@+id/target_help" android:text="Help"
         android:drawableTop="@drawable/icon_help" android:onClick="onClickButton"
         android:layout_width="fill_parent" android:layout_height="wrap_content"

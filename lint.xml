@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
   <issue id="IconDensities" severity="ignore" />
+  <issue id="NestedWeights">
+    <ignore path="res\layout-land\now_showing.xml" />
+  </issue>
 </lint>
