@@ -32,7 +32,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="fill_parent" android:layout_height="fill_parent"
         android:layout_marginBottom="4dip" />
-      <view class="com.arantius.tivocommander.LinearListView"
+      <view class="com.arantius.tivocommander.views.LinearListView"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:orientation="vertical" android:layout_weight="1"
         android:id="@+id/will_record" />
@@ -40,7 +40,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="fill_parent" android:layout_height="fill_parent"
         android:layout_marginBottom="4dip" android:layout_marginTop="3dip" />
-      <view class="com.arantius.tivocommander.LinearListView"
+      <view class="com.arantius.tivocommander.views.LinearListView"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:orientation="vertical" android:layout_weight="1"
         android:id="@+id/wont_record" />

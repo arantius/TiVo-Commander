@@ -1,4 +1,4 @@
-package com.arantius.tivocommander;
+package com.arantius.tivocommander.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;

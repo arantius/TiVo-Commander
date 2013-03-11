@@ -23,6 +23,7 @@ import com.arantius.tivocommander.rpc.request.OfferSearch;
 import com.arantius.tivocommander.rpc.request.Subscribe;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
+import com.arantius.tivocommander.views.LinearListView;
 
 public class SubscribeCollection extends SubscribeBase {
   private final static String[] mMaxLabels =
