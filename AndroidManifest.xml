@@ -59,6 +59,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     <activity android:name=".SubscribeCollection"></activity>
     <activity android:name=".SubscribeOffer"></activity>
     <activity android:name=".Suggestions"></activity>
+    <activity android:name=".ToDo"></activity>
     <activity android:name=".Upcoming"></activity>
   </application>
 </manifest>

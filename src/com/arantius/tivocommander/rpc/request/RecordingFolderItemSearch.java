@@ -56,6 +56,7 @@ public class RecordingFolderItemSearch extends MindRpcRequest {
 
     addCommonDetails(orderBy);
     mDataMap.put("objectIdAndType", showIds);
+    mDataMap.put("state", new String[] { "inProgress", "scheduled" });
   }
 
   private void addCommonDetails(String orderBy) {

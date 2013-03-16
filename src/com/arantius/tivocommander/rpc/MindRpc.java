@@ -315,6 +315,7 @@ public enum MindRpc {
 
     if (isConnected()) {
       // Already connected?  No-op.
+      Utils.log("MindRpc.init(): already connected.");
       return false;
     }
 
