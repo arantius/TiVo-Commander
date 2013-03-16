@@ -91,8 +91,6 @@ public class Explore extends ExploreCommon {
     public void onResponse(MindRpcResponse response) {
       mRecording = response.getBody().path("recording").path(0);
       mRecordingState = mRecording.path("state").getTextValue();
-      Utils.log(String.format(Locale.US, "Duration: %d",
-          mRecording.path("duration").getIntValue()));
       finishRequest();
     }
   };
