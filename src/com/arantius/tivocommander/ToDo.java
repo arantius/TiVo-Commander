@@ -54,7 +54,7 @@ public class ToDo extends ShowList {
   }
 
   protected JsonNode getRecordingFromItem(JsonNode item) {
-    return item.path("recordingForChildRecordingId");
+    return item;
   }
 
   @Override

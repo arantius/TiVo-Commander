@@ -93,7 +93,7 @@ public abstract class ShowList extends ListActivity {
           MindRpcRequest req;
           if (mContext instanceof ToDo) {
             req = new TodoRecordingSearch(showIds, mOrderBy);
-          } else  if (mContext instanceof MyShows) {
+          } else if (mContext instanceof MyShows) {
             if ("deleted".equals(mFolderId)) {
               req = new RecordingSearch(showIds);
             } else {
@@ -147,10 +147,14 @@ public abstract class ShowList extends ListActivity {
         } else {
           Date startTime =
               Utils.parseDateTimeStr(startTimeStr);
+          String timeFormat = "EEE M/d";
+          if (mContext instanceof ToDo) {
+            timeFormat += " h:mm aa";
+          }
           SimpleDateFormat dateFormatter =
-              new SimpleDateFormat("EEE M/d", Locale.US);
-          ((TextView) v.findViewById(R.id.show_time)).setText(dateFormatter
-              .format(startTime));
+              new SimpleDateFormat(timeFormat, Locale.US);
+          String timeStr = dateFormatter.format(startTime);
+          ((TextView) v.findViewById(R.id.show_time)).setText(timeStr);
         }
 
         final int iconId = getIconForItem(item);
@@ -232,20 +236,11 @@ public abstract class ShowList extends ListActivity {
       };
 
   protected abstract int getIconForItem(JsonNode item);
+  protected abstract JsonNode getRecordingFromItem(JsonNode item);
 
   protected void finishWithRefresh() {
     setRefreshResult();
     finish();
-  }
-
-  private JsonNode getRecordingFromItem(JsonNode item) {
-    if ("deleted".equals(mFolderId)) {
-      // In deleted mode, we directly fetch recordings.
-      return item;
-    } else {
-      // Otherwise we've got recordings wrapped in folders.
-      return item.path("recordingForChildRecordingId");
-    }
   }
 
   @Override
