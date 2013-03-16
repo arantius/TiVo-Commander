@@ -75,6 +75,8 @@ public class Utils {
       return MyShows.class;
     case R.id.menu_item_search:
       return Search.class;
+    case R.id.menu_item_todo:
+      return ToDo.class;
     case R.id.menu_item_settings:
       return Discover.class;
     case R.id.menu_item_help:
@@ -198,7 +200,7 @@ public class Utils {
     addToMenu(menu, activity, R.id.menu_item_search, R.drawable.icon_search,
         "Search", MenuItem.SHOW_AS_ACTION_IF_ROOM);
     addToMenu(menu, activity, R.id.menu_item_todo, R.drawable.icon_todo,
-        "Search", MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        "To Do", MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_settings, R.drawable.icon_cog,
         "Settings", MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_help, R.drawable.icon_help,
@@ -214,7 +216,8 @@ public class Utils {
     Class<? extends Activity> targetActivity =
         Utils.activityForMenuId(item.getItemId());
     if (targetActivity == null) {
-      Utils.logError("Unknown item ID: " + Integer.toString(item.getItemId()));
+      Utils.logError("Unknown menu item ID: "
+          + Integer.toString(item.getItemId()));
       return false;
     }
     Intent intent = new Intent(srcActivity, targetActivity);
