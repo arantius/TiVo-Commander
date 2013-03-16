@@ -37,4 +37,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <string name="error_multicast">Device search failed.  (Read below and) Try custom settings.</string>
   <string name="error_net_control">You need to enable network control and/or video sharing to connect to this TiVo.  (See below.)</string>
   <string name="premiere_only">This app only works with a TiVo Premiere device; not Series 2, Series 3 or HD.</string>
+  <string name="sub_season_pass">You have a Season Pass.</string>
+  <string name="sub_single_offer">This show will be recorded.</string>
+  <string name="sub_wishlist">You have a Wishlist.</string>
 </resources>

@@ -68,6 +68,8 @@ public class Explore extends ExploreCommon {
     }
   }
 
+  enum SubscriptionType { SEASON_PASS, SINGLE_OFFER, WISHLIST; }
+
   private final MindRpcResponseListener mDeleteListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
@@ -91,6 +93,16 @@ public class Explore extends ExploreCommon {
     public void onResponse(MindRpcResponse response) {
       mRecording = response.getBody().path("recording").path(0);
       mRecordingState = mRecording.path("state").getTextValue();
+
+      String subType = mRecording.path("subscriptionIdentifier").path(0)
+          .path("subscriptionType").asText();
+      if ("seasonPass".equals(subType)) {
+        mSubscriptionType = SubscriptionType.SEASON_PASS;
+      } else if ("singleOffer".equals(subType)) {
+        mSubscriptionType = SubscriptionType.SINGLE_OFFER;
+      } else if ("wishList".equals(subType)) {
+        mSubscriptionType = SubscriptionType.WISHLIST;
+      }
       finishRequest();
     }
   };
@@ -108,6 +120,7 @@ public class Explore extends ExploreCommon {
   private JsonNode mRecording = null;
   private String mRecordingState = null;
   private int mRequestCount = 0;
+  private SubscriptionType mSubscriptionType = null;
   private JsonNode mSubscription = null;
   private String mSubscriptionId = null;
 
@@ -260,6 +273,26 @@ public class Explore extends ExploreCommon {
     if (mRecording == null || !mRecording.path("hdtv").getBooleanValue()) {
       findViewById(R.id.badge_hd).setVisibility(View.GONE);
     }
+    ImageView iconSubType = (ImageView) findViewById(R.id.icon_sub_type);
+    TextView textSubType = (TextView) findViewById(R.id.text_sub_type);
+    switch (mSubscriptionType) {
+    case SEASON_PASS:
+      iconSubType.setImageResource(R.drawable.todo_seasonpass);
+      textSubType.setText(R.string.sub_season_pass);
+      break;
+    case SINGLE_OFFER:
+      iconSubType.setImageResource(R.drawable.todo_recording);
+      textSubType.setText(R.string.sub_single_offer);
+      break;
+    case WISHLIST:
+      iconSubType.setImageResource(R.drawable.todo_wishlist);
+      textSubType.setText(R.string.sub_wishlist);
+      break;
+    default:
+      iconSubType.setVisibility(View.GONE);
+      textSubType.setVisibility(View.GONE);
+    }
+
 
     // Display channel and time.
     if (mRecording != null) {
