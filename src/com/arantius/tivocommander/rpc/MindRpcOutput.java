@@ -51,20 +51,12 @@ public class MindRpcOutput extends Thread {
 
   @Override
   public void run() {
-    while (true) {
-      if (mStopFlag) {
-        break;
-      }
-
-      // Limit worst case battery consumption?
+    while (!mStopFlag) {
       try {
-        Thread.sleep(33);
-      } catch (InterruptedException e) {
-        break;
-      }
+        // Limit worst case battery consumption?
+        Thread.sleep(50);
 
-      // If necessary, send requests.
-      try {
+        // If necessary, send requests.
         if (mRequestQueue.peek() != null) {
           MindRpcRequest request = mRequestQueue.remove();
           Utils.log(String.format(Locale.US, "% 4d CALL %s",
@@ -75,6 +67,9 @@ public class MindRpcOutput extends Thread {
           mStream.write(requestBytes, 0, requestBytes.length);
           mStream.flush();
         }
+      } catch (InterruptedException e) {
+        Utils.log("MindRpcOutput: thread interrupted.");
+        break;
       } catch (IOException e) {
         Log.e(LOG_TAG, "write: io exception!", e);
         break;

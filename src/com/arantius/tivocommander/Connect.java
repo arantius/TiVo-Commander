@@ -44,10 +44,9 @@ public class Connect extends Activity {
     Utils.log("Activity:Resume:Connect");
 
     // Start on a separate thread so the UI can be updated.
-    final Connect that = this;
     new Thread(new Runnable() {
       public void run() {
-        MindRpc.initContinue(that);
+        MindRpc.init3(Connect.this);
         finish();
       }
     }).start();

@@ -116,6 +116,12 @@ public enum MindRpc {
    */
   public static void addRequest(MindRpcRequest request,
       MindRpcResponseListener listener) {
+    // Reconnect if necessary; but not for BodyAuthenticate!  That one RPC
+    // is sent during connection as part of the verification.
+    if (!isConnected() && !(request instanceof BodyAuthenticate)) {
+      init2();
+      return;
+    }
     mOutputThread.addRequest(request);
     if (listener != null) {
       mResponseListenerMap.put(request.getRpcId(), listener);
@@ -235,7 +241,6 @@ public enum MindRpc {
     for (Integer i : mResponseListenerMap.keySet()) {
       addRequest(new CancelRpc(i), null);
     }
-//    mResponseListenerMap.remove(i);
     mResponseListenerMap.clear();
   }
 
@@ -304,14 +309,12 @@ public enum MindRpc {
     return mSessionId;
   }
 
+  /** Init step 1.  Every activity that's going to do RPCs should call this,
+   * passing itself and its data bundle, if any. */
   public static boolean init(final Activity originActivity, Bundle originExtras) {
+    // Always save these; they're used to resume later.
     mOriginExtras = originExtras;
     mOriginActivity = originActivity;
-
-    if (!checkSettings(originActivity)) {
-      originActivity.finish();
-      return true;
-    }
 
     if (isConnected()) {
       // Already connected?  No-op.
@@ -319,15 +322,30 @@ public enum MindRpc {
       return false;
     }
 
-    // Otherwise, start the connection, by firing off the "Connect" activity.
-    Intent intent =
-        new Intent(originActivity.getBaseContext(), Connect.class);
-    originActivity.startActivity(intent);
-    originActivity.finish();
+    Utils.log("MindRpc.init(); " + originActivity.toString());
+    if (!checkSettings(originActivity)) {
+      originActivity.finish();
+      return true;
+    }
+
+    init2();
     return true;
   }
 
-  public static void initContinue(final Activity activity) {
+  /** Init continues here; it may resume here after disconnection. Fires off
+   * the Connect activity to surface this flow to the user. */
+  public static void init2() {
+    Utils.log("MindRpc.init2(); " + mOriginActivity.toString());
+    Intent intent =
+        new Intent(mOriginActivity.getBaseContext(), Connect.class);
+    mOriginActivity.startActivity(intent);
+    mOriginActivity.finish();
+  }
+
+  /** Finally, (only) the Connect activity calls back here to finish init. */
+  public static void init3(final Activity activity) {
+    Utils.log("MindRpc.init3() " + mOriginActivity.toString());
+
     stopThreads();
     disconnect();
 
@@ -342,7 +360,7 @@ public enum MindRpc {
     mOutputThread = new MindRpcOutput(mOutputStream);
     mOutputThread.start();
 
-    addRequest(new BodyAuthenticate(mTivoMak), new MindRpcResponseListener() {
+    MindRpcResponseListener authListener = new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
         if ("failure".equals(response.getBody().path("status").getTextValue())) {
           settingsError(activity, R.string.error_auth);
@@ -358,7 +376,9 @@ public enum MindRpc {
           activity.finish();
         }
       }
-    });
+    };
+    Utils.log("MindRpc.init3(): start auth.");
+    addRequest(new BodyAuthenticate(mTivoMak), authListener);
   }
 
   protected static boolean isConnected() {

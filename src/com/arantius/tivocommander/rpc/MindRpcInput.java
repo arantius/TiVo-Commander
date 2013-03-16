@@ -49,12 +49,11 @@ public class MindRpcInput extends Thread {
     MindRpcResponseFactory mindRpcResponseFactory =
         new MindRpcResponseFactory();
 
-    while (true) {
-      if (mStopFlag) {
-        break;
-      }
-
+    while (!mStopFlag) {
       try {
+        // Limit worst case battery consumption?
+        Thread.sleep(50);
+
         // Use deprecated readline on DataInputStream, because later I have to
         // read _bytes_ from it.
         @SuppressWarnings("deprecation")
@@ -83,6 +82,9 @@ public class MindRpcInput extends Thread {
             MindRpc.dispatchResponse(response);
           }
         }
+      } catch (InterruptedException e) {
+        Utils.log("MindRpcInput: thread interrupted.");
+        break;
       } catch (IOException e) {
         Log.e(LOG_TAG, "read: IOException!", e);
         break;
