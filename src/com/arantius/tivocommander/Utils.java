@@ -169,7 +169,10 @@ public class Utils {
 
   public final static void logRpc(Object obj) {
     if (DEBUG) {
-      Log.d(LOG_TAG, Utils.stringifyToPrettyJson(obj));
+      String json = Utils.stringifyToPrettyJson(obj);
+      for (String line : json.split(System.getProperty("line.separator"))) {
+        Log.d(LOG_TAG, line);
+      }
     }
   }
 
