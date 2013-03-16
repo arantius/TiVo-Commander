@@ -373,7 +373,6 @@ public enum MindRpc {
           }
           mOriginExtras = null;
           activity.startActivity(intent);
-          activity.finish();
         }
       }
     };
