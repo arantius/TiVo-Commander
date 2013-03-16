@@ -80,20 +80,20 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         android:drawableTop="@drawable/icon_search" android:onClick="onClickButton"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:layout_weight="1" android:padding="16dp" />
-      <Button android:id="@+id/target_settings" android:text="Settings"
-        android:drawableTop="@drawable/icon_cog" android:onClick="onClickButton"
+      <Button android:id="@+id/target_todo" android:text="To Do"
+        android:drawableTop="@drawable/icon_todo" android:onClick="onClickButton"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:layout_weight="1" android:padding="16dp" />
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
       android:layout_width="match_parent" android:layout_height="wrap_content"
     >
-      <Button android:id="@+id/target_help" android:text="Help"
-        android:drawableTop="@drawable/icon_help" android:onClick="onClickButton"
+      <Button android:id="@+id/target_settings" android:text="Settings"
+        android:drawableTop="@drawable/icon_cog" android:onClick="onClickButton"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:layout_weight="1" android:padding="16dp" />
-      <Button android:id="@+id/target_about" android:text="About"
-        android:drawableTop="@drawable/icon_info" android:onClick="onClickButton"
+      <Button android:id="@+id/target_help" android:text="Help"
+        android:drawableTop="@drawable/icon_help" android:onClick="onClickButton"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:layout_weight="1" android:padding="16dp" />
     </LinearLayout>

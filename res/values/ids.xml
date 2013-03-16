@@ -6,4 +6,5 @@
   <item type="id" name="menu_item_remote" />
   <item type="id" name="menu_item_search" />
   <item type="id" name="menu_item_settings" />
+  <item type="id" name="menu_item_todo" />
 </resources>

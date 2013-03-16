@@ -86,7 +86,7 @@ public class Utils {
   }
 
   @SuppressLint("NewApi")
-  private final static void addToMenu(Menu menu, Activity activity, int itemId,
+  final static void addToMenu(Menu menu, Activity activity, int itemId,
       int iconId, String title, int showAsAction) {
     if (Utils.activityForMenuId(itemId) == activity.getClass()) {
       return;
@@ -196,6 +196,8 @@ public class Utils {
     addToMenu(menu, activity, R.id.menu_item_my_shows, R.drawable.icon_tv32,
         "My Shows", MenuItem.SHOW_AS_ACTION_IF_ROOM);
     addToMenu(menu, activity, R.id.menu_item_search, R.drawable.icon_search,
+        "Search", MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    addToMenu(menu, activity, R.id.menu_item_todo, R.drawable.icon_todo,
         "Search", MenuItem.SHOW_AS_ACTION_IF_ROOM);
     addToMenu(menu, activity, R.id.menu_item_settings, R.drawable.icon_cog,
         "Settings", MenuItem.SHOW_AS_ACTION_NEVER);

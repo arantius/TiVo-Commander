@@ -27,8 +27,11 @@ import java.util.TimeZone;
 
 import org.codehaus.jackson.JsonNode;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
@@ -292,11 +295,11 @@ public class NowShowing extends Activity {
     case R.id.target_settings:
       intent = new Intent(getBaseContext(), Discover.class);
       break;
+    case R.id.target_todo:
+      intent = new Intent(getBaseContext(), ToDo.class);
+      break;
     case R.id.target_help:
       intent = new Intent(getBaseContext(), Help.class);
-      break;
-    case R.id.target_about:
-      intent = new Intent(getBaseContext(), About.class);
       break;
     }
 
@@ -307,6 +310,18 @@ public class NowShowing extends Activity {
 
   public void onClickRemote(View v) {
     MindRpc.addRequest(Remote.viewIdToEvent(v.getId()), null);
+  }
+
+  @SuppressLint("InlinedApi")
+  public final boolean onCreateOptionsMenu(Menu menu) {
+    Utils.addToMenu(menu, this, R.id.menu_item_about, R.drawable.icon_info,
+        "About", MenuItem.SHOW_AS_ACTION_NEVER);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    return Utils.onOptionsItemSelected(item, this);
   }
 
   @Override
