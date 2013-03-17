@@ -198,7 +198,7 @@ public class Utils {
     addToMenu(menu, activity, R.id.menu_item_search, R.drawable.icon_search,
         "Search", MenuItem.SHOW_AS_ACTION_IF_ROOM);
     addToMenu(menu, activity, R.id.menu_item_todo, R.drawable.icon_todo,
-        "To Do", MenuItem.SHOW_AS_ACTION_NEVER);
+        "To Do List", MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_settings, R.drawable.icon_cog,
         "Settings", MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_help, R.drawable.icon_help,
