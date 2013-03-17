@@ -52,7 +52,7 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class Explore extends ExploreCommon {
   enum RecordActions {
-    RECORD("Record this episode"), RECORD_STOP(
+    DONT_RECORD("Don't record"), RECORD("Record this episode"), RECORD_STOP(
         "Stop recording in progress"), SP_ADD("Add season pass"), SP_CANCEL(
         "Cancel season pass"), SP_MODIFY("Modify season pass");
 
@@ -136,7 +136,22 @@ public class Explore extends ExploreCommon {
         new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int position) {
             String label = mChoices.get(position);
-            if (RecordActions.RECORD.toString().equals(label)) {
+            if (RecordActions.DONT_RECORD.toString().equals(label)) {
+              getParent().setProgressBarIndeterminateVisibility(true);
+              MindRpc.addRequest(
+                  new RecordingUpdate(mRecordingId, "cancelled"),
+                  new MindRpcResponseListener() {
+                    public void onResponse(MindRpcResponse response) {
+                      getParent().setProgressBarIndeterminateVisibility(false);
+                      ImageView iconSubType =
+                          (ImageView) findViewById(R.id.icon_sub_type);
+                      TextView textSubType =
+                          (TextView) findViewById(R.id.text_sub_type);
+                      iconSubType.setVisibility(View.GONE);
+                      textSubType.setVisibility(View.GONE);
+                    }
+                  });
+            } else if (RecordActions.RECORD.toString().equals(label)) {
               Intent intent =
                   new Intent(getBaseContext(), SubscribeOffer.class);
               intent.putExtra("contentId", mContentId);
@@ -203,20 +218,23 @@ public class Explore extends ExploreCommon {
     if (mRecordingId == null) {
       for (JsonNode recording : mContent.path("recordingForContentId")) {
         String state = recording.path("state").getTextValue();
-        if ("inProgress".equals(state) || "complete".equals(state)) {
+        if ("inProgress".equals(state) || "complete".equals(state)
+            || "scheduled".equals(state)) {
           mRecordingId = recording.path("recordingId").getTextValue();
+          mRecordingState = state;
           break;
         }
       }
     }
 
     // Fill mChoices based on the data we now have.
-    // TODO: Cancel future recording.
-    if ("inProgress".equals(mRecordingState)) {
+    if ("scheduled".equals(mRecordingState)) {
+      mChoices.add(RecordActions.DONT_RECORD.toString());
+    } else if ("inProgress".equals(mRecordingState)) {
       mChoices.add(RecordActions.RECORD_STOP.toString());
-    }
-    if (mOfferId != null) {
-      mChoices.add(RecordActions.RECORD.toString());
+      if (mOfferId != null) {
+        mChoices.add(RecordActions.RECORD.toString());
+      }
     }
     if (mSubscriptionId != null) {
       mChoices.add(RecordActions.SP_MODIFY.toString());
@@ -228,21 +246,19 @@ public class Explore extends ExploreCommon {
     setContentView(R.layout.explore);
 
     // Show only appropriate buttons.
-    hideViewIfNull(R.id.explore_btn_watch, mRecordingId);
+    findViewById(R.id.explore_btn_watch).setVisibility(
+        "complete".equals(mRecordingState)
+            || "inprogress".equals(mRecordingState)
+            ? View.VISIBLE : View.GONE);
     hideViewIfNull(R.id.explore_btn_upcoming, mCollectionId);
     if (mChoices.size() == 0) {
       findViewById(R.id.explore_btn_record).setVisibility(View.GONE);
     }
-    // Delete / undelete buttons, gone by default, on if appropriate.
-    findViewById(R.id.explore_btn_delete).setVisibility(View.GONE);
-    findViewById(R.id.explore_btn_undelete).setVisibility(View.GONE);
-    if (mRecordingId != null) {
-      if ("deleted".equals(mRecording.path("state").asText())) {
-        findViewById(R.id.explore_btn_undelete).setVisibility(View.VISIBLE);
-      } else {
-        findViewById(R.id.explore_btn_delete).setVisibility(View.VISIBLE);
-      }
-    }
+    // Delete / undelete buttons visible only if appropriate.
+    findViewById(R.id.explore_btn_delete).setVisibility(
+        "complete".equals(mRecordingState) ? View.VISIBLE : View.GONE);
+    findViewById(R.id.explore_btn_undelete).setVisibility(
+        "deleted".equals(mRecordingState) ? View.VISIBLE : View.GONE);
 
     // Display titles.
     String title = mContent.path("title").getTextValue();
@@ -271,7 +287,7 @@ public class Explore extends ExploreCommon {
     } else if ("inProgress".equals(mRecordingState)) {
       iconSubType.setImageResource(R.drawable.recording_recording);
       textSubType.setText(R.string.sub_recording);
-    } else {
+    } else if (mSubscriptionType != null) {
       switch (mSubscriptionType) {
       case SEASON_PASS:
         iconSubType.setImageResource(R.drawable.todo_seasonpass);
