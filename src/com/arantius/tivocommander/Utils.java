@@ -282,6 +282,25 @@ public class Utils {
     return stringifyToJson(obj, true);
   }
 
+  public final static SubscriptionType subscriptionTypeForRecording(
+      JsonNode recording) {
+    if ("inProgress".equals(recording.path("state").asText())) {
+      return SubscriptionType.RECORDING;
+    }
+    String subType = recording.path("subscriptionIdentifier").path(0)
+        .path("subscriptionType").asText();
+    if ("seasonPass".equals(subType)) {
+      return SubscriptionType.SEASON_PASS;
+    } else if ("singleOffer".equals(subType)) {
+      return SubscriptionType.SINGLE_OFFER;
+    } else if ("wishList".equals(subType)) {
+      return SubscriptionType.WISHLIST;
+    } else {
+      logError("Unsupported subscriptionType string: " + subType);
+      return null;
+    }
+  }
+
   public final static String ucFirst(String s) {
     if (s == null) {
       return null;

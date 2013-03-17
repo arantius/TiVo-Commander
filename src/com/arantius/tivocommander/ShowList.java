@@ -28,9 +28,14 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
+import android.util.Pair;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,6 +44,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,10 +53,14 @@ import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.MindRpcRequest;
 import com.arantius.tivocommander.rpc.request.RecordingFolderItemSearch;
 import com.arantius.tivocommander.rpc.request.RecordingSearch;
+import com.arantius.tivocommander.rpc.request.RecordingUpdate;
 import com.arantius.tivocommander.rpc.request.TodoRecordingSearch;
+import com.arantius.tivocommander.rpc.request.UiNavigate;
+import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
-public abstract class ShowList extends ListActivity {
+public abstract class ShowList extends ListActivity implements
+    OnItemLongClickListener, DialogInterface.OnClickListener {
   protected class ShowsAdapter extends ArrayAdapter<JsonNode> {
     protected Context mContext;
 
@@ -183,6 +193,7 @@ public abstract class ShowList extends ListActivity {
   protected String mFolderId;
   protected MindRpcResponseListener mIdSequenceCallback;
   protected ShowsAdapter mListAdapter;
+  protected JsonNode mLongPressItem;
   protected String mOrderBy = "startTime";
   protected final String[] mOrderLabels = new String[] { "Date", "A-Z" };
   protected final String[] mOrderValues = new String[] { "startTime", "title" };
@@ -236,7 +247,13 @@ public abstract class ShowList extends ListActivity {
       };
 
   protected abstract int getIconForItem(JsonNode item);
+
+  protected abstract Pair<ArrayList<String>, ArrayList<Integer>> getLongPressChoices(
+      JsonNode item);
+
   protected abstract JsonNode getRecordingFromItem(JsonNode item);
+
+  protected abstract void startRequest();
 
   protected void finishWithRefresh() {
     setRefreshResult();
@@ -263,9 +280,97 @@ public abstract class ShowList extends ListActivity {
     }
   };
 
+  public void onClick(DialogInterface dialog, int position) {
+    final Pair<ArrayList<String>, ArrayList<Integer>> choices =
+        getLongPressChoices(mLongPressItem);
+    Integer action = choices.second.get(position);
+
+    String recordingId = mLongPressItem.path("recordingId").asText();
+
+    MindRpcRequest req = null;
+    MindRpcResponseListener reqListener =
+        new MindRpcResponseListener() {
+          public void onResponse(MindRpcResponse response) {
+            setProgressIndicator(-1);
+            // Now that it's probably changed, re-load the list.
+            startRequest();
+          }
+        };
+
+    switch (action) {
+    case R.string.delete:
+    case R.string.stop_recording_and_delete:
+      req = new RecordingUpdate(recordingId, "deleted");
+      break;
+    case R.string.dont_record:
+      req = new RecordingUpdate(recordingId, "cancelled");
+      break;
+    case R.string.stop_recording:
+      req = new RecordingUpdate(recordingId, "complete");
+      break;
+    case R.string.play_all:
+      // TODO: Figure out how to do this!
+      // Intentional case fall through!  For listener.
+    case R.string.watch_now:
+      if (req == null) {
+        // I.E. this wasn't for "play all", it's for "watch now".
+        req = new UiNavigate(recordingId);
+      }
+      reqListener =
+          new MindRpcResponseListener() {
+            public void onResponse(MindRpcResponse response) {
+              setProgressIndicator(-1);
+              Intent intent = new Intent(ShowList.this, NowShowing.class);
+              startActivity(intent);
+            }
+          };
+      break;
+    }
+
+    setProgressIndicator(1);
+    MindRpc.addRequest(req, reqListener);
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+  }
+
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     return Utils.onCreateOptionsMenu(menu, this);
+  }
+
+  public boolean onItemLongClick(AdapterView<?> parent, View view,
+      int position,
+      long id) {
+    if (position > mShowData.size())
+      return false;
+    if (mShowStatus.get(position) != ShowStatus.LOADED)
+      return false;
+
+    mLongPressItem = mShowData.get(position);
+    if (mLongPressItem.has("recordingForChildRecordingId")
+        && !mLongPressItem.has("folderType")) {
+      mLongPressItem = mLongPressItem.path("recordingForChildRecordingId");
+    }
+
+    final Pair<ArrayList<String>, ArrayList<Integer>> choices =
+        getLongPressChoices(mLongPressItem);
+    if (choices == null) {
+      return false;
+    }
+    final ArrayAdapter<String> choicesAdapter =
+        new ArrayAdapter<String>(this, android.R.layout.select_dialog_item,
+            choices.first);
+
+    Builder dialogBuilder = new AlertDialog.Builder(this);
+    dialogBuilder.setTitle("Operation?");
+    dialogBuilder.setAdapter(choicesAdapter, this);
+    AlertDialog dialog = dialogBuilder.create();
+    dialog.show();
+
+    return true;
   }
 
   @Override
@@ -282,8 +387,5 @@ public abstract class ShowList extends ListActivity {
     Intent resultIntent = new Intent();
     resultIntent.putExtra("refresh", true);
     setResult(Activity.RESULT_OK, resultIntent);
-  }
-
-  protected void startRequest() {
   }
 }

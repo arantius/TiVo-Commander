@@ -30,9 +30,11 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -130,6 +132,45 @@ public class MyShows extends ShowList {
     return R.drawable.blank;
   }
 
+  protected Pair<ArrayList<String>, ArrayList<Integer>> getLongPressChoices(
+      JsonNode item) {
+    final ArrayList<String> choices = new ArrayList<String>();
+    final ArrayList<Integer> actions = new ArrayList<Integer>();
+
+    Utils.debugLog("long press choices for:");
+    Utils.debugLog(Utils.stringifyToPrettyJson(item));
+
+    final String folderType = item.path("folderType").asText();
+    if ("series".equals(folderType) || "wishlist".equals(folderType)) {
+      // For season pass and/or wish list folders.
+
+      // TODO: Play whole folder.
+      // TODO: Delete whole folder.
+
+      // I don't know the right RPC to make either happen.  Until then:
+      return null;
+    } else if (!"".equals(folderType)) {
+      // Other folders not supported.
+      return null;
+    } else {
+      // For individual recordings.
+      JsonNode recording = item.path("recordingForChildRecordingId");
+      choices.add(getResources().getString(R.string.watch_now));
+      actions.add(R.string.watch_now);
+      if ("inProgress" == recording.path("state").asText()) {
+        choices.add(getResources().getString(R.string.stop_recording));
+        actions.add(R.string.stop_recording);
+        choices.add(getResources().getString(R.string.stop_recording_and_delete));
+        actions.add(R.string.stop_recording_and_delete);
+      } else {
+        choices.add(getResources().getString(R.string.delete));
+        actions.add(R.string.delete);
+      }
+    }
+
+    return Pair.create(choices, actions);
+  }
+
   protected JsonNode getRecordingFromItem(JsonNode item) {
     if ("deleted".equals(mFolderId)) {
       // In deleted mode, we directly fetch recordings.
@@ -187,8 +228,11 @@ public class MyShows extends ShowList {
     }
 
     mListAdapter = new ShowsAdapter(this);
-    getListView().setAdapter(mListAdapter);
-    getListView().setOnItemClickListener(mOnClickListener);
+    ListView lv = getListView();
+    lv.setAdapter(mListAdapter);
+    lv.setOnItemClickListener(mOnClickListener);
+    lv.setLongClickable(true);
+    lv.setOnItemLongClickListener(this);
 
     mDetailCallback =
         new MindRpcResponseListener() {
@@ -236,9 +280,6 @@ public class MyShows extends ShowList {
               mShowIds.add("deleted");
             }
 
-            // Start from nothing ...
-            mShowData.clear();
-            mShowStatus.clear();
             if (mShowIds != null) {
               // e.g. "Suggestions" can be present, but empty!
               for (int i = 0; i < mShowIds.size(); i++) {
@@ -246,8 +287,6 @@ public class MyShows extends ShowList {
                 mShowStatus.add(ShowStatus.MISSING);
               }
             }
-
-            // And get them displayed.
             mListAdapter.notifyDataSetChanged();
           }
         };
@@ -269,6 +308,9 @@ public class MyShows extends ShowList {
   }
 
   protected void startRequest() {
+    mShowData.clear();
+    mShowStatus.clear();
+    mListAdapter.notifyDataSetChanged();
     if ("deleted".equals(mFolderId)) {
       MindRpc.addRequest(new RecordingSearch(mFolderId), mIdSequenceCallback);
     } else {

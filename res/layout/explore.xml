@@ -60,7 +60,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
         <ImageView android:id="@+id/icon_sub_type"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
-          android:src="@drawable/todo_recording"
+          android:src="@drawable/todo_single_offer"
           android:layout_gravity="center_vertical"
           android:paddingLeft="3dip" android:paddingRight="3dip" />
         <TextView android:id="@+id/text_sub_type"

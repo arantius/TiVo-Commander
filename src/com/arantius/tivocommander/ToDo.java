@@ -27,7 +27,9 @@ import org.codehaus.jackson.node.ArrayNode;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Window;
+import android.widget.ListView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.TodoSearch;
@@ -36,21 +38,36 @@ import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
 public class ToDo extends ShowList {
   protected int getIconForItem(JsonNode item) {
-    if ("inProgress".equals(item.path("state").asText())) {
+    switch (Utils.subscriptionTypeForRecording(item)) {
+    case RECORDING:
       return R.drawable.recording_recording;
-    }
-
-    final String subscriptionType = item.path("subscriptionIdentifier")
-        .path(0).path("subscriptionType").asText();
-    if ("seasonPass".equals(subscriptionType)) {
+    case SEASON_PASS:
       return R.drawable.todo_seasonpass;
-    } else if ("wishList".equals(subscriptionType)) {
+    case SINGLE_OFFER:
+      return R.drawable.todo_single_offer;
+    case WISHLIST:
       return R.drawable.todo_wishlist;
-    } else if ("singleOffer".equals(subscriptionType)) {
-      return R.drawable.todo_recording;
     }
 
     return R.drawable.blank;
+  }
+
+  protected Pair<ArrayList<String>, ArrayList<Integer>> getLongPressChoices(
+      JsonNode item) {
+    final ArrayList<String> choices = new ArrayList<String>();
+    final ArrayList<Integer> actions = new ArrayList<Integer>();
+
+    if ("inProgress".equals(item.path("state").asText())) {
+      choices.add(getResources().getString(R.string.stop_recording));
+      actions.add(R.string.stop_recording);
+      choices.add(getResources().getString(R.string.stop_recording_and_delete));
+      actions.add(R.string.stop_recording_and_delete);
+    } else {
+      choices.add(getResources().getString(R.string.dont_record));
+      actions.add(R.string.dont_record);
+    }
+
+    return Pair.create(choices, actions);
   }
 
   protected JsonNode getRecordingFromItem(JsonNode item) {
@@ -89,8 +106,11 @@ public class ToDo extends ShowList {
     setTitle("To Do List");
 
     mListAdapter = new ShowsAdapter(this);
-    getListView().setAdapter(mListAdapter);
-    getListView().setOnItemClickListener(mOnClickListener);
+    ListView lv = getListView();
+    lv.setAdapter(mListAdapter);
+    lv.setOnItemClickListener(mOnClickListener);
+    lv.setLongClickable(true);
+    lv.setOnItemLongClickListener(this);
 
     mDetailCallback =
         new MindRpcResponseListener() {
@@ -100,7 +120,8 @@ public class ToDo extends ShowList {
             String itemId = "recording";
             final JsonNode items = response.getBody().path(itemId);
 
-            ArrayList<Integer> slotMap = mRequestSlotMap.get(response.getRpcId());
+            ArrayList<Integer> slotMap =
+                mRequestSlotMap.get(response.getRpcId());
 
             for (int i = 0; i < items.size(); i++) {
               int pos = slotMap.get(i);
@@ -122,9 +143,6 @@ public class ToDo extends ShowList {
             setProgressIndicator(-1);
 
             mShowIds = (ArrayNode) body.findValue("objectIdAndType");
-
-            mShowData.clear();
-            mShowStatus.clear();
             for (int i = 0; i < mShowIds.size(); i++) {
               mShowData.add(null);
               mShowStatus.add(ShowStatus.MISSING);
@@ -150,6 +168,9 @@ public class ToDo extends ShowList {
   }
 
   protected void startRequest() {
+    mShowData.clear();
+    mShowStatus.clear();
+    mListAdapter.notifyDataSetChanged();
     MindRpc.addRequest(new TodoSearch(), mIdSequenceCallback);
     setProgressIndicator(1);
   }

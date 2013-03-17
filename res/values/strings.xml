@@ -27,9 +27,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <string name="error_connect">Could not connect; check host &amp; port settings.</string>
   <string name="error_auth">Authentication failed; check MAK settings.</string>
   <string name="keep_until">Keep Until</string>
-  <string name="start_recording">Start Recording</string>
-  <string name="stop_recording">Stop Recording</string>
+  <string name="start_recording">Start recording</string>
+  <string name="stop_recording">Stop recording</string>
+  <string name="dont_record">Don\'t record</string>
+  <string name="stop_recording_and_delete">Stop recording and delete</string>
+  <string name="delete">Delete</string>
+  <string name="watch_now">Watch now</string>
   <string name="channel">Channel</string>
+  <string name="play_all">Play all shows</string>
+  <string name="delete_all">Delete all shows</string>
   <string name="record_max">Keep at most</string>
   <string name="record_which">Record</string>
   <string name="error_wifi_lock">Could not do discovery; falling back to manual settings.</string>
