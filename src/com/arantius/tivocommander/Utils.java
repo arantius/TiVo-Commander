@@ -51,7 +51,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 public class Utils {
-  private static boolean DEBUG = false;
   private static final String LOG_TAG = "tivo_commander";
   private static final ObjectMapper mMapper = new ObjectMapper();
   private static final ObjectWriter mMapperPretty = mMapper
@@ -101,9 +100,7 @@ public class Utils {
   }
 
   public final static void debugLog(String message) {
-    if (DEBUG) {
-      log(message);
-    }
+    Log.d(LOG_TAG, message);
   }
 
   public static final String findImageUrl(JsonNode node) {
@@ -168,11 +165,9 @@ public class Utils {
   }
 
   public final static void logRpc(Object obj) {
-    if (DEBUG) {
-      String json = Utils.stringifyToPrettyJson(obj);
-      for (String line : json.split(System.getProperty("line.separator"))) {
-        Log.d(LOG_TAG, line);
-      }
+    String json = Utils.stringifyToPrettyJson(obj);
+    for (String line : json.split(System.getProperty("line.separator"))) {
+      Log.d(LOG_TAG, line);
     }
   }
 
