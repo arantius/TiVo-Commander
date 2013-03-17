@@ -264,22 +264,31 @@ public class Explore extends ExploreCommon {
     }
     ImageView iconSubType = (ImageView) findViewById(R.id.icon_sub_type);
     TextView textSubType = (TextView) findViewById(R.id.text_sub_type);
-    switch (mSubscriptionType) {
-    case SEASON_PASS:
-      iconSubType.setImageResource(R.drawable.todo_seasonpass);
-      textSubType.setText(R.string.sub_season_pass);
-      break;
-    case SINGLE_OFFER:
-      iconSubType.setImageResource(R.drawable.todo_single_offer);
-      textSubType.setText(R.string.sub_single_offer);
-      break;
-    case WISHLIST:
-      iconSubType.setImageResource(R.drawable.todo_wishlist);
-      textSubType.setText(R.string.sub_wishlist);
-      break;
-    default:
+    // TODO: Downloading state?
+    if ("complete".equals(mRecordingState)) {
       iconSubType.setVisibility(View.GONE);
       textSubType.setVisibility(View.GONE);
+    } else if ("inProgress".equals(mRecordingState)) {
+      iconSubType.setImageResource(R.drawable.recording_recording);
+      textSubType.setText(R.string.sub_recording);
+    } else {
+      switch (mSubscriptionType) {
+      case SEASON_PASS:
+        iconSubType.setImageResource(R.drawable.todo_seasonpass);
+        textSubType.setText(R.string.sub_season_pass);
+        break;
+      case SINGLE_OFFER:
+        iconSubType.setImageResource(R.drawable.todo_single_offer);
+        textSubType.setText(R.string.sub_single_offer);
+        break;
+      case WISHLIST:
+        iconSubType.setImageResource(R.drawable.todo_wishlist);
+        textSubType.setText(R.string.sub_wishlist);
+        break;
+      default:
+        iconSubType.setVisibility(View.GONE);
+        textSubType.setVisibility(View.GONE);
+      }
     }
 
 
