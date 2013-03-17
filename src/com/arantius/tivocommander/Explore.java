@@ -88,22 +88,22 @@ public class Explore extends ExploreCommon {
 
   private final MindRpcResponseListener mRecordingListener =
       new MindRpcResponseListener() {
-    public void onResponse(MindRpcResponse response) {
-      mRecording = response.getBody().path("recording").path(0);
-      mRecordingState = mRecording.path("state").getTextValue();
-      mSubscriptionType = Utils.subscriptionTypeForRecording(mRecording);
-      finishRequest();
-    }
-  };
+        public void onResponse(MindRpcResponse response) {
+          mRecording = response.getBody().path("recording").path(0);
+          mRecordingState = mRecording.path("state").getTextValue();
+          mSubscriptionType = Utils.subscriptionTypeForRecording(mRecording);
+          finishRequest();
+        }
+      };
 
   private final MindRpcResponseListener mSubscriptionListener =
       new MindRpcResponseListener() {
-    public void onResponse(MindRpcResponse response) {
-      mSubscription = response.getBody().path("subscription").path(0);
-      mSubscriptionId = mSubscription.path("subscriptionId").getTextValue();
-      finishRequest();
-    }
-  };
+        public void onResponse(MindRpcResponse response) {
+          mSubscription = response.getBody().path("subscription").path(0);
+          mSubscriptionId = mSubscription.path("subscriptionId").getTextValue();
+          finishRequest();
+        }
+      };
 
   private final ArrayList<String> mChoices = new ArrayList<String>();
   private JsonNode mRecording = null;
@@ -290,7 +290,6 @@ public class Explore extends ExploreCommon {
         textSubType.setVisibility(View.GONE);
       }
     }
-
 
     // Display channel and time.
     if (mRecording != null) {
