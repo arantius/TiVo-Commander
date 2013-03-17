@@ -51,15 +51,31 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       </intent-filter>
     </activity>
     <activity android:name=".Help"></activity>
-    <activity android:name=".MyShows"></activity>
+    <activity android:name=".MyShows">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+      </intent-filter>
+    </activity>
     <activity android:name=".Person"></activity>
-    <activity android:name=".Remote"></activity>
-    <activity android:name=".Search"></activity>
+    <activity android:name=".Remote">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+      </intent-filter>
+    </activity>
+    <activity android:name=".Search">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+      </intent-filter>
+    </activity>
     <activity android:name=".Settings"></activity>
     <activity android:name=".SubscribeCollection"></activity>
     <activity android:name=".SubscribeOffer"></activity>
     <activity android:name=".Suggestions"></activity>
-    <activity android:name=".ToDo"></activity>
+    <activity android:name=".ToDo">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+      </intent-filter>
+    </activity>
     <activity android:name=".Upcoming"></activity>
   </application>
 </manifest>
