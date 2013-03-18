@@ -327,14 +327,14 @@ public class NowShowing extends Activity {
   @Override
   protected void onPause() {
     super.onPause();
-    Utils.log("Activity:Pause:NowPlaying");
+    Utils.log("Activity:Pause:NowShowing");
     MindRpc.cancelAll();
   }
 
   @Override
   protected void onResume() {
     super.onResume();
-    Utils.log("Activity:Resume:NowPlaying");
+    Utils.log("Activity:Resume:NowShowing");
 
     if (MindRpc.init(this, null)) {
       return;
