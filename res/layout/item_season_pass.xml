@@ -76,13 +76,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     </LinearLayout>
   </LinearLayout>
   <TextView android:id="@+id/show_channel"
-    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_width="60dp" android:layout_height="wrap_content"
     android:focusable="false" android:focusableInTouchMode="false"
-    android:text="123" android:layout_gravity="right"
-    android:textAppearance="?android:attr/textAppearanceLarge"
-    android:drawableBottom="@drawable/blank" android:paddingRight="6dp" />
+    android:text="123" android:gravity="center_horizontal"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:drawableBottom="@drawable/blank"
+    android:paddingRight="6dp" android:paddingLeft="6dp" />
   <ImageView android:id="@+id/drag_handle"
-    android:src="@android:drawable/btn_star_big_on"
     android:layout_width="60dp" android:layout_height="60dp"
-    />
+    android:src="@drawable/icmpmove" android:visibility="gone"
+    android:paddingRight="6dp" android:paddingLeft="6dp" />
 </LinearLayout>

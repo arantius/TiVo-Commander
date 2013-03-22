@@ -2,8 +2,6 @@ package com.arantius.tivocommander.rpc.request;
 
 import java.util.ArrayList;
 
-import org.codehaus.jackson.JsonNode;
-
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public class SubscriptionSearch extends MindRpcRequest {
@@ -16,8 +14,9 @@ public class SubscriptionSearch extends MindRpcRequest {
     mDataMap.put("noLimit", true);
   }
 
-  public SubscriptionSearch(ArrayList<JsonNode> subscriptionIds) {
+  public SubscriptionSearch(ArrayList<?> subscriptionIds) {
     super("subscriptionSearch");
+
     mDataMap.put("bodyId", MindRpc.mBodyId);
     mDataMap.put("levelOfDetail", "medium");
     mDataMap.put("noLimit", true);

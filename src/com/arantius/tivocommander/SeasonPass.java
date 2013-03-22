@@ -22,9 +22,9 @@ package com.arantius.tivocommander;
 import java.util.ArrayList;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
 
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -44,6 +44,7 @@ import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.SubscriptionSearch;
+import com.arantius.tivocommander.rpc.request.SubscriptionsReprioritize;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.mobeta.android.dslv.DragSortListView;
@@ -52,6 +53,8 @@ import com.mobeta.android.dslv.DragSortListView;
 
 public class SeasonPass extends ListActivity {
   protected class SubscriptionAdapter extends ArrayAdapter<JsonNode> {
+    protected ColorDrawable mBlankLogoDrawable;
+
     public SubscriptionAdapter() {
       super(SeasonPass.this, 0, mSubscriptionData);
 
@@ -60,8 +63,6 @@ public class SeasonPass extends ListActivity {
       mBlankLogoDrawable.setBounds(r);
     }
 
-    protected ColorDrawable mBlankLogoDrawable;
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
       View v = convertView;
@@ -69,12 +70,12 @@ public class SeasonPass extends ListActivity {
       if (mSubscriptionStatus.get(position) == SubscriptionStatus.MISSING) {
         // If the data for this position is missing, fetch it and more, if they
         // exist, up to a limit of MAX_REQUEST_BATCH.
-        ArrayList<JsonNode> subscriptionIds = new ArrayList<JsonNode>();
+        ArrayList<String> subscriptionIds = new ArrayList<String>();
         ArrayList<Integer> slots = new ArrayList<Integer>();
         int i = position;
         while (i < mSubscriptionData.size()) {
           if (mSubscriptionStatus.get(i) == SubscriptionStatus.MISSING) {
-            JsonNode subscriptionId = mSubscriptionIds.get(i);
+            String subscriptionId = mSubscriptionIds.get(i);
             subscriptionIds.add(subscriptionId);
             slots.add(i);
             mSubscriptionStatus.set(i, SubscriptionStatus.LOADING);
@@ -120,18 +121,28 @@ public class SeasonPass extends ListActivity {
         ((ImageView) v.findViewById(R.id.badge_new)).setVisibility(newOnlyVis);
         ((TextView) v.findViewById(R.id.new_only)).setVisibility(newOnlyVis);
 
-        final JsonNode channel = item.path("idSetSource").path("channel");
         TextView channelView = (TextView) v.findViewById(R.id.show_channel);
-        channelView.setText(
-            channel.path("channelNumber").asText());
-        channelView.setCompoundDrawables(null, null, null, mBlankLogoDrawable);
-        if (channel.has("logoIndex")) {
-          // Wish lists don't have channels, so get the image conditionally.
-          final String channelLogoUrl =
-              "http://" + MindRpc.mTivoAddr + "/ChannelLogo/icon-" +
-                  channel.path("logoIndex") + "-1.png";
-          new DownloadImageTask(SeasonPass.this, channelView)
-              .execute(channelLogoUrl);
+        ImageView dragHandle = (ImageView) v.findViewById(R.id.drag_handle);
+        if (mInReorderMode) {
+          dragHandle.setVisibility(View.VISIBLE);
+          channelView.setVisibility(View.GONE);
+        } else {
+          dragHandle.setVisibility(View.GONE);
+          channelView.setVisibility(View.VISIBLE);
+
+          final JsonNode channel = item.path("idSetSource").path("channel");
+          channelView.setText(
+              channel.path("channelNumber").asText());
+          channelView
+              .setCompoundDrawables(null, null, null, mBlankLogoDrawable);
+          if (channel.has("logoIndex")) {
+            // Wish lists don't have channels, so get the image conditionally.
+            final String channelLogoUrl =
+                "http://" + MindRpc.mTivoAddr + "/ChannelLogo/icon-" +
+                    channel.path("logoIndex") + "-1.png";
+            new DownloadImageTask(SeasonPass.this, channelView)
+                .execute(channelLogoUrl);
+          }
         }
       } else {
         // Otherwise give a loading indicator.
@@ -142,29 +153,6 @@ public class SeasonPass extends ListActivity {
     }
 
   }
-
-  protected final OnItemClickListener mOnClickListener =
-      new OnItemClickListener() {
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-            long id) {
-          final JsonNode item = mSubscriptionData.get(position);
-          if (item == null) {
-            return;
-          }
-
-          final String collectionId =
-              item.path("idSetSource").path("collectionId")
-                  .asText();
-          if ("".equals(collectionId)) {
-            return;
-          }
-
-          Intent intent = new Intent(SeasonPass.this, ExploreTabs.class);
-          intent.putExtra("collectionId", collectionId);
-          startActivity(intent);
-        }
-
-      };
 
   protected enum SubscriptionStatus {
     LOADED, LOADING, MISSING;
@@ -192,15 +180,50 @@ public class SeasonPass extends ListActivity {
         }
       };
 
+  protected boolean mInReorderMode = false;
+
   protected SubscriptionAdapter mListAdapter;
-  protected boolean mReorderMode = false;
+  protected final OnItemClickListener mOnClickListener =
+      new OnItemClickListener() {
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id) {
+          final JsonNode item = mSubscriptionData.get(position);
+          if (item == null) {
+            return;
+          }
+
+          final String collectionId =
+              item.path("idSetSource").path("collectionId")
+                  .asText();
+          if ("".equals(collectionId)) {
+            return;
+          }
+
+          Intent intent = new Intent(SeasonPass.this, ExploreTabs.class);
+          intent.putExtra("collectionId", collectionId);
+          startActivity(intent);
+        }
+
+      };
+  final protected DragSortListView.DropListener mOnDrop =
+      new DragSortListView.DropListener() {
+        public void drop(int from, int to) {
+          JsonNode item = mListAdapter.getItem(from);
+          mListAdapter.remove(item);
+          mListAdapter.insert(item, to);
+          String id = mSubscriptionIds.get(from);
+          mSubscriptionIds.remove(id);
+          mSubscriptionIds.add(to, id);
+        }
+      };
   protected final SparseArray<ArrayList<Integer>> mRequestSlotMap =
       new SparseArray<ArrayList<Integer>>();
-  protected final ArrayList<SubscriptionStatus> mSubscriptionStatus =
-      new ArrayList<SubscriptionStatus>();
   protected final ArrayList<JsonNode> mSubscriptionData =
       new ArrayList<JsonNode>();
-  protected ArrayNode mSubscriptionIds;
+  protected ArrayList<String> mSubscriptionIds;
+
+  protected final ArrayList<SubscriptionStatus> mSubscriptionStatus =
+      new ArrayList<SubscriptionStatus>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -218,13 +241,17 @@ public class SeasonPass extends ListActivity {
     setListAdapter(mListAdapter);
     DragSortListView dslv = (DragSortListView) getListView();
     dslv.setOnItemClickListener(mOnClickListener);
+    dslv.setDropListener(mOnDrop);
 
     MindRpcResponseListener idSequenceCallback =
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             JsonNode body = response.getBody();
 
-            mSubscriptionIds = (ArrayNode) body.findValue("objectIdAndType");
+            mSubscriptionIds = new ArrayList<String>();
+            for (JsonNode node : body.path("objectIdAndType")) {
+              mSubscriptionIds.add(node.asText());
+            }
             for (int i = 0; i < mSubscriptionIds.size(); i++) {
               mSubscriptionData.add(null);
               mSubscriptionStatus.add(SubscriptionStatus.MISSING);
@@ -243,30 +270,85 @@ public class SeasonPass extends ListActivity {
   @Override
   protected void onPause() {
     super.onPause();
-    Utils.log("Activity:Pause:About");
+    Utils.log("Activity:Pause:SeasonPass");
   }
 
   @Override
   protected void onResume() {
     super.onResume();
-    Utils.log("Activity:Resume:About");
+    Utils.log("Activity:Resume:SeasonPass");
     if (MindRpc.init(this, null)) {
       return;
     }
   }
 
-  public void reorderEnable(View unusedView) {
-    mReorderMode = true;
-    findViewById(R.id.reorder_enable).setVisibility(View.GONE);
-    findViewById(R.id.reorder_apply).setVisibility(View.VISIBLE);
-//    mListAdapter.notifyDataSetChanged();
+  public void reorderApply(View unusedView) {
+    Utils.log("SeasonPass::reorderApply() " + Boolean.toString(mInReorderMode));
+
+    final ProgressDialog d = new ProgressDialog(this);
+    d.setIndeterminate(true);
+    d.setTitle("Saving ...");
+    d.setMessage("Saving new season pass order.  "
+        + "Patience please, this takes a while.");
+    d.setCancelable(false);
+    d.show();
+
+    ArrayList<String> subIds = new ArrayList<String>();
+    for (JsonNode sub : mSubscriptionData) {
+      subIds.add(sub.path("subscriptionId").asText());
+    }
+    SubscriptionsReprioritize req = new SubscriptionsReprioritize(subIds);
+    MindRpc.addRequest(req, new MindRpcResponseListener() {
+      public void onResponse(MindRpcResponse response) {
+        d.dismiss();
+
+        // Flip the buttons.
+        findViewById(R.id.reorder_enable).setVisibility(View.VISIBLE);
+        findViewById(R.id.reorder_apply).setVisibility(View.GONE);
+        // Turn off the drag handles.
+        mInReorderMode = false;
+        mListAdapter.notifyDataSetChanged();
+      }
+    });
   }
 
-  public void reorderApply(View unusedView) {
-    mReorderMode = false;
-    findViewById(R.id.reorder_enable).setVisibility(View.VISIBLE);
-    findViewById(R.id.reorder_apply).setVisibility(View.GONE);
-//    mListAdapter.notifyDataSetChanged();
-    // TODO: Dialog and RPC.
+  public void reorderEnable(View unusedView) {
+    Utils
+        .log("SeasonPass::reorderEnable() " + Boolean.toString(mInReorderMode));
+
+    final ProgressDialog d = new ProgressDialog(this);
+    d.setIndeterminate(true);
+    d.setTitle("Preparing ...");
+    d.setMessage("Loading all season pass data.");
+    d.setCancelable(false);
+    d.show();
+
+    final ArrayList<String> subscriptionIds = new ArrayList<String>();
+    final ArrayList<Integer> slots = new ArrayList<Integer>();
+    int i = 0;
+    while (i < mSubscriptionData.size()) {
+      if (mSubscriptionStatus.get(i) == SubscriptionStatus.MISSING) {
+        String subscriptionId = mSubscriptionIds.get(i);
+        subscriptionIds.add(subscriptionId);
+        slots.add(i);
+        mSubscriptionStatus.set(i, SubscriptionStatus.LOADING);
+      }
+      i++;
+    }
+    SubscriptionSearch req = new SubscriptionSearch(subscriptionIds);
+    mRequestSlotMap.put(req.getRpcId(), slots);
+    MindRpc.addRequest(req, new MindRpcResponseListener() {
+      public void onResponse(MindRpcResponse response) {
+        mDetailCallback.onResponse(response);
+        d.dismiss();
+
+        // Flip the buttons.
+        findViewById(R.id.reorder_enable).setVisibility(View.GONE);
+        findViewById(R.id.reorder_apply).setVisibility(View.VISIBLE);
+        // Show the drag handles.
+        mInReorderMode = true;
+        mListAdapter.notifyDataSetChanged();
+      }
+    });
   }
 }
