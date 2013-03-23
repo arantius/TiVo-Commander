@@ -376,6 +376,7 @@ public enum MindRpc {
           mOriginExtras = null;
           connectActivity.startActivity(intent);
           connectActivity.finish();
+          connectActivity.overridePendingTransition(0, 0);
         }
       }
     };
