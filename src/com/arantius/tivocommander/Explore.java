@@ -305,6 +305,9 @@ public class Explore extends ExploreCommon {
         iconSubType.setVisibility(View.GONE);
         textSubType.setVisibility(View.GONE);
       }
+    } else {
+      iconSubType.setVisibility(View.GONE);
+      textSubType.setVisibility(View.GONE);
     }
 
     // Display channel and time.
