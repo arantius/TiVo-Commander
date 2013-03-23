@@ -232,14 +232,14 @@ public class Explore extends ExploreCommon {
       mChoices.add(RecordActions.DONT_RECORD.toString());
     } else if ("inProgress".equals(mRecordingState)) {
       mChoices.add(RecordActions.RECORD_STOP.toString());
-      if (mOfferId != null) {
-        mChoices.add(RecordActions.RECORD.toString());
-      }
+    } else if (mOfferId != null) {
+      mChoices.add(RecordActions.RECORD.toString());
     }
     if (mSubscriptionId != null) {
       mChoices.add(RecordActions.SP_MODIFY.toString());
       mChoices.add(RecordActions.SP_CANCEL.toString());
-    } else if (mCollectionId != null) {
+    } else if (mCollectionId != null
+        && !"movie".equals(mRecording.path("collectionType").asText())) {
       mChoices.add(RecordActions.SP_ADD.toString());
     }
 
