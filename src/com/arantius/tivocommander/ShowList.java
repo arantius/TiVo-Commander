@@ -305,14 +305,8 @@ public abstract class ShowList extends ListActivity implements
     case R.string.stop_recording:
       req = new RecordingUpdate(recordingId, "complete");
       break;
-    case R.string.play_all:
-      // TODO: Figure out how to do this!
-      // Intentional case fall through!  For listener.
     case R.string.watch_now:
-      if (req == null) {
-        // I.E. this wasn't for "play all", it's for "watch now".
-        req = new UiNavigate(recordingId);
-      }
+      req = new UiNavigate(recordingId);
       reqListener =
           new MindRpcResponseListener() {
             public void onResponse(MindRpcResponse response) {

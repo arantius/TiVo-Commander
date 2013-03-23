@@ -32,10 +32,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <string name="dont_record">Don\'t record</string>
   <string name="stop_recording_and_delete">Stop recording and delete</string>
   <string name="delete">Delete</string>
+  <string name="delete_folder">Delete entire folder</string>
   <string name="watch_now">Watch now</string>
+  <string name="watch_folder">Watch entire folder</string>
   <string name="channel">Channel</string>
-  <string name="play_all">Play all shows</string>
-  <string name="delete_all">Delete all shows</string>
   <string name="record_max">Keep at most</string>
   <string name="record_which">Record</string>
   <string name="error_wifi_lock">Could not do discovery; falling back to manual settings.</string>

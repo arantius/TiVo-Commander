@@ -40,8 +40,10 @@ import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.BodyConfigSearch;
+import com.arantius.tivocommander.rpc.request.RecordingFolderItemEmpty;
 import com.arantius.tivocommander.rpc.request.RecordingFolderItemSearch;
 import com.arantius.tivocommander.rpc.request.RecordingSearch;
+import com.arantius.tivocommander.rpc.request.UiNavigate;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 
@@ -80,6 +82,50 @@ public class MyShows extends ShowList {
         });
     AlertDialog dialog = dialogBuilder.create();
     dialog.show();
+  }
+
+  protected void folderDelete(JsonNode folder) {
+    final String folderId = folder.path("recordingFolderItemId").asText();
+    RecordingFolderItemEmpty req = new RecordingFolderItemEmpty(folderId);
+    MindRpc.addRequest(req, new MindRpcResponseListener() {
+      public void onResponse(MindRpcResponse response) {
+        startRequest();
+      }
+    });
+  }
+
+  protected void folderPlay(final JsonNode folder) {
+    Utils.log("Play folder:");
+    setProgressIndicator(1);
+    final String folderId = folder.path("recordingFolderItemId").asText();
+    final RecordingFolderItemSearch req =
+        new RecordingFolderItemSearch(folderId, mOrderBy);
+    MindRpc.addRequest(req, new MindRpcResponseListener() {
+      public void onResponse(MindRpcResponse response) {
+        final RecordingFolderItemSearch req =
+            new RecordingFolderItemSearch(
+                response.getBody().path("objectIdAndType"), mOrderBy);
+        MindRpc.addRequest(req, new MindRpcResponseListener() {
+          public void onResponse(MindRpcResponse response) {
+            setProgressIndicator(-1);
+
+            // Gather recordings in reverse order (by always adding to index
+            // zero), reversing the reverse-chronological order we got.
+            ArrayList<String> recordingIds = new ArrayList<String>();
+            for (JsonNode item : response.getBody().path("recordingFolderItem")) {
+              recordingIds.add(0, item.path("childRecordingId").asText());
+            }
+
+            UiNavigate req =
+                new UiNavigate(recordingIds, folder.path("title").asText());
+            MindRpc.addRequest(req, null);
+
+            Intent intent = new Intent(MyShows.this, NowShowing.class);
+            startActivity(intent);
+          }
+        });
+      }
+    });
   }
 
   protected int getIconForItem(JsonNode item) {
@@ -137,18 +183,13 @@ public class MyShows extends ShowList {
     final ArrayList<String> choices = new ArrayList<String>();
     final ArrayList<Integer> actions = new ArrayList<Integer>();
 
-    Utils.debugLog("long press choices for:");
-    Utils.debugLog(Utils.stringifyToPrettyJson(item));
-
     final String folderType = item.path("folderType").asText();
     if ("series".equals(folderType) || "wishlist".equals(folderType)) {
       // For season pass and/or wish list folders.
-
-      // TODO: Play whole folder.
-      // TODO: Delete whole folder.
-
-      // I don't know the right RPC to make either happen.  Until then:
-      return null;
+      choices.add(getResources().getString(R.string.watch_folder));
+      actions.add(R.string.watch_folder);
+      choices.add(getResources().getString(R.string.delete_folder));
+      actions.add(R.string.delete_folder);
     } else if (!"".equals(folderType)) {
       // Other folders not supported.
       return null;
@@ -160,7 +201,8 @@ public class MyShows extends ShowList {
       if ("inProgress" == recording.path("state").asText()) {
         choices.add(getResources().getString(R.string.stop_recording));
         actions.add(R.string.stop_recording);
-        choices.add(getResources().getString(R.string.stop_recording_and_delete));
+        choices.add(getResources()
+            .getString(R.string.stop_recording_and_delete));
         actions.add(R.string.stop_recording_and_delete);
       } else {
         choices.add(getResources().getString(R.string.delete));
@@ -198,6 +240,24 @@ public class MyShows extends ShowList {
           startRequest();
         }
       }
+    }
+  }
+
+  @Override
+  public void onClick(DialogInterface dialog, int position) {
+    final Pair<ArrayList<String>, ArrayList<Integer>> choices =
+        getLongPressChoices(mLongPressItem);
+    Integer action = choices.second.get(position);
+
+    switch (action) {
+    case R.string.delete_folder:
+      folderDelete(mLongPressItem);
+      break;
+    case R.string.watch_folder:
+      folderPlay(mLongPressItem);
+      return;
+    default:
+      super.onClick(dialog, position);
     }
   }
 
@@ -245,7 +305,8 @@ public class MyShows extends ShowList {
             }
             final JsonNode items = response.getBody().path(itemId);
 
-            ArrayList<Integer> slotMap = mRequestSlotMap.get(response.getRpcId());
+            ArrayList<Integer> slotMap =
+                mRequestSlotMap.get(response.getRpcId());
 
             MindRpc.saveBodyId(items.path(0).path("bodyId").getTextValue());
 

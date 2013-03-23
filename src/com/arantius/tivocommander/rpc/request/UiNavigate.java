@@ -20,6 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package com.arantius.tivocommander.rpc.request;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UiNavigate extends MindRpcRequest {
@@ -30,6 +31,23 @@ public class UiNavigate extends MindRpcRequest {
     parameters.put("fUseTrioId", "true");
     parameters.put("fHideBannerOnEnter", "false");
     parameters.put("recordingId", recordingId);
+
+    mDataMap.put("uri", "x-tivo:classicui:playback");
+    mDataMap.put("parameters", parameters);
+  }
+
+  public UiNavigate(List<String> recordingIds, String displayName) {
+    super("uiNavigate");
+
+    Map<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("fUseTrioId", "true");
+    parameters.put("fHideBannerOnEnter", "false");
+    parameters.put("iCurrentRecording", 0);
+    parameters.put("recordingId", recordingIds);
+
+    if (displayName != null && !"".equals(displayName)) {
+      parameters.put("folderName", displayName);
+    }
 
     mDataMap.put("uri", "x-tivo:classicui:playback");
     mDataMap.put("parameters", parameters);

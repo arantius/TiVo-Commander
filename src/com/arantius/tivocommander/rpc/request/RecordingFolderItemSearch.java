@@ -51,7 +51,7 @@ public class RecordingFolderItemSearch extends MindRpcRequest {
   }
 
   /** Given a set of IDs, produces details about the shows. */
-  public RecordingFolderItemSearch(ArrayList<JsonNode> showIds, String orderBy) {
+  public RecordingFolderItemSearch(ArrayList<?> showIds, String orderBy) {
     super("recordingFolderItemSearch");
 
     addCommonDetails(orderBy);
