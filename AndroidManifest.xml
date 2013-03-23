@@ -67,6 +67,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         <action android:name="android.intent.action.MAIN" />
       </intent-filter>
     </activity>
+    <activity android:name=".SeasonPass">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+      </intent-filter>
+    </activity>
     <activity android:name=".Settings"></activity>
     <activity android:name=".SubscribeCollection"></activity>
     <activity android:name=".SubscribeOffer"></activity>

@@ -88,12 +88,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     <LinearLayout android:orientation="horizontal"
       android:layout_width="match_parent" android:layout_height="wrap_content"
     >
-      <Button android:id="@+id/target_settings" android:text="Settings"
-        android:drawableTop="@drawable/icon_cog" android:onClick="onClickButton"
+      <Button android:id="@+id/target_season_pass" android:text="S. Pass"
+        android:drawableTop="@drawable/icon_seasonpass" android:onClick="onClickButton"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:layout_weight="1" android:padding="16dp" />
-      <Button android:id="@+id/target_help" android:text="Help"
-        android:drawableTop="@drawable/icon_help" android:onClick="onClickButton"
+      <Button android:id="@+id/target_settings" android:text="Settings"
+        android:drawableTop="@drawable/icon_cog" android:onClick="onClickButton"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:layout_weight="1" android:padding="16dp" />
     </LinearLayout>

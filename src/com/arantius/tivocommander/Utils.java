@@ -282,6 +282,13 @@ public class Utils {
     return stringifyToJson(obj, true);
   }
 
+  public final static String stripQuotes(String s) {
+    if ('"' == s.charAt(0) && '"' == s.charAt(s.length() - 1)) {
+      return s.substring(1, s.length() - 1);
+    }
+    return s;
+  }
+
   public final static SubscriptionType subscriptionTypeForRecording(
       JsonNode recording) {
     if ("inProgress".equals(recording.path("state").asText())) {

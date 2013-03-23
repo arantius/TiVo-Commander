@@ -92,6 +92,8 @@ public enum MindRpc {
 
   public static String mBodyId = "-";
   public static Boolean mBodyIsAuthed = false;
+  public static String mTivoAddr;
+
   private static DataInputStream mInputStream;
   private static MindRpcInput mInputThread;
   private static Activity mOriginActivity;
@@ -103,7 +105,6 @@ public enum MindRpc {
   private static volatile int mRpcId = 1;
   private static volatile int mSessionId;
   private static Socket mSocket;
-  private static String mTivoAddr;
   private static String mTivoMak;
   private static int mTivoPort;
   private static final int TIMEOUT_CONNECT = 2500;

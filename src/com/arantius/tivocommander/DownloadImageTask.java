@@ -46,6 +46,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
   private final static long MAX_CACHE_SIZE = 2 * 1024 * 1024; // 2Mb
@@ -53,6 +54,8 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
   private final Context mContext;
   private final ImageView mImageView;
   private final View mProgressView;
+  private final TextView mTextView;
+
   private final ResponseCache mResponseCache = new ResponseCache() {
     // Thanks to: http://pivotallabs.com/users/tyler/blog/articles/1754
     @Override
@@ -123,6 +126,15 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     mContext = context;
     mImageView = imageView;
     mProgressView = progressView;
+    mTextView = null;
+    ResponseCache.setDefault(mResponseCache);
+  }
+
+  public DownloadImageTask(Context context, TextView textView) {
+    mContext = context;
+    mImageView = null;
+    mProgressView = null;
+    mTextView = textView;
     ResponseCache.setDefault(mResponseCache);
   }
 
@@ -156,8 +168,12 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
   @Override
   protected void onPostExecute(Bitmap result) {
     if (result != null) {
-      mImageView.setImageDrawable(
-          new BitmapDrawable(mContext.getResources(), result));
+      BitmapDrawable d = new BitmapDrawable(mContext.getResources(), result);
+      if (mImageView != null) {
+        mImageView.setImageDrawable(d);
+      } else if (mTextView != null) {
+        mTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, d);
+      }
     }
     if (mProgressView != null) {
       mProgressView.setVisibility(View.GONE);

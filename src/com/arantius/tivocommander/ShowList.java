@@ -127,11 +127,8 @@ public abstract class ShowList extends ListActivity implements
         final JsonNode item = mShowData.get(position);
         final JsonNode recording = getRecordingFromItem(item);
 
-        String title = item.path("title").getTextValue();
-        if ('"' == title.charAt(0) && '"' == title.charAt(title.length() - 1)) {
-          title = title.substring(1, title.length() - 1);
-        }
-        ((TextView) v.findViewById(R.id.show_title)).setText(title);
+        ((TextView) v.findViewById(R.id.show_title)).setText(
+            Utils.stripQuotes(item.path("title").asText()));
 
         Integer folderItemCount = item.path("folderItemCount").getIntValue();
         ((TextView) v.findViewById(R.id.folder_num))

@@ -292,14 +292,14 @@ public class NowShowing extends Activity {
     case R.id.target_search:
       intent = new Intent(getBaseContext(), Search.class);
       break;
+    case R.id.target_season_pass:
+      intent = new Intent(getBaseContext(), SeasonPass.class);
+      break;
     case R.id.target_settings:
       intent = new Intent(getBaseContext(), Discover.class);
       break;
     case R.id.target_todo:
       intent = new Intent(getBaseContext(), ToDo.class);
-      break;
-    case R.id.target_help:
-      intent = new Intent(getBaseContext(), Help.class);
       break;
     }
 
@@ -314,6 +314,8 @@ public class NowShowing extends Activity {
 
   @SuppressLint("InlinedApi")
   public final boolean onCreateOptionsMenu(Menu menu) {
+    Utils.addToMenu(menu, this, R.id.menu_item_help, R.drawable.icon_help,
+        "Help", MenuItem.SHOW_AS_ACTION_NEVER);
     Utils.addToMenu(menu, this, R.id.menu_item_about, R.drawable.icon_info,
         "About", MenuItem.SHOW_AS_ACTION_NEVER);
     return true;

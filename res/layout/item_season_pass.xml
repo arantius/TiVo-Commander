@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:orientation="horizontal"
+  android:paddingTop="4dip" android:paddingBottom="4dip"
+  android:layout_width="fill_parent" android:layout_height="wrap_content"
+>
+  <TextView android:id="@+id/index"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:layout_width="45dp" android:layout_height="wrap_content"
+    android:gravity="center" android:text="1"
+    android:focusable="false" android:focusableInTouchMode="false"
+    />
+
+  <LinearLayout android:orientation="vertical"
+    android:layout_width="0dp" android:layout_height="wrap_content"
+    android:layout_weight="1"
+  >
+    <TextView android:id="@+id/show_title"
+      android:textAppearance="?android:attr/textAppearanceLarge"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:text="Title"
+      android:focusable="false" android:focusableInTouchMode="false"
+      />
+    <LinearLayout android:orientation="horizontal"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+    >
+      <ImageView android:id="@+id/icon_until_deleted"
+        android:src="@drawable/recording_keep"
+        android:layout_gravity="center_vertical"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        />
+      <TextView
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:focusable="false" android:focusableInTouchMode="false"
+        android:text="Keep " android:layout_gravity="center_vertical"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+      <TextView android:id="@+id/keep_num"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:focusable="false" android:focusableInTouchMode="false"
+        android:text="#" android:layout_gravity="center_vertical"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+      <TextView android:id="@+id/new_comma"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:focusable="false" android:focusableInTouchMode="false"
+        android:text=", " android:layout_gravity="center_vertical"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+      <ImageView android:id="@+id/badge_new" android:paddingTop="4dp"
+        android:src="@drawable/badge_new" android:layout_gravity="center_vertical"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        />
+      <TextView android:id="@+id/new_only"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:focusable="false" android:focusableInTouchMode="false"
+        android:text=" only" android:layout_gravity="center_vertical"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
+  </LinearLayout>
+  <TextView android:id="@+id/show_channel"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:focusable="false" android:focusableInTouchMode="false"
+    android:text="123" android:layout_gravity="right"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:drawableBottom="@drawable/blank" android:paddingRight="6dp" />
+  <ImageView android:id="@+id/drag_handle"
+    android:src="@android:drawable/btn_star_big_on"
+    android:layout_width="60dp" android:layout_height="60dp"
+    />
+</LinearLayout>
