@@ -23,9 +23,13 @@ import java.util.ArrayList;
 
 import org.codehaus.jackson.JsonNode;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
@@ -35,9 +39,11 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -45,13 +51,15 @@ import android.widget.TextView;
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.SubscriptionSearch;
 import com.arantius.tivocommander.rpc.request.SubscriptionsReprioritize;
+import com.arantius.tivocommander.rpc.request.Unsubscribe;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.mobeta.android.dslv.DragSortListView;
 
 // TODO: This copies a lot from ShowList; be DRY?
 
-public class SeasonPass extends ListActivity {
+public class SeasonPass extends ListActivity implements
+    OnItemLongClickListener, OnClickListener {
   protected class SubscriptionAdapter extends ArrayAdapter<JsonNode> {
     protected ColorDrawable mBlankLogoDrawable;
 
@@ -159,6 +167,16 @@ public class SeasonPass extends ListActivity {
   }
 
   protected final static int MAX_REQUEST_BATCH = 5;
+  protected boolean mInReorderMode = false;
+  protected SubscriptionAdapter mListAdapter;
+  protected int mLongClickPosition;
+  protected final SparseArray<ArrayList<Integer>> mRequestSlotMap =
+      new SparseArray<ArrayList<Integer>>();
+  protected final ArrayList<JsonNode> mSubscriptionData =
+      new ArrayList<JsonNode>();
+  protected ArrayList<String> mSubscriptionIds;
+  protected final ArrayList<SubscriptionStatus> mSubscriptionStatus =
+      new ArrayList<SubscriptionStatus>();
 
   protected MindRpcResponseListener mDetailCallback =
       new MindRpcResponseListener() {
@@ -180,9 +198,6 @@ public class SeasonPass extends ListActivity {
         }
       };
 
-  protected boolean mInReorderMode = false;
-
-  protected SubscriptionAdapter mListAdapter;
   protected final OnItemClickListener mOnClickListener =
       new OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -205,6 +220,7 @@ public class SeasonPass extends ListActivity {
         }
 
       };
+
   final protected DragSortListView.DropListener mOnDrop =
       new DragSortListView.DropListener() {
         public void drop(int from, int to) {
@@ -216,14 +232,36 @@ public class SeasonPass extends ListActivity {
           mSubscriptionIds.add(to, id);
         }
       };
-  protected final SparseArray<ArrayList<Integer>> mRequestSlotMap =
-      new SparseArray<ArrayList<Integer>>();
-  protected final ArrayList<JsonNode> mSubscriptionData =
-      new ArrayList<JsonNode>();
-  protected ArrayList<String> mSubscriptionIds;
 
-  protected final ArrayList<SubscriptionStatus> mSubscriptionStatus =
-      new ArrayList<SubscriptionStatus>();
+  public void onClick(DialogInterface dialog, int which) {
+    JsonNode sub = mSubscriptionData.get(mLongClickPosition);
+
+    // TODO: De-dupe vs. Explore.doRecord().
+    switch (which) {
+    case 0:
+      Intent intent =
+          new Intent(getBaseContext(), SubscribeCollection.class);
+      intent.putExtra("collectionId",
+          sub.path("idSetSource").path("collectionId").asText());
+      intent.putExtra("subscriptionId", sub.path("subscriptionId").asText());
+      intent.putExtra("subscriptionJson", Utils.stringifyToJson(sub));
+      startActivity(intent);
+      break;
+    case 1:
+      setProgressBarIndeterminateVisibility(true);
+      MindRpc.addRequest(new Unsubscribe(sub.path("subscriptionId").asText()),
+          new MindRpcResponseListener() {
+            public void onResponse(MindRpcResponse response) {
+              setProgressBarIndeterminateVisibility(false);
+              mSubscriptionData.remove(mLongClickPosition);
+              mSubscriptionIds.remove(mLongClickPosition);
+              mSubscriptionStatus.remove(mLongClickPosition);
+              mListAdapter.notifyDataSetChanged();
+            }
+          });
+      break;
+    }
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -232,9 +270,9 @@ public class SeasonPass extends ListActivity {
       return;
     }
 
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     Utils.activateHomeButton(this);
     setTitle("Season Pass Manager");
-
     setContentView(R.layout.list_season_pass);
 
     mListAdapter = new SubscriptionAdapter();
@@ -242,6 +280,8 @@ public class SeasonPass extends ListActivity {
     DragSortListView dslv = (DragSortListView) getListView();
     dslv.setOnItemClickListener(mOnClickListener);
     dslv.setDropListener(mOnDrop);
+    dslv.setLongClickable(true);
+    dslv.setOnItemLongClickListener(this);
 
     MindRpcResponseListener idSequenceCallback =
         new MindRpcResponseListener() {
@@ -260,6 +300,26 @@ public class SeasonPass extends ListActivity {
           }
         };
     MindRpc.addRequest(new SubscriptionSearch(), idSequenceCallback);
+  }
+
+  public boolean onItemLongClick(AdapterView<?> parent, View view,
+      int position, long id) {
+    mLongClickPosition = position;
+
+    final ArrayList<String> choices = new ArrayList<String>();
+    choices.add(Explore.RecordActions.SP_MODIFY.toString());
+    choices.add(Explore.RecordActions.SP_CANCEL.toString());
+    final ArrayAdapter<String> choicesAdapter =
+        new ArrayAdapter<String>(this, android.R.layout.select_dialog_item,
+            choices);
+
+    Builder dialogBuilder = new AlertDialog.Builder(this);
+    dialogBuilder.setTitle("Operation?");
+    dialogBuilder.setAdapter(choicesAdapter, this);
+    AlertDialog dialog = dialogBuilder.create();
+    dialog.show();
+
+    return true;
   }
 
   @Override

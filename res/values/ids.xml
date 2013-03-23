@@ -5,6 +5,7 @@
   <item type="id" name="menu_item_my_shows" />
   <item type="id" name="menu_item_remote" />
   <item type="id" name="menu_item_search" />
+  <item type="id" name="menu_item_season_pass" />
   <item type="id" name="menu_item_settings" />
   <item type="id" name="menu_item_todo" />
 </resources>

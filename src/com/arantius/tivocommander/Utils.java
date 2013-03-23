@@ -76,6 +76,8 @@ public class Utils {
       return Search.class;
     case R.id.menu_item_todo:
       return ToDo.class;
+    case R.id.menu_item_season_pass:
+      return SeasonPass.class;
     case R.id.menu_item_settings:
       return Discover.class;
     case R.id.menu_item_help:
@@ -199,6 +201,9 @@ public class Utils {
         "Search", MenuItem.SHOW_AS_ACTION_IF_ROOM);
     addToMenu(menu, activity, R.id.menu_item_todo, R.drawable.icon_todo,
         "To Do List", MenuItem.SHOW_AS_ACTION_NEVER);
+    addToMenu(menu, activity, R.id.menu_item_season_pass,
+        R.drawable.icon_seasonpass,
+        "Season Pass Manager", MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_settings, R.drawable.icon_cog,
         "Settings", MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_help, R.drawable.icon_help,
