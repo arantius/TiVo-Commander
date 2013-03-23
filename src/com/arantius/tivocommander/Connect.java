@@ -28,7 +28,7 @@ public class Connect extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    // TODO: Not immediately, to reduce flicker, if connection happens fast?
+    Utils.log("Activity:Create:Connect");
     setContentView(R.layout.connect);
   }
 
@@ -43,11 +43,10 @@ public class Connect extends Activity {
     super.onResume();
     Utils.log("Activity:Resume:Connect");
 
-    // Start on a separate thread so the UI can be updated.
+    // Start on a separate thread so this UI shows immediately.
     new Thread(new Runnable() {
       public void run() {
         MindRpc.init3(Connect.this);
-        finish();
       }
     }).start();
   }

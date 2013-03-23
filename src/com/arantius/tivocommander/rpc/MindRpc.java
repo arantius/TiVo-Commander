@@ -344,14 +344,14 @@ public enum MindRpc {
   }
 
   /** Finally, (only) the Connect activity calls back here to finish init. */
-  public static void init3(final Activity activity) {
+  public static void init3(final Activity connectActivity) {
     Utils.log("MindRpc.init3() " + mOriginActivity.toString());
 
     stopThreads();
     disconnect();
 
-    if (!connect(activity)) {
-      settingsError(activity, R.string.error_connect);
+    if (!connect(connectActivity)) {
+      settingsError(mOriginActivity, R.string.error_connect);
       return;
     }
 
@@ -364,16 +364,18 @@ public enum MindRpc {
     MindRpcResponseListener authListener = new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
         if ("failure".equals(response.getBody().path("status").getTextValue())) {
-          settingsError(activity, R.string.error_auth);
+          settingsError(connectActivity, R.string.error_auth);
+          connectActivity.finish();
         } else {
           mBodyIsAuthed = true;
           Intent intent =
-              new Intent(activity.getBaseContext(), mOriginActivity.getClass());
+              new Intent(connectActivity.getBaseContext(), mOriginActivity.getClass());
           if (mOriginExtras != null) {
             intent.putExtras(mOriginExtras);
           }
           mOriginExtras = null;
-          activity.startActivity(intent);
+          connectActivity.startActivity(intent);
+          connectActivity.finish();
         }
       }
     };
