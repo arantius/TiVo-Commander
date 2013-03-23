@@ -71,12 +71,17 @@ public class NowShowing extends Activity {
           rpcComplete();
         }
       };
+
+  private String mCollectionId = null;
   private String mContentId = null;
   private ContentType mContentType = null;
   final private SimpleDateFormat mDateFormat = new SimpleDateFormat(
       "yyyy-MM-dd HH:mm:ss", Locale.US);
   final private SimpleDateFormat mDisplayTimeFormat = new SimpleDateFormat(
       "h:mm", Locale.US);
+  private String mOfferId = null;
+  private String mRecordingId = null;
+  private String mWhatsOnId = null;
 
   private Integer mGmtOffsetMillis = null;
   private Long mMillisActualBegin = null;
@@ -168,42 +173,48 @@ public class NowShowing extends Activity {
           rpcComplete();
         }
       };
+
   private final MindRpcResponseListener mWhatsOnCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           JsonNode whatsOn = response.getBody().path("whatsOn").path(0);
 
+          mCollectionId = whatsOn.path("collectionId").asText();
+          mContentId = whatsOn.path("contentId").asText();
+          mOfferId = whatsOn.path("offerId").asText();
+          mRecordingId = whatsOn.path("recordingId").asText();
+
           String playbackType = whatsOn.path("playbackType").asText();
-          String contentId = null;
+          String whatsOnId = null;
           if ("recording".equals(playbackType)) {
-            contentId = whatsOn.path("recordingId").asText();
+            whatsOnId = whatsOn.path("recordingId").asText();
           } else if ("liveCache".equals(playbackType)) {
-            contentId = whatsOn.path("offerId").asText();
+            whatsOnId = whatsOn.path("offerId").asText();
           } else {
             Utils.logError("Unsupported playbackType: " + playbackType);
             return;
           }
 
-          if (mContentId != null) {
+          if (mWhatsOnId != null) {
             // Ignore extra callbacks where the content has not changed.
-            if (mContentId.equals(contentId)) {
+            if (mWhatsOnId.equals(whatsOnId)) {
               return;
             }
             // Otherwise, start over with new requests and data.
             initInstanceVars();
           }
-          mContentId = contentId;
+          mWhatsOnId = whatsOnId;
           ((ViewFlipper) findViewById(R.id.now_showing_detail_flipper))
               .setDisplayedChild(1);
 
           if ("recording".equals(playbackType)) {
             mContentType = ContentType.RECORDING;
-            RecordingSearch request = new RecordingSearch(contentId);
+            RecordingSearch request = new RecordingSearch(whatsOnId);
             request.setLevelOfDetail("low");
             MindRpc.addRequest(request, mRecordingCallback);
           } else if ("liveCache".equals(playbackType)) {
             mContentType = ContentType.LIVE;
-            OfferSearch request = new OfferSearch("offerId", contentId);
+            OfferSearch request = new OfferSearch("offerId", whatsOnId);
             MindRpc.addRequest(request, mOfferCallback);
           }
         };
@@ -272,12 +283,36 @@ public class NowShowing extends Activity {
 
   /** (Re-)Initialize instance variables. */
   private void initInstanceVars() {
+    mCollectionId = null;
     mContentId = null;
     mContentType = null;
     mMillisActualBegin = null;
     mMillisContentBegin = null;
     mMillisContentEnd = null;
+    mOfferId = null;
+    mRecordingId = null;
     mRpcComplete = false;
+    mWhatsOnId = null;
+  }
+
+  public void doExplore(View unused) {
+    Utils.log("NowShowing::doExplore()");
+
+    Intent intent = new Intent(this, ExploreTabs.class);
+    if (mCollectionId != null && !"".equals(mCollectionId)) {
+      intent.putExtra("collectionId", mCollectionId);
+    }
+    if (mContentId != null && !"".equals(mContentId)) {
+      intent.putExtra("contentId", mContentId);
+    }
+    if (mOfferId != null && !"".equals(mOfferId)) {
+      intent.putExtra("offerId", mOfferId);
+    }
+    if (mRecordingId != null && !"".equals(mRecordingId)) {
+      intent.putExtra("recordingId", mRecordingId);
+    }
+
+    startActivity(intent);
   }
 
   public void onClickButton(View target) {

@@ -35,11 +35,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         <TextView android:id="@+id/content_title"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
           android:textAppearance="?android:attr/textAppearanceLarge"
-          android:textColor="#FF9500" android:text="Title" />
+          android:textColor="#FF9500" android:text="Title"
+          android:clickable="true" android:onClick="doExplore" />
         <TextView android:id="@+id/content_subtitle"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
           android:textAppearance="?android:attr/textAppearanceMedium"
-          android:textColor="#FF9500" android:text="Subtitle" />
+          android:textColor="#FF9500" android:text="Subtitle"
+          android:clickable="true" android:onClick="doExplore" />
         <com.arantius.tivocommander.views.TivoScrubBar
             android:id="@+id/tivo_scrub_bar"
             android:layout_width="fill_parent" android:layout_height="30dip"
