@@ -23,9 +23,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 
-import org.codehaus.jackson.JsonNode;
-
 import com.arantius.tivocommander.Utils;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class MindRpcResponseFactory {
   public MindRpcResponse create(byte[] headers, byte[] body) {

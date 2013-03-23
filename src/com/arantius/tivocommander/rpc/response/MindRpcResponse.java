@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc.response;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class MindRpcResponse {
   private final JsonNode mBody;
@@ -31,7 +31,7 @@ public class MindRpcResponse {
     mBody = bodyObj;
     mIsFinal = isFinal;
     mRpcId = rpcId;
-    mRespType = bodyObj.path("type").getTextValue();
+    mRespType = bodyObj.path("type").asText();
   }
 
   public JsonNode getBody() {

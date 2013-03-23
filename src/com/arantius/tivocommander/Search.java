@@ -21,8 +21,6 @@ package com.arantius.tivocommander;
 
 import java.util.ArrayList;
 
-import org.codehaus.jackson.JsonNode;
-
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -50,6 +48,7 @@ import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.UnifiedItemSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class Search extends ListActivity {
   private class SearchAdapter extends ArrayAdapter<JsonNode> {
@@ -98,12 +97,12 @@ public class Search extends ListActivity {
 
       String title = null;
       if (item.has("collectionId") || item.has("contentId")) {
-        title = item.path("title").getTextValue();
+        title = item.path("title").asText();
       } else if (item.has("personId")) {
-        title = item.path("first").getTextValue();
+        title = item.path("first").asText();
         if (item.has("last")) {
           // Some people only have one (thus first) name.
-          title += " " + item.path("last").getTextValue();
+          title += " " + item.path("last").asText();
         }
       } else {
         Utils.log("Could not find title!");
@@ -153,15 +152,15 @@ public class Search extends ListActivity {
           if (result.has("collectionId") || result.has("contentId")) {
             Intent intent = new Intent(getBaseContext(), ExploreTabs.class);
             intent.putExtra("contentId", result.path("contentId")
-                .getTextValue());
+                .asText());
             intent.putExtra("collectionId", result.path("collectionId")
-                .getTextValue());
+                .asText());
             startActivity(intent);
           } else if (result.has("personId")) {
             Intent intent = new Intent(getBaseContext(), Person.class);
-            intent.putExtra("fName", result.path("first").getTextValue());
-            intent.putExtra("lName", result.path("last").getTextValue());
-            intent.putExtra("personId", result.path("personId").getTextValue());
+            intent.putExtra("fName", result.path("first").asText());
+            intent.putExtra("lName", result.path("last").asText());
+            intent.putExtra("personId", result.path("personId").asText());
             startActivity(intent);
           } else {
             Utils

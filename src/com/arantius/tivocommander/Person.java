@@ -24,8 +24,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.codehaus.jackson.JsonNode;
-
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -50,6 +48,7 @@ import com.arantius.tivocommander.rpc.request.PersonCreditsSearch;
 import com.arantius.tivocommander.rpc.request.PersonSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class Person extends ListActivity {
   // TODO: Refactor this to be DRY w/ Credits.
@@ -95,7 +94,7 @@ public class Person extends ListActivity {
       }
 
       ((TextView) v.findViewById(R.id.person_name)).setText(item.path("title")
-          .getTextValue());
+          .asText());
       ((TextView) v.findViewById(R.id.person_role)).setText(Utils
           .ucFirst(findRole(item.path("credit"))));
       // TODO: Can we display / sort by the year?
@@ -113,7 +112,7 @@ public class Person extends ListActivity {
           JsonNode person = mCredits.path(position);
           Intent intent = new Intent(getBaseContext(), ExploreTabs.class);
           intent.putExtra("collectionId", person.path("collectionId")
-              .getTextValue());
+              .asText());
           startActivity(intent);
         }
       };
@@ -137,9 +136,9 @@ public class Person extends ListActivity {
 
   private String findRole(JsonNode credits) {
     for (JsonNode credit : credits) {
-      String x = credit.path("personId").getTextValue();
+      String x = credit.path("personId").asText();
       if (mPersonId.equals(x)) {
-        return credit.path("role").getTextValue();
+        return credit.path("role").asText();
       }
     }
     return null;
@@ -222,7 +221,7 @@ public class Person extends ListActivity {
     JsonNode rolesNode = mPerson.path("roleForPersonId");
     String[] roles = new String[rolesNode.size()];
     for (i = 0; i < rolesNode.size(); i++) {
-      roles[i] = rolesNode.path(i).getTextValue();
+      roles[i] = rolesNode.path(i).asText();
       roles[i] = Utils.ucFirst(roles[i]);
     }
     ((TextView) findViewById(R.id.person_role))
@@ -232,7 +231,7 @@ public class Person extends ListActivity {
     TextView birthdateView = ((TextView) findViewById(R.id.person_birthdate));
     if (mPerson.has("birthDate")) {
       Date birthdate =
-          Utils.parseDateStr(mPerson.path("birthDate").getTextValue());
+          Utils.parseDateStr(mPerson.path("birthDate").asText());
       SimpleDateFormat dateFormatter =
           new SimpleDateFormat("MMMMM d, yyyy", Locale.US);
       dateFormatter.setTimeZone(TimeZone.getDefault());
@@ -250,7 +249,7 @@ public class Person extends ListActivity {
     if (mPerson.has("birthPlace")) {
       Spannable birthplaceStr =
           new SpannableString("Birthplace: "
-              + mPerson.path("birthPlace").getTextValue());
+              + mPerson.path("birthPlace").asText());
       birthplaceStr.setSpan(new ForegroundColorSpan(Color.WHITE), 12,
           birthplaceStr.length(), 0);
       birthplaceView.setText(birthplaceStr);

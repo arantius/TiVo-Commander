@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import org.codehaus.jackson.JsonNode;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -49,6 +47,7 @@ import com.arantius.tivocommander.rpc.request.UiNavigate;
 import com.arantius.tivocommander.rpc.request.Unsubscribe;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class Explore extends ExploreCommon {
   enum RecordActions {
@@ -90,7 +89,7 @@ public class Explore extends ExploreCommon {
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           mRecording = response.getBody().path("recording").path(0);
-          mRecordingState = mRecording.path("state").getTextValue();
+          mRecordingState = mRecording.path("state").asText();
           mSubscriptionType = Utils.subscriptionTypeForRecording(mRecording);
           finishRequest();
         }
@@ -100,7 +99,7 @@ public class Explore extends ExploreCommon {
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           mSubscription = response.getBody().path("subscription").path(0);
-          mSubscriptionId = mSubscription.path("subscriptionId").getTextValue();
+          mSubscriptionId = mSubscription.path("subscriptionId").asText();
           finishRequest();
         }
       };
@@ -217,10 +216,10 @@ public class Explore extends ExploreCommon {
 
     if (mRecordingId == null) {
       for (JsonNode recording : mContent.path("recordingForContentId")) {
-        String state = recording.path("state").getTextValue();
+        String state = recording.path("state").asText();
         if ("inProgress".equals(state) || "complete".equals(state)
             || "scheduled".equals(state)) {
-          mRecordingId = recording.path("recordingId").getTextValue();
+          mRecordingId = recording.path("recordingId").asText();
           mRecordingState = state;
           break;
         }
@@ -261,8 +260,8 @@ public class Explore extends ExploreCommon {
         "deleted".equals(mRecordingState) ? View.VISIBLE : View.GONE);
 
     // Display titles.
-    String title = mContent.path("title").getTextValue();
-    String subtitle = mContent.path("subtitle").getTextValue();
+    String title = mContent.path("title").asText();
+    String subtitle = mContent.path("subtitle").asText();
     ((TextView) findViewById(R.id.content_title)).setText(title);
     TextView subtitleView = ((TextView) findViewById(R.id.content_subtitle));
     if (subtitle == null) {
@@ -272,10 +271,10 @@ public class Explore extends ExploreCommon {
     }
 
     // Display (only the proper) badges.
-    if (mRecording == null || mRecording.path("repeat").getBooleanValue()) {
+    if (mRecording == null || mRecording.path("repeat").asBoolean()) {
       findViewById(R.id.badge_new).setVisibility(View.GONE);
     }
-    if (mRecording == null || !mRecording.path("hdtv").getBooleanValue()) {
+    if (mRecording == null || !mRecording.path("hdtv").asBoolean()) {
       findViewById(R.id.badge_hd).setVisibility(View.GONE);
     }
     ImageView iconSubType = (ImageView) findViewById(R.id.icon_sub_type);
@@ -317,13 +316,13 @@ public class Explore extends ExploreCommon {
       if (!channel.isMissingNode()) {
         channelStr =
             String.format("%s %s, ", channel.path("channelNumber")
-                .getTextValue(),
-                channel.path("callSign").getTextValue());
+                .asText(),
+                channel.path("callSign").asText());
       }
 
       // Lots of shows seem to be a few seconds short, add padding so that
       // rounding down works as expected. Magic number.
-      final int minutes = (30 + mRecording.path("duration").getIntValue()) / 60;
+      final int minutes = (30 + mRecording.path("duration").asInt()) / 60;
 
       String durationStr =
           minutes >= 60 ? String.format(Locale.US, "%d hr", minutes / 60)
@@ -339,21 +338,21 @@ public class Explore extends ExploreCommon {
 
     // Construct and display details.
     ArrayList<String> detailParts = new ArrayList<String>();
-    int season = mContent.path("seasonNumber").getIntValue();
-    int epNum = mContent.path("episodeNum").path(0).getIntValue();
+    int season = mContent.path("seasonNumber").asInt();
+    int epNum = mContent.path("episodeNum").path(0).asInt();
     if (season != 0 && epNum != 0) {
       detailParts.add(String.format("Sea %d Ep %d", season, epNum));
     }
     if (mContent.has("mpaaRating")) {
-      detailParts.add(mContent.path("mpaaRating").getTextValue()
+      detailParts.add(mContent.path("mpaaRating").asText()
           .toUpperCase(Locale.US));
     } else if (mContent.has("tvRating")) {
       detailParts.add("TV-"
-          + mContent.path("tvRating").getTextValue().toUpperCase(Locale.US));
+          + mContent.path("tvRating").asText().toUpperCase(Locale.US));
     }
     detailParts.add(mContent.path("category").path(0).path("label")
-        .getTextValue());
-    int year = mContent.path("originalAirYear").getIntValue();
+        .asText());
+    int year = mContent.path("originalAirYear").asInt();
     if (year != 0) {
       detailParts.add(Integer.toString(year));
     }
@@ -370,7 +369,7 @@ public class Explore extends ExploreCommon {
       detail1 = "";
     }
 
-    String detail2 = mContent.path("description").getTextValue();
+    String detail2 = mContent.path("description").asText();
     TextView detailView = ((TextView) findViewById(R.id.content_details));
     if (detail2 == null) {
       detailView.setText(detail1);
@@ -384,11 +383,11 @@ public class Explore extends ExploreCommon {
     // Add credits.
     ArrayList<String> credits = new ArrayList<String>();
     for (JsonNode credit : mContent.path("credit")) {
-      String role = credit.path("role").getTextValue();
+      String role = credit.path("role").asText();
       if ("actor".equals(role) || "host".equals(role)
           || "guestStar".equals(role)) {
-        credits.add(credit.path("first").getTextValue() + " "
-            + credit.path("last").getTextValue());
+        credits.add(credit.path("first").asText() + " "
+            + credit.path("last").asText());
       }
     }
     TextView creditsView = (TextView) findViewById(R.id.content_credits);
@@ -410,15 +409,15 @@ public class Explore extends ExploreCommon {
   private Boolean isRecordingPartial() {
     final Date actualStart =
         Utils.parseDateTimeStr(mRecording.path("actualStartTime")
-            .getTextValue());
+            .asText());
     final Date scheduledStart =
         Utils.parseDateTimeStr(mRecording.path("scheduledStartTime")
-            .getTextValue());
+            .asText());
     final Date actualEnd =
-        Utils.parseDateTimeStr(mRecording.path("actualEndTime").getTextValue());
+        Utils.parseDateTimeStr(mRecording.path("actualEndTime").asText());
     final Date scheduledEnd =
         Utils.parseDateTimeStr(mRecording.path("scheduledEndTime")
-            .getTextValue());
+            .asText());
     return actualStart.getTime() - scheduledStart.getTime() >= 30000
         || scheduledEnd.getTime() - actualEnd.getTime() >= 30000;
   }

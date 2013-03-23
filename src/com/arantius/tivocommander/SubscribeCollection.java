@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.codehaus.jackson.JsonNode;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.SimpleAdapter;
@@ -24,6 +22,7 @@ import com.arantius.tivocommander.rpc.request.Subscribe;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.arantius.tivocommander.views.LinearListView;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class SubscribeCollection extends SubscribeBase {
   private final static String[] mMaxLabels =
@@ -52,8 +51,8 @@ public class SubscribeCollection extends SubscribeBase {
             JsonNode channel = offer.path("example").path("channel");
             mChannelNodes.add(channel);
             mChannelNames[i++] =
-                channel.path("channelNumber").getTextValue() + " "
-                    + channel.path("callSign").getTextValue();
+                channel.path("channelNumber").asText() + " "
+                    + channel.path("callSign").asText();
           }
           if (i == 0) {
             Toast.makeText(getApplicationContext(),
@@ -78,11 +77,11 @@ public class SubscribeCollection extends SubscribeBase {
           if (mSubscription != null) {
             String thatChannelId =
                 mSubscription.path("idSetSource").path("channel")
-                    .path("stationId").getTextValue();
+                    .path("stationId").asText();
             i = 0;
             for (JsonNode offer : offers) {
               if (thatChannelId.equals(offer.path("example").path("channel")
-                  .path("stationId").getTextValue())) {
+                  .path("stationId").asText())) {
                 // Set spinner so it will save properly, then hide.
                 Spinner s = ((Spinner) findViewById(R.id.channel));
                 s.setSelection(i);
@@ -97,15 +96,15 @@ public class SubscribeCollection extends SubscribeBase {
             }
 
             setSpinner(R.id.record_which, mWhichValues,
-                mSubscription.path("showStatus").getTextValue());
+                mSubscription.path("showStatus").asText());
             setSpinner(R.id.record_max, mMaxValues,
-                mSubscription.path("maxRecordings").getIntValue());
+                mSubscription.path("maxRecordings").asInt());
             setSpinner(R.id.until, mUntilValues,
-                mSubscription.path("keepBehavior").getTextValue());
+                mSubscription.path("keepBehavior").asText());
             setSpinner(R.id.start, mStartStopValues,
-                mSubscription.path("startTimePadding").getIntValue());
+                mSubscription.path("startTimePadding").asInt());
             setSpinner(R.id.stop, mStartStopValues,
-                mSubscription.path("endTimePadding").getIntValue());
+                mSubscription.path("endTimePadding").asInt());
           }
         }
       };
@@ -119,13 +118,13 @@ public class SubscribeCollection extends SubscribeBase {
       String prefix, boolean fullDate, String titleField) {
     HashMap<String, String> listItem = new HashMap<String, String>();
     listItem
-        .put(prefix + "show_name", conflict.path(titleField).getTextValue());
+        .put(prefix + "show_name", conflict.path(titleField).asText());
     listItem.put(prefix + "channel",
-        conflict.path("channel").path("channelNumber").getTextValue() + " "
-            + conflict.path("channel").path("callSign").getTextValue());
+        conflict.path("channel").path("channelNumber").asText() + " "
+            + conflict.path("channel").path("callSign").asText());
 
     Date startTime =
-        Utils.parseDateTimeStr(conflict.path("startTime").getTextValue());
+        Utils.parseDateTimeStr(conflict.path("startTime").asText());
     SimpleDateFormat dateFormatter1 =
         new SimpleDateFormat(fullDate ? "MMM dd h:mm - " : "h:mm - ",
             Locale.US);
@@ -133,7 +132,7 @@ public class SubscribeCollection extends SubscribeBase {
     String showTime = dateFormatter1.format(startTime);
     Calendar endTime = Calendar.getInstance();
     endTime.setTime(startTime);
-    endTime.add(Calendar.SECOND, conflict.path("duration").getIntValue());
+    endTime.add(Calendar.SECOND, conflict.path("duration").asInt());
     SimpleDateFormat dateFormatter2 = new SimpleDateFormat("h:mm a", Locale.US);
     dateFormatter2.setTimeZone(TimeZone.getDefault());
     showTime += dateFormatter2.format(endTime.getTime());

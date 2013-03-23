@@ -21,9 +21,6 @@ package com.arantius.tivocommander;
 
 import java.util.ArrayList;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -46,6 +43,8 @@ import com.arantius.tivocommander.rpc.request.RecordingSearch;
 import com.arantius.tivocommander.rpc.request.UiNavigate;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class MyShows extends ShowList {
   private MindRpcResponseListener mBodyConfigCallback =
@@ -130,7 +129,7 @@ public class MyShows extends ShowList {
 
   protected int getIconForItem(JsonNode item) {
     String folderTransportType =
-        item.path("folderTransportType").path(0).getTextValue();
+        item.path("folderTransportType").path(0).asText();
     if ("mrv".equals(folderTransportType)) {
       return R.drawable.folder_downloading;
     } else if ("stream".equals(folderTransportType)) {
@@ -140,7 +139,7 @@ public class MyShows extends ShowList {
     }
 
     if (item.has("folderItemCount")) {
-      if ("wishlist".equals(item.path("folderType").getTextValue())) {
+      if ("wishlist".equals(item.path("folderType").asText())) {
         return R.drawable.folder_wishlist;
       } else {
         return R.drawable.folder;
@@ -148,7 +147,7 @@ public class MyShows extends ShowList {
     }
 
     if (item.has("recordingStatusType")) {
-      String recordingStatus = item.path("recordingStatusType").getTextValue();
+      String recordingStatus = item.path("recordingStatusType").asText();
       if ("expired".equals(recordingStatus)) {
         return R.drawable.recording_expired;
       } else if ("expiresSoon".equals(recordingStatus)) {
@@ -167,7 +166,7 @@ public class MyShows extends ShowList {
     }
 
     if ("recording".equals(item.path("recordingForChildRecordingId")
-        .path("type").getTextValue())) {
+        .path("type").asText())) {
       return R.drawable.recording;
     }
 
@@ -308,7 +307,7 @@ public class MyShows extends ShowList {
             ArrayList<Integer> slotMap =
                 mRequestSlotMap.get(response.getRpcId());
 
-            MindRpc.saveBodyId(items.path(0).path("bodyId").getTextValue());
+            MindRpc.saveBodyId(items.path(0).path("bodyId").asText());
 
             for (int i = 0; i < items.size(); i++) {
               int pos = slotMap.get(i);
@@ -326,7 +325,7 @@ public class MyShows extends ShowList {
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             JsonNode body = response.getBody();
-            if ("error".equals(body.path("status").getTextValue())
+            if ("error".equals(body.path("status").asText())
                 || !body.has("objectIdAndType")) {
               Utils.log("Handling mIdSequenceCallback error response by "
                   + "finishWithRefresh()");

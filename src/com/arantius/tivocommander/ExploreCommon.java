@@ -19,8 +19,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
-import org.codehaus.jackson.JsonNode;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -32,6 +30,7 @@ import com.arantius.tivocommander.rpc.request.MindRpcRequest;
 import com.arantius.tivocommander.rpc.request.RecordingSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
+import com.fasterxml.jackson.databind.JsonNode;
 
 abstract public class ExploreCommon extends Activity {
   private final MindRpcResponseListener mListener =

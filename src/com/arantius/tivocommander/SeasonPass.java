@@ -21,8 +21,6 @@ package com.arantius.tivocommander;
 
 import java.util.ArrayList;
 
-import org.codehaus.jackson.JsonNode;
-
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
@@ -55,6 +53,7 @@ import com.arantius.tivocommander.rpc.request.SubscriptionsReprioritize;
 import com.arantius.tivocommander.rpc.request.Unsubscribe;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.mobeta.android.dslv.DragSortListView;
 
 // TODO: This copies a lot from ShowList; be DRY?

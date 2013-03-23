@@ -25,8 +25,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.codehaus.jackson.JsonNode;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -45,6 +43,7 @@ import com.arantius.tivocommander.rpc.request.WhatsOnSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.arantius.tivocommander.views.TivoScrubBar;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class NowShowing extends Activity {
   private enum ContentType {
@@ -65,7 +64,7 @@ public class NowShowing extends Activity {
         public void onResponse(MindRpcResponse response) {
           final JsonNode bodyConfig =
               response.getBody().path("bodyConfig").path(0);
-          MindRpc.saveBodyId(bodyConfig.path("bodyId").getTextValue());
+          MindRpc.saveBodyId(bodyConfig.path("bodyId").asText());
           int gmtOffsetSeconds = bodyConfig.path("secondsFromGmt").asInt();
           mGmtOffsetMillis = gmtOffsetSeconds * 1000;
           rpcComplete();

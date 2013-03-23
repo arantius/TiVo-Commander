@@ -363,7 +363,7 @@ public enum MindRpc {
 
     MindRpcResponseListener authListener = new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
-        if ("failure".equals(response.getBody().path("status").getTextValue())) {
+        if ("failure".equals(response.getBody().path("status").asText())) {
           settingsError(connectActivity, R.string.error_auth);
           connectActivity.finish();
         } else {

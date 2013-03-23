@@ -21,9 +21,8 @@ package com.arantius.tivocommander.rpc.request;
 
 import java.util.ArrayList;
 
-import org.codehaus.jackson.JsonNode;
-
 import com.arantius.tivocommander.rpc.MindRpc;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class TodoRecordingSearch extends MindRpcRequest {
   public TodoRecordingSearch(ArrayList<JsonNode> showIds, String orderBy) {

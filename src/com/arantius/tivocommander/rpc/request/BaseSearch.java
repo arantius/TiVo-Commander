@@ -19,9 +19,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander.rpc.request;
 
-import org.codehaus.jackson.JsonNode;
-
 import com.arantius.tivocommander.rpc.MindRpc;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class BaseSearch extends MindRpcRequest {
   public BaseSearch(String collectionId, String contentId) {

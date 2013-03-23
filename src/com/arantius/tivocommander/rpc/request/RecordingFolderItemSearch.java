@@ -21,10 +21,9 @@ package com.arantius.tivocommander.rpc.request;
 
 import java.util.ArrayList;
 
-import org.codehaus.jackson.JsonNode;
-
 import com.arantius.tivocommander.Utils;
 import com.arantius.tivocommander.rpc.MindRpc;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class RecordingFolderItemSearch extends MindRpcRequest {
   private static final JsonNode mResponseTemplate =

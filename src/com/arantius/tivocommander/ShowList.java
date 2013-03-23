@@ -24,9 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -58,6 +55,8 @@ import com.arantius.tivocommander.rpc.request.TodoRecordingSearch;
 import com.arantius.tivocommander.rpc.request.UiNavigate;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public abstract class ShowList extends ListActivity implements
     OnItemLongClickListener, DialogInterface.OnClickListener {
@@ -130,7 +129,7 @@ public abstract class ShowList extends ListActivity implements
         ((TextView) v.findViewById(R.id.show_title)).setText(
             Utils.stripQuotes(item.path("title").asText()));
 
-        Integer folderItemCount = item.path("folderItemCount").getIntValue();
+        Integer folderItemCount = item.path("folderItemCount").asInt();
         ((TextView) v.findViewById(R.id.folder_num))
             .setText(folderItemCount > 0 ? folderItemCount.toString() : "");
 
@@ -139,14 +138,14 @@ public abstract class ShowList extends ListActivity implements
         if (folderItemCount == 0 && !channel.isMissingNode()) {
           channelStr =
               String.format("%s %s", channel.path("channelNumber")
-                  .getTextValue(), channel.path("callSign").getTextValue());
+                  .asText(), channel.path("callSign").asText());
         }
         ((TextView) v.findViewById(R.id.show_channel)).setText(channelStr);
 
-        String startTimeStr = item.path("startTime").getTextValue();
+        String startTimeStr = item.path("startTime").asText();
         if (startTimeStr == null) {
           // Rarely the time is only on the recording, not the item.
-          startTimeStr = recording.path("startTime").getTextValue();
+          startTimeStr = recording.path("startTime").asText();
         }
 
         if (startTimeStr == null || "1970".equals(startTimeStr.substring(0, 4))) {
@@ -225,17 +224,17 @@ public abstract class ShowList extends ListActivity implements
 
             Intent intent = new Intent(ShowList.this, ExploreTabs.class);
             intent.putExtra("contentId", recording.path("contentId")
-                .getTextValue());
+                .asText());
             intent.putExtra("collectionId", recording.path("collectionId")
-                .getTextValue());
+                .asText());
 
             // Regular / deleted recordings IDs are differently located.
             if (item.has("childRecordingId")) {
               intent.putExtra("recordingId", item.path("childRecordingId")
-                  .getTextValue());
+                  .asText());
             } else if (item.has("recordingId")) {
               intent.putExtra("recordingId", item.path("recordingId")
-                  .getTextValue());
+                  .asText());
             }
 
             startActivityForResult(intent, EXPECT_REFRESH_INTENT_ID);

@@ -29,13 +29,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
@@ -49,6 +42,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class Utils {
   private static final String LOG_TAG = "tivo_commander";
@@ -110,12 +110,10 @@ public class Utils {
     int biggestSize = 0;
     int size = 0;
     for (JsonNode image : node.path("image")) {
-      size =
-          image.path("width").getIntValue()
-              * image.path("height").getIntValue();
+      size = image.path("width").asInt() * image.path("height").asInt();
       if (size > biggestSize) {
         biggestSize = size;
-        url = image.path("imageUrl").getTextValue();
+        url = image.path("imageUrl").asText();
       }
     }
     return url;

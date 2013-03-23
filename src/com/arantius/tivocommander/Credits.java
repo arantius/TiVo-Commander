@@ -19,8 +19,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
-import org.codehaus.jackson.JsonNode;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -37,6 +35,7 @@ import android.widget.TextView;
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.BaseSearch;
 import com.arantius.tivocommander.rpc.request.CreditsSearch;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class Credits extends ExploreCommon {
   private class CreditsAdapter extends ArrayAdapter<JsonNode> {
@@ -81,14 +80,14 @@ public class Credits extends ExploreCommon {
       }
 
       ((TextView) v.findViewById(R.id.person_name)).setText(item.path("first")
-          .getTextValue() + " " + item.path("last").getTextValue());
+          .asText() + " " + item.path("last").asText());
       if (item.has("characterName")) {
         ((TextView) v.findViewById(R.id.person_char)).setText("\""
-            + item.path("characterName").getTextValue() + "\"");
+            + item.path("characterName").asText() + "\"");
       } else {
         v.findViewById(R.id.person_char).setVisibility(View.GONE);
       }
-      String role = Utils.ucFirst(item.path("role").getTextValue());
+      String role = Utils.ucFirst(item.path("role").asText());
       role = role.replaceAll("(?=[A-Z])", " ").trim();
       ((TextView) v.findViewById(R.id.person_role)).setText(role);
 
@@ -104,9 +103,9 @@ public class Credits extends ExploreCommon {
             View view, int position, long id) {
           JsonNode person = mCredits.path(position);
           Intent intent = new Intent(getBaseContext(), Person.class);
-          intent.putExtra("personId", person.path("personId").getTextValue());
-          intent.putExtra("fName", person.path("first").getTextValue());
-          intent.putExtra("lName", person.path("last").getTextValue());
+          intent.putExtra("personId", person.path("personId").asText());
+          intent.putExtra("fName", person.path("first").asText());
+          intent.putExtra("lName", person.path("last").asText());
           startActivity(intent);
         }
       };

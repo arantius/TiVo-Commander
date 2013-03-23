@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.codehaus.jackson.JsonNode;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -44,6 +42,7 @@ import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.UpcomingSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class Upcoming extends ListActivity {
   private class DateInPast extends Throwable {
@@ -61,10 +60,10 @@ public class Upcoming extends ListActivity {
               mShows.path(((Integer) listItem.get("index")).intValue());
 
           Intent intent = new Intent(Upcoming.this, ExploreTabs.class);
-          intent.putExtra("contentId", show.path("contentId").getTextValue());
+          intent.putExtra("contentId", show.path("contentId").asText());
           intent.putExtra("collectionId", show.path("collectionId")
-              .getTextValue());
-          intent.putExtra("offerId", show.path("offerId").getTextValue());
+              .asText());
+          intent.putExtra("offerId", show.path("offerId").asText());
           startActivity(intent);
         }
       };
@@ -86,19 +85,19 @@ public class Upcoming extends ListActivity {
               HashMap<String, Object> listItem = new HashMap<String, Object>();
 
               String channelNum =
-                  item.path("channel").path("channelNumber").getTextValue();
+                  item.path("channel").path("channelNumber").asText();
               String callSign =
-                  item.path("channel").path("callSign").getTextValue();
+                  item.path("channel").path("callSign").asText();
               String details =
                   String.format("%s  %s %s", formatTime(item), channelNum,
                       callSign);
-              if (item.path("episodic").getBooleanValue()
-                  && item.path("episodeNum").path(0).getIntValue() > 0
-                  && item.path("seasonNumber").getIntValue() > 0) {
+              if (item.path("episodic").asBoolean()
+                  && item.path("episodeNum").path(0).asInt() > 0
+                  && item.path("seasonNumber").asInt() > 0) {
                 details =
                     String.format("(Sea %d Ep %d)  ", item.path("seasonNumber")
-                        .getIntValue(), item.path("episodeNum").path(0)
-                        .getIntValue())
+                        .asInt(), item.path("episodeNum").path(0)
+                        .asInt())
                         + details;
               }
               listItem.put("icon", R.drawable.blank);
@@ -107,8 +106,8 @@ public class Upcoming extends ListActivity {
               }
               listItem.put("details", details);
               listItem.put("title", item.has("subtitle") ? item
-                  .path("subtitle").getTextValue() : item.path("title")
-                  .getTextValue());
+                  .path("subtitle").asText() : item.path("title")
+                  .asText());
               listItem.put("index", Integer.valueOf(i));
               listItems.add(listItem);
             } catch (DateInPast e) {
@@ -129,7 +128,7 @@ public class Upcoming extends ListActivity {
   protected JsonNode mShows;
 
   protected String formatTime(JsonNode item) throws DateInPast {
-    String timeIn = item.path("startTime").getTextValue();
+    String timeIn = item.path("startTime").asText();
     if (timeIn == null) {
       return null;
     }

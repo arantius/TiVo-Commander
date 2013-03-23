@@ -21,9 +21,6 @@ package com.arantius.tivocommander;
 
 import java.util.ArrayList;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,6 +32,8 @@ import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.TodoSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class ToDo extends ShowList {
   protected int getIconForItem(JsonNode item) {

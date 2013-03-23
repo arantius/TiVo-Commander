@@ -19,8 +19,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
-import org.codehaus.jackson.JsonNode;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +38,7 @@ import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.SuggestionsSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class Suggestions extends Activity {
   private class ShowAdapter extends ArrayAdapter<JsonNode> {
@@ -82,7 +81,7 @@ public class Suggestions extends Activity {
       }
 
       ((TextView) v.findViewById(R.id.show_name)).setText(item.path("title")
-          .getTextValue());
+          .asText());
 
       return v;
     }
@@ -93,7 +92,7 @@ public class Suggestions extends Activity {
         public void onItemClick(android.widget.AdapterView<?> parent,
             View view, int position, long id) {
           String collectionId =
-              mShows.path(position).path("collectionId").getTextValue();
+              mShows.path(position).path("collectionId").asText();
           Intent intent = new Intent(getBaseContext(), ExploreTabs.class);
           intent.putExtra("collectionId", collectionId);
           startActivity(intent);
