@@ -175,6 +175,8 @@ public class SeasonPass extends ListActivity implements
   protected final ArrayList<JsonNode> mSubscriptionData =
       new ArrayList<JsonNode>();
   protected ArrayList<String> mSubscriptionIds;
+  protected ArrayList<String> mSubscriptionIdsBeforeReorder =
+      new ArrayList<String>();
   protected final ArrayList<SubscriptionStatus> mSubscriptionStatus =
       new ArrayList<SubscriptionStatus>();
 
@@ -350,31 +352,47 @@ public class SeasonPass extends ListActivity implements
   public void reorderApply(View unusedView) {
     Utils.log("SeasonPass::reorderApply() " + Boolean.toString(mInReorderMode));
 
-    final ProgressDialog d = new ProgressDialog(this);
-    d.setIndeterminate(true);
-    d.setTitle("Saving ...");
-    d.setMessage("Saving new season pass order.  "
-        + "Patience please, this takes a while.");
-    d.setCancelable(false);
-    d.show();
-
+    boolean noChange = true;
     ArrayList<String> subIds = new ArrayList<String>();
-    for (JsonNode sub : mSubscriptionData) {
-      subIds.add(sub.path("subscriptionId").asText());
-    }
-    SubscriptionsReprioritize req = new SubscriptionsReprioritize(subIds);
-    MindRpc.addRequest(req, new MindRpcResponseListener() {
-      public void onResponse(MindRpcResponse response) {
-        d.dismiss();
-
-        // Flip the buttons.
-        findViewById(R.id.reorder_enable).setVisibility(View.VISIBLE);
-        findViewById(R.id.reorder_apply).setVisibility(View.GONE);
-        // Turn off the drag handles.
-        mInReorderMode = false;
-        mListAdapter.notifyDataSetChanged();
+    for (int i = 0; i < mSubscriptionIds.size(); i++) {
+      if (mSubscriptionIds.get(i) != mSubscriptionIdsBeforeReorder.get(i)) {
+        noChange = false;
       }
-    });
+      subIds.add(mSubscriptionData.get(i).path("subscriptionId").asText());
+    }
+
+    final ProgressDialog d = new ProgressDialog(this);
+    final MindRpcResponseListener onReorderComplete =
+        new MindRpcResponseListener() {
+          public void onResponse(MindRpcResponse response) {
+            if (d.isShowing()) {
+              d.dismiss();
+            }
+
+            // Flip the buttons.
+            findViewById(R.id.reorder_enable).setVisibility(View.VISIBLE);
+            findViewById(R.id.reorder_apply).setVisibility(View.GONE);
+            // Turn off the drag handles.
+            mInReorderMode = false;
+            mListAdapter.notifyDataSetChanged();
+          }
+        };
+
+    if (noChange) {
+      // If there was no change, switch the UI back immediately.
+      onReorderComplete.onResponse(null);
+    } else {
+      // Otherwise show a dialog while we do the RPC.
+      d.setIndeterminate(true);
+      d.setTitle("Saving ...");
+      d.setMessage("Saving new season pass order.  "
+          + "Patience please, this takes a while.");
+      d.setCancelable(false);
+      d.show();
+
+      SubscriptionsReprioritize req = new SubscriptionsReprioritize(subIds);
+      MindRpc.addRequest(req, onReorderComplete);
+    }
   }
 
   public void reorderEnable(View unusedView) {
@@ -403,6 +421,9 @@ public class SeasonPass extends ListActivity implements
             }
             d.dismiss();
 
+            // Save the state before ordering.
+            mSubscriptionIdsBeforeReorder.clear();
+            mSubscriptionIdsBeforeReorder.addAll(mSubscriptionIds);
             // Flip the buttons.
             findViewById(R.id.reorder_enable).setVisibility(View.GONE);
             findViewById(R.id.reorder_apply).setVisibility(View.VISIBLE);
@@ -413,7 +434,7 @@ public class SeasonPass extends ListActivity implements
         };
 
     if (subscriptionIds.size() == 0) {
-      // No subscriptions need loading?  Proceed immediately.
+      // No subscriptions need loading? Proceed immediately.
       onAllPassesLoaded.onResponse(null);
     } else {
       // Otherwise, show dialog and start loading.
