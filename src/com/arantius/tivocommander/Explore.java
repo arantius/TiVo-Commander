@@ -99,7 +99,12 @@ public class Explore extends ExploreCommon {
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
           mSubscription = response.getBody().path("subscription").path(0);
-          mSubscriptionId = mSubscription.path("subscriptionId").asText();
+          if (mSubscription.isMissingNode()) {
+            mSubscription = null;
+            mSubscriptionId = null;
+          } else {
+            mSubscriptionId = mSubscription.path("subscriptionId").asText();
+          }
           finishRequest();
         }
       };
@@ -120,9 +125,8 @@ public class Explore extends ExploreCommon {
       newState = "complete";
     }
     // (Un-)Delete the recording ...
-    MindRpc.addRequest(new RecordingUpdate(mRecordingId, newState),
-        mDeleteListener
-        );
+    final RecordingUpdate req = new RecordingUpdate(mRecordingId, newState);
+    MindRpc.addRequest(req, mDeleteListener);
   }
 
   public void doRecord(View v) {
@@ -238,7 +242,7 @@ public class Explore extends ExploreCommon {
       mChoices.add(RecordActions.SP_MODIFY.toString());
       mChoices.add(RecordActions.SP_CANCEL.toString());
     } else if (mCollectionId != null
-        && !"movie".equals(mRecording.path("collectionType").asText())) {
+        && !"movie".equals(mContent.path("collectionType").asText())) {
       mChoices.add(RecordActions.SP_ADD.toString());
     }
 
