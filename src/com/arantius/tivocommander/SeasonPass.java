@@ -381,13 +381,6 @@ public class SeasonPass extends ListActivity implements
     Utils
         .log("SeasonPass::reorderEnable() " + Boolean.toString(mInReorderMode));
 
-    final ProgressDialog d = new ProgressDialog(this);
-    d.setIndeterminate(true);
-    d.setTitle("Preparing ...");
-    d.setMessage("Loading all season pass data.");
-    d.setCancelable(false);
-    d.show();
-
     final ArrayList<String> subscriptionIds = new ArrayList<String>();
     final ArrayList<Integer> slots = new ArrayList<Integer>();
     int i = 0;
@@ -400,20 +393,39 @@ public class SeasonPass extends ListActivity implements
       }
       i++;
     }
-    SubscriptionSearch req = new SubscriptionSearch(subscriptionIds);
-    mRequestSlotMap.put(req.getRpcId(), slots);
-    MindRpc.addRequest(req, new MindRpcResponseListener() {
-      public void onResponse(MindRpcResponse response) {
-        mDetailCallback.onResponse(response);
-        d.dismiss();
 
-        // Flip the buttons.
-        findViewById(R.id.reorder_enable).setVisibility(View.GONE);
-        findViewById(R.id.reorder_apply).setVisibility(View.VISIBLE);
-        // Show the drag handles.
-        mInReorderMode = true;
-        mListAdapter.notifyDataSetChanged();
-      }
-    });
+    final ProgressDialog d = new ProgressDialog(this);
+    final MindRpcResponseListener onAllPassesLoaded =
+        new MindRpcResponseListener() {
+          public void onResponse(MindRpcResponse response) {
+            if (response != null) {
+              mDetailCallback.onResponse(response);
+            }
+            d.dismiss();
+
+            // Flip the buttons.
+            findViewById(R.id.reorder_enable).setVisibility(View.GONE);
+            findViewById(R.id.reorder_apply).setVisibility(View.VISIBLE);
+            // Show the drag handles.
+            mInReorderMode = true;
+            mListAdapter.notifyDataSetChanged();
+          }
+        };
+
+    if (subscriptionIds.size() == 0) {
+      // No subscriptions need loading?  Proceed immediately.
+      onAllPassesLoaded.onResponse(null);
+    } else {
+      // Otherwise, show dialog and start loading.
+      d.setIndeterminate(true);
+      d.setTitle("Preparing ...");
+      d.setMessage("Loading all season pass data.");
+      d.setCancelable(false);
+      d.show();
+
+      final SubscriptionSearch req = new SubscriptionSearch(subscriptionIds);
+      mRequestSlotMap.put(req.getRpcId(), slots);
+      MindRpc.addRequest(req, onAllPassesLoaded);
+    }
   }
 }
