@@ -47,4 +47,5 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <string name="sub_single_offer">This show will be recorded.</string>
   <string name="sub_wishlist">You have a Wishlist.</string>
   <string name="sub_recording">This is recording now.</string>
+  <string name="undelete">Undelete</string>
 </resources>

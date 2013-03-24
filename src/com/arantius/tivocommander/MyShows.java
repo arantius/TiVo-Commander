@@ -195,17 +195,22 @@ public class MyShows extends ShowList {
     } else {
       // For individual recordings.
       JsonNode recording = item.path("recordingForChildRecordingId");
-      choices.add(getResources().getString(R.string.watch_now));
-      actions.add(R.string.watch_now);
-      if ("inProgress" == recording.path("state").asText()) {
-        choices.add(getResources().getString(R.string.stop_recording));
-        actions.add(R.string.stop_recording);
-        choices.add(getResources()
-            .getString(R.string.stop_recording_and_delete));
-        actions.add(R.string.stop_recording_and_delete);
+      if ("deleted".equals(mFolderId)) {
+        choices.add(getResources().getString(R.string.undelete));
+        actions.add(R.string.undelete);
       } else {
-        choices.add(getResources().getString(R.string.delete));
-        actions.add(R.string.delete);
+        choices.add(getResources().getString(R.string.watch_now));
+        actions.add(R.string.watch_now);
+        if ("inProgress" == recording.path("state").asText()) {
+          choices.add(getResources().getString(R.string.stop_recording));
+          actions.add(R.string.stop_recording);
+          choices.add(getResources()
+              .getString(R.string.stop_recording_and_delete));
+          actions.add(R.string.stop_recording_and_delete);
+        } else {
+          choices.add(getResources().getString(R.string.delete));
+          actions.add(R.string.delete);
+        }
       }
     }
 

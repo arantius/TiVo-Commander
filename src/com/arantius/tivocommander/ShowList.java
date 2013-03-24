@@ -303,6 +303,7 @@ public abstract class ShowList extends ListActivity implements
       req = new RecordingUpdate(recordingId, "cancelled");
       break;
     case R.string.stop_recording:
+    case R.string.undelete:
       req = new RecordingUpdate(recordingId, "complete");
       break;
     case R.string.watch_now:
