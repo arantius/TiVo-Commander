@@ -143,12 +143,13 @@ public abstract class ShowList extends ListActivity implements
         ((TextView) v.findViewById(R.id.show_channel)).setText(channelStr);
 
         String startTimeStr = item.path("startTime").asText();
-        if (startTimeStr == null) {
+        if ("".equals(startTimeStr)) {
           // Rarely the time is only on the recording, not the item.
           startTimeStr = recording.path("startTime").asText();
         }
 
-        if (startTimeStr == null || "1970".equals(startTimeStr.substring(0, 4))) {
+        if ("".equals(startTimeStr)
+            || "1970".equals(startTimeStr.substring(0, 4))) {
           v.findViewById(R.id.show_time).setVisibility(View.GONE);
         } else {
           Date startTime =
