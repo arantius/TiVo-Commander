@@ -121,7 +121,7 @@ public class Search extends ListActivity {
     protected Void doInBackground(String... params) {
       // Give the user time to type more.
       try {
-        Thread.sleep(250);
+        Thread.sleep(333);
       } catch (InterruptedException e) {
         // No-op.
       }
