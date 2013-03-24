@@ -104,6 +104,13 @@ public class Explore extends ExploreCommon {
             mSubscriptionId = null;
           } else {
             mSubscriptionId = mSubscription.path("subscriptionId").asText();
+            final String subType =
+                mSubscription.path("idSetSource").path("type").asText();
+            if ("seasonPassSource".equals(subType)) {
+              mSubscriptionType = SubscriptionType.SEASON_PASS;
+            } else if ("wishListSource".equals(subType)) {
+              mSubscriptionType = SubscriptionType.WISHLIST;
+            }
           }
           finishRequest();
         }
