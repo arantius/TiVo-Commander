@@ -268,7 +268,7 @@ public class Explore extends ExploreCommon {
     String subtitle = mContent.path("subtitle").asText();
     ((TextView) findViewById(R.id.content_title)).setText(title);
     TextView subtitleView = ((TextView) findViewById(R.id.content_subtitle));
-    if (subtitle == null) {
+    if ("".equals(subtitle)) {
       subtitleView.setVisibility(View.GONE);
     } else {
       subtitleView.setText(subtitle);
