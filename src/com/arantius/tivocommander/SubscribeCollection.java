@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.SimpleAdapter;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.arantius.tivocommander.rpc.MindRpc;
 import com.arantius.tivocommander.rpc.request.OfferSearch;
 import com.arantius.tivocommander.rpc.request.Subscribe;
+import com.arantius.tivocommander.rpc.request.SubscriptionSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.arantius.tivocommander.views.LinearListView;
@@ -39,15 +41,23 @@ public class SubscribeCollection extends SubscribeBase {
   private JsonNode mChannel;
   private String[] mChannelNames;
   private final ArrayList<JsonNode> mChannelNodes = new ArrayList<JsonNode>();
+  private JsonNode mOffers;
+  private int mRequestCount = 0;
+  private String mCollectionId;
+  private int mMax;
+  private int mPriority = 0;
+  private JsonNode mSubscription = null;
+  private String mWhich;
+
   private final MindRpcResponseListener mChannelsListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          JsonNode offers = response.getBody().path("offerGroup");
+          mOffers = response.getBody().path("offerGroup");
           mChannelNodes.clear();
-          mChannelNames = new String[offers.size()];
+          mChannelNames = new String[mOffers.size()];
 
           int i = 0;
-          for (JsonNode offer : offers) {
+          for (JsonNode offer : mOffers) {
             JsonNode channel = offer.path("example").path("channel");
             mChannelNodes.add(channel);
             mChannelNames[i++] =
@@ -62,63 +72,27 @@ public class SubscribeCollection extends SubscribeBase {
             return;
           }
 
-          setContentView(R.layout.subscribe_collection);
-          setUpSpinner(R.id.channel, mChannelNames);
-          setUpSpinner(R.id.record_which, mWhichLabels);
-          setUpSpinner(R.id.record_max, mMaxLabels);
-          setUpSpinner(R.id.until, mUntilLabels);
-          setUpSpinner(R.id.start, mStartLabels);
-          setUpSpinner(R.id.stop, mStopLabels);
-
-          // Set defaults.
-          ((Spinner) findViewById(R.id.record_max)).setSelection(4);
-
-          // If known, set values from existing subscription.
-          if (mSubscription != null) {
-            String thatChannelId =
-                mSubscription.path("idSetSource").path("channel")
-                    .path("stationId").asText();
-            i = 0;
-            for (JsonNode offer : offers) {
-              if (thatChannelId.equals(offer.path("example").path("channel")
-                  .path("stationId").asText())) {
-                // Set spinner so it will save properly, then hide.
-                Spinner s = ((Spinner) findViewById(R.id.channel));
-                s.setSelection(i);
-                s.setVisibility(View.GONE);
-                // Set text view to display immutable (?) channel.
-                TextView tv = ((TextView) findViewById(R.id.channel_text));
-                tv.setText(mChannelNames[i]);
-                tv.setVisibility(View.VISIBLE);
-                break;
-              }
-              i++;
-            }
-
-            setSpinner(R.id.record_which, mWhichValues,
-                mSubscription.path("showStatus").asText());
-            setSpinner(R.id.record_max, mMaxValues,
-                mSubscription.path("maxRecordings").asInt());
-            setSpinner(R.id.until, mUntilValues,
-                mSubscription.path("keepBehavior").asText());
-            setSpinner(R.id.start, mStartStopValues,
-                mSubscription.path("startTimePadding").asInt());
-            setSpinner(R.id.stop, mStartStopValues,
-                mSubscription.path("endTimePadding").asInt());
-          }
+          finishRequest();
         }
       };
-  private String mCollectionId;
-  private int mMax;
-  private int mPriority = 0;
-  private JsonNode mSubscription = null;
-  private String mWhich;
+
+  private final MindRpcResponseListener mSubscriptionListener =
+      new MindRpcResponseListener() {
+        public void onResponse(MindRpcResponse response) {
+          mSubscription = response.getBody().path("subscription").path(0);
+          finishRequest();
+        }
+      };
 
   private HashMap<String, String> conflictListItem(JsonNode conflict,
       String prefix, boolean fullDate, String titleField) {
     HashMap<String, String> listItem = new HashMap<String, String>();
+    String title = conflict.path(titleField).asText();
+    if ("".equals(title) && "subtitle".equals(titleField)) {
+      title = conflict.path("title").asText();
+    }
     listItem
-        .put(prefix + "show_name", conflict.path(titleField).asText());
+        .put(prefix + "show_name", title);
     listItem.put(prefix + "channel",
         conflict.path("channel").path("channelNumber").asText() + " "
             + conflict.path("channel").path("callSign").asText());
@@ -142,21 +116,44 @@ public class SubscribeCollection extends SubscribeBase {
   }
 
   private void doSubscribe(Boolean ignoreConflicts) {
-    Subscribe request = new Subscribe();
+    final Subscribe request = new Subscribe();
 
-    request.setCollection(mCollectionId, mChannel, mMax, mWhich);
-    request.setPriority(mPriority);
-    request.setIgnoreConflicts(ignoreConflicts);
+    final String subscriptionId = (mSubscription == null)
+        ? null : mSubscription.path("subscriptionId").textValue();
+
+    request.setCollection(mCollectionId, mChannel, mMax, mWhich, subscriptionId);
+    if (mSubscription != null && subscriptionId != null) {
+      request.setIgnoreConflicts(true);
+      request.setPriority(mSubscription.path("priority").asInt());
+    } else {
+      request.setIgnoreConflicts(ignoreConflicts);
+      request.setPriority(mPriority);
+    }
     subscribeRequestCommon(request);
 
-    // TODO: Use dialog for progress (to prevent double-button-presses).
-    setProgressBarIndeterminateVisibility(true);
+    final ProgressDialog d = new ProgressDialog(this);
+    d.setIndeterminate(true);
+    d.setTitle("Subscribing ...");
+    d.setMessage("Saving season pass.");
+    d.setCancelable(false);
+    d.show();
+
     MindRpc.addRequest(request, new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
-        if (response.getBody().has("conflicts")) {
+        if ("error".equals(response.getBody().path("type").asText())) {
+          Toast.makeText(
+              SubscribeCollection.this,
+              "Error making subscription: "
+                  + response.getBody().path("text").asText(),
+              Toast.LENGTH_SHORT).show();
+          d.dismiss();
+          finish();
+        } else if (response.getBody().has("conflicts")) {
+          d.dismiss();
           handleConflicts(response.getBody().path("conflicts"));
         } else if (response.getBody().has("subscription")) {
-          finish();
+            d.dismiss();
+            finish();
         } else {
           Utils.log("What kind of subscribe response is this??");
           Utils.log(Utils.stringifyToPrettyJson(response.getBody()));
@@ -174,16 +171,69 @@ public class SubscribeCollection extends SubscribeBase {
     // Conflict dialog. Either boost priority or, if we already did that, also
     // ignore conflicts.
     if (mPriority == 0) {
-      doSubscribe(true);
-    } else {
       mPriority++;
       doSubscribe(false);
+    } else {
+      doSubscribe(true);
     }
   }
 
   public void doSubscribeAsIs(View v) {
     // Conflict dialog, do a ignore-conflicts subscribe.
     doSubscribe(true);
+  }
+
+  protected void finishRequest() {
+    if (--mRequestCount > 0) {
+      return;
+    }
+
+    setContentView(R.layout.subscribe_collection);
+    setUpSpinner(R.id.channel, mChannelNames);
+    setUpSpinner(R.id.record_which, mWhichLabels);
+    setUpSpinner(R.id.record_max, mMaxLabels);
+    setUpSpinner(R.id.until, mUntilLabels);
+    setUpSpinner(R.id.start, mStartLabels);
+    setUpSpinner(R.id.stop, mStopLabels);
+
+    // Set defaults.
+    ((Spinner) findViewById(R.id.record_max)).setSelection(4);
+
+    // If known, set values from existing subscription.
+    if (mSubscription != null) {
+      final String thatChannelId =
+          mSubscription.path("idSetSource").path("channel")
+              .path("stationId").asText();
+      int i = 0;
+      for (JsonNode offer : mOffers) {
+        final String thisChannelId =
+            offer.path("example").path("channel")
+                .path("stationId").asText();
+        if (thatChannelId.equals(thisChannelId)) {
+          // Set spinner so it will save properly, then hide.
+          Spinner s = ((Spinner) findViewById(R.id.channel));
+          s.setSelection(i);
+          s.setVisibility(View.GONE);
+          // Set text view to display immutable (?) channel.
+          TextView tv = ((TextView) findViewById(R.id.channel_text));
+          tv.setText(mChannelNames[i]);
+          tv.setVisibility(View.VISIBLE);
+          break;
+        }
+        i++;
+      }
+
+      setSpinner(R.id.record_which, mWhichValues,
+          mSubscription.path("showStatus").asText());
+      setSpinner(R.id.record_max, mMaxValues,
+          mSubscription.path("maxRecordings").asInt());
+      setSpinner(R.id.until, mUntilValues,
+          mSubscription.path("keepBehavior").asText());
+      setSpinner(R.id.start, mStartStopValues,
+          mSubscription.path("startTimePadding").asInt());
+      setSpinner(R.id.stop, mStartStopValues,
+          mSubscription.path("endTimePadding").asInt());
+    }
   }
 
   @Override
@@ -243,9 +293,6 @@ public class SubscribeCollection extends SubscribeBase {
           "Overlaps with: " + listItem.get("overlap_show_name"));
       willNotRecord.add(listItem);
     }
-    // TODO: This title/subtitle policy is not quite right.
-    // Sometimes, a third show is winning over the loser, because this
-    // one bumped the other two down.
     for (JsonNode conflict : conflicts.path("willCancel")) {
       HashMap<String, String> listItem =
           conflictListItem(conflict.path("losingOffer").path(0), "", true,
@@ -262,6 +309,8 @@ public class SubscribeCollection extends SubscribeBase {
             "overlap_show_time", "show_name", "show_time" }, new int[] {
             R.id.channel, R.id.overlap_show_name, R.id.overlap_show_time,
             R.id.show_name, R.id.show_time }));
+
+    // TODO: Will clip list.
   }
 
   @Override
@@ -273,15 +322,24 @@ public class SubscribeCollection extends SubscribeBase {
       return;
     }
 
+    setContentView(R.layout.progress);
+
     mCollectionId = bundle.getString("collectionId");
 
     OfferSearch request = new OfferSearch();
     request.setChannelsForCollection(mCollectionId);
+    mRequestCount++;
     MindRpc.addRequest(request, mChannelsListener);
 
     String subscriptionJson = bundle.getString("subscriptionJson");
     if (subscriptionJson != null) {
       mSubscription = Utils.parseJson(subscriptionJson);
+      mRequestCount++;
+      finishRequest();
+    } else {
+      mRequestCount++;
+      MindRpc.addRequest(new SubscriptionSearch(mCollectionId),
+          mSubscriptionListener);
     }
   }
 

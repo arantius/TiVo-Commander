@@ -14,11 +14,14 @@ public class Subscribe extends MindRpcRequest {
   }
 
   public void setCollection(String collectionId, JsonNode channel, int max,
-      String which) {
+      String which, String subscriptionId) {
     HashMap<String, Object> idSetSource = new HashMap<String, Object>();
     idSetSource.put("channel", channel);
     idSetSource.put("collectionId", collectionId);
     idSetSource.put("type", "seasonPassSource");
+    if (subscriptionId != null && !"".equals(subscriptionId)) {
+      mDataMap.put("subscriptionId", subscriptionId);
+    }
     mDataMap.put("idSetSource", idSetSource);
     mDataMap.put("maxRecordings", max);
     mDataMap.put("showStatus", which);
@@ -51,7 +54,7 @@ public class Subscribe extends MindRpcRequest {
 
   public void setPriority(Integer priority) {
     if (priority > 0) {
-      mDataMap.put("priority", 1);
+      mDataMap.put("priority", priority);
     }
   }
 }

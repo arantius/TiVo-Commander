@@ -119,8 +119,11 @@ public class SeasonPass extends ListActivity implements
         ((ImageView) v.findViewById(R.id.icon_until_deleted)).setVisibility(
             "forever".equals(item.path("keepBehavior").asText())
                 ? View.VISIBLE : View.GONE);
-        ((TextView) v.findViewById(R.id.keep_num)).setText(
-            item.path("maxRecordings").asText());
+        String keepNum =item.path("maxRecordings").asText();
+        if ("0".equals(keepNum)) {
+          keepNum = "all";
+        }
+        ((TextView) v.findViewById(R.id.keep_num)).setText(keepNum);
 
         final boolean newOnly =
             "firstRunOnly".equals(item.path("showStatus").asText());
