@@ -30,7 +30,7 @@ public class Help extends Activity {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    return Utils.onOptionsItemSelected(item, this);
+    return Utils.onOptionsItemSelected(item, this, true);
   }
 
   @Override

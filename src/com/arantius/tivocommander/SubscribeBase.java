@@ -2,6 +2,7 @@ package com.arantius.tivocommander;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -43,6 +44,12 @@ abstract public class SubscribeBase extends Activity {
     super.onCreate(savedInstanceState);
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    Utils.activateHomeButton(this);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    return Utils.onOptionsItemSelected(item, this, true);
   }
 
   protected void setUpSpinner(int spinnerId, String[] labels) {

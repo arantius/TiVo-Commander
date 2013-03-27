@@ -214,6 +214,16 @@ public class Utils {
 
   public final static boolean onOptionsItemSelected(MenuItem item,
       Activity srcActivity) {
+    return onOptionsItemSelected(item, srcActivity, false);
+  }
+
+  public final static boolean onOptionsItemSelected(MenuItem item,
+      Activity srcActivity, boolean homeIsBack) {
+    if (android.R.id.home == item.getItemId() && homeIsBack) {
+      srcActivity.finish();
+      return true;
+    }
+
     Class<? extends Activity> targetActivity =
         Utils.activityForMenuId(item.getItemId());
     if (targetActivity == null) {

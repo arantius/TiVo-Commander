@@ -30,6 +30,8 @@ import java.util.TimeZone;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -168,6 +170,16 @@ public class Upcoming extends ListActivity {
     }
 
     Utils.log(String.format("Upcoming: collectionId:%s", collectionId));
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    return Utils.onCreateOptionsMenu(menu, this);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    return Utils.onOptionsItemSelected(item, this, true);
   }
 
   @Override
