@@ -156,6 +156,10 @@ public class Utils {
     Log.i(LOG_TAG, message);
   }
 
+  public final static void logDebug(String message) {
+    Log.d(LOG_TAG, message);
+  }
+
   public final static void logError(String message) {
     Log.e(LOG_TAG, message);
   }

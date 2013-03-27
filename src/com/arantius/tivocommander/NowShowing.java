@@ -257,7 +257,7 @@ public class NowShowing extends Activity {
     // a minute) extend the scrub bar by half an hour.
     // TODO: Do these need to be whiles in case of big padding?
     if (range.activeMin < -30000) {
-      Utils.log(String.format(Locale.US,
+      Utils.logDebug(String.format(Locale.US,
           "Adjusting beginning back becase %d < 0", range.activeMin));
       range.absoluteBegin -= millisHalfHour;
       // Since min must be 0, actually shift everything else forward.
@@ -269,7 +269,7 @@ public class NowShowing extends Activity {
       range.activeMin = 0;
     }
     if (range.activeMax > range.max + 30000) {
-      Utils.log(String.format(Locale.US,
+      Utils.logDebug(String.format(Locale.US,
           "Adjusting end forward becase %d > %d", range.activeMax, range.max));
       range.absoluteEnd += millisHalfHour;
       range.max += millisHalfHour;
@@ -295,8 +295,6 @@ public class NowShowing extends Activity {
   }
 
   public void doExplore(View unused) {
-    Utils.log("NowShowing::doExplore()");
-
     Intent intent = new Intent(this, ExploreTabs.class);
     if (mCollectionId != null && !"".equals(mCollectionId)) {
       intent.putExtra("collectionId", mCollectionId);
