@@ -49,7 +49,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-  private final static long MAX_CACHE_SIZE = 2 * 1024 * 1024; // 2Mb
+  private final static long MAX_CACHE_SIZE = 8 * 1024 * 1024; // 8Mb
 
   private final Context mContext;
   private final ImageView mImageView;
