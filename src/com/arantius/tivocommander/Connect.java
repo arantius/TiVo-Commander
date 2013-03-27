@@ -30,8 +30,8 @@ import android.widget.Toast;
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public class Connect extends Activity {
-//  final private static Date BETA_EXPIRATION_TIME = new Date(113, 0, 1);
-  final private static Date BETA_EXPIRATION_TIME = null;
+  @SuppressWarnings("deprecation")
+  final private static Date BETA_EXPIRATION_TIME = new Date(113, 6, 1);
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
