@@ -75,7 +75,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
       <TextView
-        android:text="Ok, as a really last resort: From TiVo Central, go to > Settings &amp; messages > Settings > Network &amp; Phone.  Read the &quot;Ip addr&quot; there, and put it in via the custom settings button.  If THAT doesn't work, something's really wrong.  Drat."
+        android:text="Let's try one more thing: From TiVo Central, go to > Settings &amp; messages > Settings > Network &amp; Phone.  Read the &quot;Ip addr&quot; there, and put it in via the custom settings button.  If THAT doesn't work, something's really wrong.  Drat."
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginBottom="6dip" />
+      <TextView
+        android:text="Ok, as a really last resort: Install the official TiVo app.  If that doesn't work either, something's probably wrong on your end.  You can try calling TiVo for support of their official app.  Once theirs works, this one might too."
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="6dip" />
     </LinearLayout>
