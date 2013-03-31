@@ -314,6 +314,12 @@ public class SeasonPass extends ListActivity implements
 
   public boolean onItemLongClick(AdapterView<?> parent, View view,
       int position, long id) {
+    final JsonNode sub = mSubscriptionData.get(position);
+    final String subType = sub.path("idSetSource").path("type").asText();
+    if ("wishListSource".equals(subType)) {
+      return false;
+    }
+
     mLongClickPosition = position;
 
     final ArrayList<String> choices = new ArrayList<String>();
