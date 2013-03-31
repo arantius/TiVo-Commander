@@ -22,45 +22,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   android:layout_width="match_parent" android:layout_height="match_parent"
   android:padding="6dp" android:baselineAligned="false"
 >
-  <ViewFlipper android:id="@+id/now_showing_detail_flipper"
-    android:layout_width="fill_parent" android:layout_height="fill_parent"
-    android:layout_weight="5"
+  <ScrollView
+    android:fillViewport="true" android:layout_weight="10"
+    android:layout_width="0dp" android:layout_height="wrap_content"
   >
-    <ScrollView android:fillViewport="true"
-      android:layout_width="fill_parent" android:layout_height="fill_parent"
-    >
-      <LinearLayout android:layout_width="fill_parent"
-          android:layout_height="wrap_content" android:orientation="vertical"
-      >
-        <TextView android:id="@+id/content_title"
-          android:layout_width="wrap_content" android:layout_height="wrap_content"
-          android:textAppearance="?android:attr/textAppearanceLarge"
-          android:textColor="#FF9500" android:text="Title"
-          android:clickable="true" android:onClick="doExplore" />
-        <TextView android:id="@+id/content_subtitle"
-          android:layout_width="wrap_content" android:layout_height="wrap_content"
-          android:textAppearance="?android:attr/textAppearanceMedium"
-          android:textColor="#FF9500" android:text="Subtitle"
-          android:clickable="true" android:onClick="doExplore" />
-        <com.arantius.tivocommander.views.TivoScrubBar
-            android:id="@+id/tivo_scrub_bar"
-            android:layout_width="fill_parent" android:layout_height="30dip"
-            />
+    <include layout="@layout/now_showing_detail" />
+  </ScrollView>
 
-        <LinearLayout android:layout_width="fill_parent"
-            android:layout_height="match_parent" android:orientation="vertical"
-            android:gravity="center"
-        >
-          <include layout="@layout/now_showing_remote" />
-        </LinearLayout>
-      </LinearLayout>
-    </ScrollView>
-    <ProgressBar style="@android:style/Widget.ProgressBar.Large"
-      android:layout_width="wrap_content" android:layout_height="fill_parent"
-      android:layout_gravity="center" />
-  </ViewFlipper>
   <LinearLayout android:orientation="vertical" android:layout_weight="7"
-    android:layout_width="fill_parent" android:layout_height="match_parent"
+    android:layout_width="0dp" android:layout_height="match_parent"
     android:paddingLeft="8dip" android:gravity="center"
   >
     <LinearLayout android:orientation="horizontal"

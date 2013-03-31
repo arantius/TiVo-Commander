@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent" android:layout_height="wrap_content"
+  android:orientation="vertical"
+>
+  <ViewFlipper android:id="@+id/now_showing_detail_flipper"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+  >
+    <LinearLayout android:layout_width="fill_parent"
+      android:layout_height="wrap_content" android:orientation="vertical"
+    >
+      <TextView android:id="@+id/content_title"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FF9500" android:text="Title"
+        android:clickable="true" android:onClick="doExplore" />
+      <TextView android:id="@+id/content_subtitle"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#D0D0D0" android:text="Subtitle"
+        android:clickable="true" android:onClick="doExplore" />
+      <com.arantius.tivocommander.views.TivoScrubBar
+        android:id="@+id/tivo_scrub_bar" android:layout_width="fill_parent"
+        android:layout_height="30dip" />
+    </LinearLayout>
+    <ProgressBar style="@android:style/Widget.ProgressBar.Large"
+      android:layout_width="wrap_content" android:layout_height="fill_parent"
+      android:layout_gravity="center" />
+  </ViewFlipper>
+
+  <include layout="@layout/now_showing_remote" />
+</LinearLayout>
