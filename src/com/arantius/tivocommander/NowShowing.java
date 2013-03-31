@@ -185,6 +185,7 @@ public class NowShowing extends Activity {
           } else if ("liveCache".equals(playbackType)) {
             whatsOnId = whatsOn.path("offerId").asText();
           } else {
+            initInstanceVars();
             mContentType = ContentType.TBA;
             mWhatsOnId = playbackType;
             setTitleFromContent(null);
