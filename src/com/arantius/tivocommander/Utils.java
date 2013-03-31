@@ -175,22 +175,6 @@ public class Utils {
     }
   }
 
-  public static final void mailLog(String log, Context context, String title) {
-    Intent i = new Intent(Intent.ACTION_SEND);
-    i.setType("message/rfc822");
-    i.putExtra(Intent.EXTRA_EMAIL, new String[] { "arantius+tivo@gmail.com" });
-    i.putExtra(Intent.EXTRA_SUBJECT, "DVR Commander for TiVo " + title);
-    i.putExtra(Intent.EXTRA_TEXT, "Please describe you were doing when "
-        + "something went wrong:\n\n\n\nThen leave these details for me:\n"
-        + "Version: " + getVersion(context) + "\n" + log);
-    try {
-      context.startActivity(Intent.createChooser(i, "Send mail..."));
-    } catch (android.content.ActivityNotFoundException ex) {
-      Toast.makeText(context, "There are no email clients installed.",
-          Toast.LENGTH_SHORT).show();
-    }
-  }
-
   @SuppressLint("InlinedApi")
   public final static boolean onCreateOptionsMenu(Menu menu, Activity activity) {
     Utils.activateHomeButton(activity);
