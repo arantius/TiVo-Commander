@@ -190,6 +190,7 @@ public abstract class ShowList extends ListActivity implements
   protected String mFolderId;
   protected MindRpcResponseListener mIdSequenceCallback;
   protected ShowsAdapter mListAdapter;
+  protected int mLongPressIndex;
   protected JsonNode mLongPressItem;
   protected String mOrderBy = "startTime";
   protected final String[] mOrderLabels = new String[] { "Date", "A-Z" };
@@ -285,7 +286,7 @@ public abstract class ShowList extends ListActivity implements
     String recordingId = mLongPressItem.path("recordingId").asText();
 
     MindRpcRequest req = null;
-    MindRpcResponseListener reqListener =
+    final MindRpcResponseListener reqListener =
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             setProgressIndicator(-1);
@@ -293,14 +294,27 @@ public abstract class ShowList extends ListActivity implements
             startRequest();
           }
         };
+    final MindRpcResponseListener removeListener =
+        new MindRpcResponseListener() {
+          public void onResponse(MindRpcResponse response) {
+            setProgressIndicator(-1);
+            mShowData.remove(mLongPressIndex);
+            mShowIds.remove(mLongPressIndex);
+            mShowStatus.remove(mLongPressIndex);
+            mListAdapter.notifyDataSetChanged();
+          }
+        };
+    MindRpcResponseListener listener = reqListener;
 
     switch (action) {
     case R.string.delete:
     case R.string.stop_recording_and_delete:
       req = new RecordingUpdate(recordingId, "deleted");
+      listener = removeListener;
       break;
     case R.string.dont_record:
       req = new RecordingUpdate(recordingId, "cancelled");
+      listener = removeListener;
       break;
     case R.string.stop_recording:
     case R.string.undelete:
@@ -308,7 +322,7 @@ public abstract class ShowList extends ListActivity implements
       break;
     case R.string.watch_now:
       req = new UiNavigate(recordingId);
-      reqListener =
+      listener =
           new MindRpcResponseListener() {
             public void onResponse(MindRpcResponse response) {
               setProgressIndicator(-1);
@@ -320,7 +334,7 @@ public abstract class ShowList extends ListActivity implements
     }
 
     setProgressIndicator(1);
-    MindRpc.addRequest(req, reqListener);
+    MindRpc.addRequest(req, listener);
   }
 
   @Override
@@ -341,6 +355,7 @@ public abstract class ShowList extends ListActivity implements
     if (mShowStatus.get(position) != ShowStatus.LOADED)
       return false;
 
+    mLongPressIndex = position;
     mLongPressItem = mShowData.get(position);
     if (mLongPressItem.has("recordingForChildRecordingId")
         && !mLongPressItem.has("folderType")) {
