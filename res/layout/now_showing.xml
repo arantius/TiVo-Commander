@@ -22,8 +22,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   android:layout_width="match_parent" android:layout_height="match_parent"
   android:padding="6dp"
 >
-  <ScrollView android:layout_weight="1"
-    android:layout_width="fill_parent" android:layout_height="0dp"
+  <ScrollView android:layout_weight="1" android:fillViewport="true"
+    android:layout_width="match_parent" android:layout_height="0dp"
   >
     <include layout="@layout/now_showing_detail" />
   </ScrollView>
