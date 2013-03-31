@@ -325,6 +325,16 @@ public class Utils {
     }
   }
 
+  public final static void toast(Activity activity, String message, int length) {
+    Context ctx = activity.getBaseContext();
+    Toast.makeText(ctx, message, length).show();
+  }
+
+  public final static void toast(Activity activity, int messageId, int length) {
+    Context ctx = activity.getBaseContext();
+    Toast.makeText(ctx, messageId, length).show();
+  }
+
   public final static String ucFirst(String s) {
     if (s == null) {
       return null;

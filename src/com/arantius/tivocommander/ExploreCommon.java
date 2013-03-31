@@ -38,8 +38,8 @@ abstract public class ExploreCommon extends Activity {
         public void onResponse(MindRpcResponse response) {
           if ("error".equals(response.getBody().path("type").asText())) {
             if ("staleData".equals(response.getBody().path("code"))) {
-              Toast.makeText(getBaseContext(), "Stale data error, panicking.",
-                  Toast.LENGTH_SHORT).show();
+              Utils.toast(ExploreCommon.this, "Stale data error, panicking.",
+                  Toast.LENGTH_SHORT);
               finish();
               return;
             }
@@ -53,8 +53,8 @@ abstract public class ExploreCommon extends Activity {
           } else if (body.has("content")) {
             mContent = response.getBody().path("content").path(0);
           } else {
-            Toast.makeText(getApplicationContext(), "Response missing content",
-                Toast.LENGTH_SHORT).show();
+            Utils.toast(ExploreCommon.this, "Response missing content",
+                Toast.LENGTH_SHORT);
             finish();
             return;
           }
@@ -77,7 +77,7 @@ abstract public class ExploreCommon extends Activity {
       return new CollectionSearch(mCollectionId);
     } else {
       final String message = "Content: Bad input!";
-      Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
+      Utils.toast(ExploreCommon.this, message, Toast.LENGTH_SHORT);
       Utils.logError(message);
       finish();
       return null;

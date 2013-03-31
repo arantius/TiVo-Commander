@@ -52,8 +52,7 @@ public class Connect extends Activity {
     Utils.log("Activity:Resume:Connect");
 
     if (BETA_EXPIRATION_TIME != null && new Date().after(BETA_EXPIRATION_TIME)) {
-      Toast.makeText(this, "This beta has expired, please update the app.",
-          Toast.LENGTH_LONG).show();
+      Utils.toast(this, R.string.beta_expired, Toast.LENGTH_LONG);
       Intent intent = new Intent(Intent.ACTION_VIEW);
       intent.setData(Uri.parse("market://details?id=com.arantius.tivocommander"));
       startActivity(intent);

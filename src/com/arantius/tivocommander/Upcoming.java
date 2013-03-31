@@ -160,8 +160,7 @@ public class Upcoming extends ListActivity {
     if (bundle != null) {
       collectionId = bundle.getString("collectionId");
       if (collectionId == null) {
-        Toast.makeText(getApplicationContext(), "Oops; missing collection ID",
-            Toast.LENGTH_SHORT).show();
+        Utils.toast(this, "Oops; missing collection ID", Toast.LENGTH_SHORT);
       } else {
         setProgressBarIndeterminateVisibility(true);
         UpcomingSearch request = new UpcomingSearch(collectionId);

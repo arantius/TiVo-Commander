@@ -65,9 +65,9 @@ public class SubscribeCollection extends SubscribeBase {
                     + channel.path("callSign").asText();
           }
           if (i == 0) {
-            Toast.makeText(getApplicationContext(),
+            Utils.toast(SubscribeCollection.this,
                 "Sorry: Couldn't find any channels to record that on.",
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_SHORT);
             finish();
             return;
           }
@@ -121,7 +121,8 @@ public class SubscribeCollection extends SubscribeBase {
     final String subscriptionId = (mSubscription == null)
         ? null : mSubscription.path("subscriptionId").textValue();
 
-    request.setCollection(mCollectionId, mChannel, mMax, mWhich, subscriptionId);
+    request
+        .setCollection(mCollectionId, mChannel, mMax, mWhich, subscriptionId);
     if (mSubscription != null && subscriptionId != null) {
       request.setIgnoreConflicts(true);
       request.setPriority(mSubscription.path("priority").asInt());
@@ -141,19 +142,17 @@ public class SubscribeCollection extends SubscribeBase {
     MindRpc.addRequest(request, new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
         if ("error".equals(response.getBody().path("type").asText())) {
-          Toast.makeText(
-              SubscribeCollection.this,
-              "Error making subscription: "
-                  + response.getBody().path("text").asText(),
-              Toast.LENGTH_SHORT).show();
+          final String msg = "Error making subscription: "
+              + response.getBody().path("text").asText();
+          Utils.toast(SubscribeCollection.this, msg, Toast.LENGTH_SHORT);
           d.dismiss();
           finish();
         } else if (response.getBody().has("conflicts")) {
           d.dismiss();
           handleConflicts(response.getBody().path("conflicts"));
         } else if (response.getBody().has("subscription")) {
-            d.dismiss();
-            finish();
+          d.dismiss();
+          finish();
         } else {
           Utils.log("What kind of subscribe response is this??");
           Utils.log(Utils.stringifyToPrettyJson(response.getBody()));
@@ -246,8 +245,8 @@ public class SubscribeCollection extends SubscribeBase {
     } catch (IndexOutOfBoundsException e) {
       Utils.log(Utils.join(" / ", mChannelNames));
       Utils.logError("Couldn't get channel", e);
-      Toast.makeText(this, "Oops, something weird happened with the channels.",
-          Toast.LENGTH_SHORT).show();
+      Utils.toast(this, "Oops, something weird happened with the channels.",
+          Toast.LENGTH_SHORT);
       finish();
     }
 

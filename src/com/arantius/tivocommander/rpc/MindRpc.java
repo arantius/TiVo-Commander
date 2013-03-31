@@ -435,9 +435,7 @@ public enum MindRpc {
     Utils.log("Settings: " + activity.getResources().getString(messageId));
     activity.runOnUiThread(new Runnable() {
       public void run() {
-        Toast
-            .makeText(activity.getBaseContext(), messageId, Toast.LENGTH_SHORT)
-            .show();
+        Utils.toast(activity, messageId, Toast.LENGTH_SHORT);
         Intent i;
         if (activity.getClass() == Discover.class) {
           i = new Intent(activity.getBaseContext(), Settings.class);

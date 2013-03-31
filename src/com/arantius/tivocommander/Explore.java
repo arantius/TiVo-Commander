@@ -73,8 +73,7 @@ public class Explore extends ExploreCommon {
           getParent().setProgressBarIndeterminateVisibility(false);
           if (!("success".equals(response.getRespType()))) {
             Utils.logError("Delete attempt failed!");
-            Toast.makeText(getBaseContext(), "Delete failed!.",
-                Toast.LENGTH_SHORT).show();
+            Utils.toast(Explore.this, "Delete failed!.", Toast.LENGTH_SHORT);
             return;
           }
           // .. and tell the show list to refresh itself.

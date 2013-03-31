@@ -140,8 +140,7 @@ public class Suggestions extends Activity {
     if (bundle != null) {
       collectionId = bundle.getString("collectionId");
       if (collectionId == null) {
-        Toast.makeText(getApplicationContext(), "Oops; missing collection ID",
-            Toast.LENGTH_SHORT).show();
+        Utils.toast(this, "Oops; missing collection ID", Toast.LENGTH_SHORT);
       } else {
         getParent().setProgressBarIndeterminateVisibility(true);
         SuggestionsSearch request = new SuggestionsSearch(collectionId);
