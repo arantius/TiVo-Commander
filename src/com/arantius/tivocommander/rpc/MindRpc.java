@@ -290,7 +290,11 @@ public enum MindRpc {
 
     mOriginActivity.runOnUiThread(new Runnable() {
       public void run() {
-        mResponseListenerMap.get(rpcId).onResponse(response);
+        MindRpcResponseListener l = mResponseListenerMap.get(rpcId);
+        if (l != null) {
+          // It might have been removed on another thread, so check for null.
+          l.onResponse(response);
+        }
         if (response.isFinal()) {
           mResponseListenerMap.remove(rpcId);
         }
