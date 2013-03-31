@@ -38,6 +38,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         android:layout_marginBottom="6dip" android:gravity="center_vertical"
         android:minHeight="30dip" android:layout_marginLeft="6dip"
         android:drawableLeft="@android:drawable/ic_dialog_alert"
+        android:drawablePadding="4dp"
         android:visibility="gone" />
 
       <TextView android:text="Is your TiVo is not found?"

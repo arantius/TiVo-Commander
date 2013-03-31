@@ -99,6 +99,14 @@ public class Discover extends ListActivity implements OnItemClickListener,
     super.onCreate(savedInstanceState);
     MindRpc.disconnect();
 
+    final String osName = System.getProperty("os.name");
+    Utils.log("Discover; os.name = " + osName);
+    if ("qnx".equals(osName)) {
+      showHelp(R.string.blackberry_discovery);
+      finish();
+      return;
+    }
+
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.list_discover);
 
@@ -323,8 +331,13 @@ public class Discover extends ListActivity implements OnItemClickListener,
     runOnUiThread(new Runnable() {
       public void run() {
         setProgressBarIndeterminateVisibility(false);
-        findViewById(R.id.refresh_button).setEnabled(true);
-        mEmpty.setText("No results found.");
+        View refreshButton = findViewById(R.id.refresh_button);
+        if (refreshButton != null) {
+          refreshButton.setEnabled(true);
+        }
+        if (mEmpty != null) {
+          mEmpty.setText("No results found.");
+        }
       }
     });
 
