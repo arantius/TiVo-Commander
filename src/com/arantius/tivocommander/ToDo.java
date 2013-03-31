@@ -21,8 +21,6 @@ package com.arantius.tivocommander;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.Window;
@@ -71,26 +69,6 @@ public class ToDo extends ShowList {
 
   protected JsonNode getRecordingFromItem(JsonNode item) {
     return item;
-  }
-
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (resultCode != Activity.RESULT_OK) {
-      return;
-    }
-
-    if (EXPECT_REFRESH_INTENT_ID == requestCode) {
-      if (data.getBooleanExtra("refresh", false)) {
-        setRefreshResult();
-        if (mShowData.size() == 1) {
-          // We deleted the last show! Go up a level.
-          finishWithRefresh();
-        } else {
-          // Load the list of remaining shows.
-          startRequest();
-        }
-      }
-    }
   }
 
   @Override

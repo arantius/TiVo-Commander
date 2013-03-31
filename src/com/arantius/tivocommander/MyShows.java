@@ -21,7 +21,6 @@ package com.arantius.tivocommander;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -224,26 +223,6 @@ public class MyShows extends ShowList {
     } else {
       // Otherwise we've got recordings wrapped in folders.
       return item.path("recordingForChildRecordingId");
-    }
-  }
-
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (resultCode != Activity.RESULT_OK) {
-      return;
-    }
-
-    if (EXPECT_REFRESH_INTENT_ID == requestCode) {
-      if (data.getBooleanExtra("refresh", false)) {
-        setRefreshResult();
-        if (mShowData.size() == 1) {
-          // We deleted the last show! Go up a level.
-          finishWithRefresh();
-        } else {
-          // Load the list of remaining shows.
-          startRequest();
-        }
-      }
     }
   }
 
