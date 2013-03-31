@@ -47,7 +47,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class NowShowing extends Activity {
   private enum ContentType {
-    LIVE, RECORDING;
+    LIVE, RECORDING, TBA;
   }
 
   private class PlaybackRange {
@@ -178,11 +178,6 @@ public class NowShowing extends Activity {
         public void onResponse(MindRpcResponse response) {
           JsonNode whatsOn = response.getBody().path("whatsOn").path(0);
 
-          mCollectionId = whatsOn.path("collectionId").asText();
-          mContentId = whatsOn.path("contentId").asText();
-          mOfferId = whatsOn.path("offerId").asText();
-          mRecordingId = whatsOn.path("recordingId").asText();
-
           String playbackType = whatsOn.path("playbackType").asText();
           String whatsOnId = null;
           if ("recording".equals(playbackType)) {
@@ -190,9 +185,18 @@ public class NowShowing extends Activity {
           } else if ("liveCache".equals(playbackType)) {
             whatsOnId = whatsOn.path("offerId").asText();
           } else {
-            Utils.logError("Unsupported playbackType: " + playbackType);
+            mContentType = ContentType.TBA;
+            mWhatsOnId = playbackType;
+            setTitleFromContent(null);
+            rpcComplete();
             return;
           }
+          mScrubBar.setVisibility(View.VISIBLE);
+
+          mCollectionId = whatsOn.path("collectionId").asText();
+          mContentId = whatsOn.path("contentId").asText();
+          mOfferId = whatsOn.path("offerId").asText();
+          mRecordingId = whatsOn.path("recordingId").asText();
 
           if (mWhatsOnId != null) {
             // Ignore extra callbacks where the content has not changed.
@@ -401,16 +405,20 @@ public class NowShowing extends Activity {
     // @formatter:off
     if (mRpcComplete) return;
 
-    if (mGmtOffsetMillis == null) return;
-    if (mMillisContentBegin == null) return;
-    if (mMillisContentEnd == null) return;
-    if (mContentType == ContentType.RECORDING) {
-      if (mMillisActualBegin == null) return;
+    if (mContentType == ContentType.TBA) {
+      // No-op.
+    } else {
+      if (mGmtOffsetMillis == null) return;
+      if (mMillisContentBegin == null) return;
+      if (mMillisContentEnd == null) return;
+      if (mContentType == ContentType.RECORDING) {
+        if (mMillisActualBegin == null) return;
+      }
+      if (mMillisPosition == null) return;
+      if (mMillisRecordingBegin == null) return;
+      if (mMillisRecordingEnd == null) return;
+      if (mMillisVirtualPosition == null) return;
     }
-    if (mMillisPosition == null) return;
-    if (mMillisRecordingBegin == null) return;
-    if (mMillisRecordingEnd == null) return;
-    if (mMillisVirtualPosition == null) return;
     // @formatter:on
 
     mRpcComplete = true;
@@ -427,6 +435,14 @@ public class NowShowing extends Activity {
     if (!mRpcComplete) {
       return;
     }
+
+    if (mContentType == ContentType.TBA) {
+      mScrubBar.setVisibility(View.GONE);
+      return;
+    } else {
+      mScrubBar.setVisibility(View.VISIBLE);
+    }
+
     PlaybackRange range = getPlaybackRange();
 
     String labelLeft = null;
@@ -457,16 +473,25 @@ public class NowShowing extends Activity {
   }
 
   private void setTitleFromContent(JsonNode content) {
-    String title = content.path("title").asText();
-    String movieYear = content.path("movieYear").asText();
-    if (movieYear != null && !"".equals(movieYear)) {
-      title += " (" + movieYear + ")";
-    }
-    ((TextView) findViewById(R.id.content_title)).setText(title);
+    String title, movieYear, subtitle;
 
-    String subtitle = content.path("subtitle").asText();
+    if (mContentType == ContentType.TBA) {
+      title = "To Be Announced";
+      subtitle = "No Information Available";
+    } else {
+      title = content.path("title").asText();
+      movieYear = content.path("movieYear").asText();
+      if (movieYear != null && !"".equals(movieYear)) {
+        title += " (" + movieYear + ")";
+      }
+      subtitle = content.path("subtitle").textValue();
+    }
+
+    TextView titleView = (TextView) findViewById(R.id.content_title);
     TextView subtitleView = (TextView) findViewById(R.id.content_subtitle);
-    if (null == subtitle || "".equals(subtitle)) {
+
+    titleView.setText(title);
+    if (null == subtitle) {
       subtitleView.setVisibility(View.GONE);
     } else {
       subtitleView.setVisibility(View.VISIBLE);
