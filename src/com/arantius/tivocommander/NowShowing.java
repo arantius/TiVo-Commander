@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
@@ -349,12 +348,8 @@ public class NowShowing extends Activity {
     MindRpc.addRequest(Remote.viewIdToEvent(v.getId()), null);
   }
 
-  @SuppressLint("InlinedApi")
   public final boolean onCreateOptionsMenu(Menu menu) {
-    Utils.addToMenu(menu, this, R.id.menu_item_help, R.drawable.icon_help,
-        "Help", MenuItem.SHOW_AS_ACTION_NEVER);
-    Utils.addToMenu(menu, this, R.id.menu_item_about, R.drawable.icon_info,
-        "About", MenuItem.SHOW_AS_ACTION_NEVER);
+    Utils.createHelpOptionsMenu(menu, this);
     return true;
   }
 

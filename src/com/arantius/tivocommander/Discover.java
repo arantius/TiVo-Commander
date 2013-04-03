@@ -43,6 +43,7 @@ import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.InputType;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -119,6 +120,11 @@ public class Discover extends ListActivity implements OnItemClickListener,
 
     getListView().setOnItemClickListener(this);
     Utils.activateHomeButton(this);
+  }
+
+  public final boolean onCreateOptionsMenu(Menu menu) {
+    Utils.createHelpOptionsMenu(menu, this);
+    return true;
   }
 
   @Override

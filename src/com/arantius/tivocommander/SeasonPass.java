@@ -309,7 +309,8 @@ public class SeasonPass extends ListActivity implements
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    return Utils.onCreateOptionsMenu(menu, this);
+    Utils.createFullOptionsMenu(menu, this);
+    return true;
   }
 
   public boolean onItemLongClick(AdapterView<?> parent, View view,

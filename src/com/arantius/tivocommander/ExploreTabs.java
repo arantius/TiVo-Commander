@@ -119,7 +119,8 @@ public class ExploreTabs extends TabActivity {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    return Utils.onCreateOptionsMenu(menu, this);
+    Utils.createFullOptionsMenu(menu, this);
+    return true;
   }
 
   @Override

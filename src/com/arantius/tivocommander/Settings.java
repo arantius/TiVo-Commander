@@ -21,6 +21,7 @@ package com.arantius.tivocommander;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.view.Menu;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
@@ -31,6 +32,11 @@ public class Settings extends PreferenceActivity {
     super.onCreate(savedInstanceState);
     MindRpc.disconnect();
     addPreferencesFromResource(R.xml.preferences);
+  }
+
+  public final boolean onCreateOptionsMenu(Menu menu) {
+    Utils.createHelpOptionsMenu(menu, this);
+    return true;
   }
 
   @Override

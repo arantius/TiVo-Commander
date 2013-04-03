@@ -181,7 +181,8 @@ public class Remote extends Activity implements OnClickListener {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    return Utils.onCreateOptionsMenu(menu, this);
+    Utils.createFullOptionsMenu(menu, this);
+    return true;
   }
 
   @Override

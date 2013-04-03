@@ -101,6 +101,37 @@ public class Utils {
     }
   }
 
+  @SuppressLint("InlinedApi")
+  public final static void createFullOptionsMenu(Menu menu, Activity activity) {
+    Utils.activateHomeButton(activity);
+
+    addToMenu(menu, activity, R.id.menu_item_remote, R.drawable.icon_remote,
+        "Remote", MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    addToMenu(menu, activity, R.id.menu_item_my_shows, R.drawable.icon_tv32,
+        "My Shows", MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    addToMenu(menu, activity, R.id.menu_item_search, R.drawable.icon_search,
+        "Search", MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    addToMenu(menu, activity, R.id.menu_item_todo, R.drawable.icon_todo,
+        "To Do List", MenuItem.SHOW_AS_ACTION_NEVER);
+    addToMenu(menu, activity, R.id.menu_item_season_pass,
+        R.drawable.icon_seasonpass,
+        "Season Pass Manager", MenuItem.SHOW_AS_ACTION_NEVER);
+    addToMenu(menu, activity, R.id.menu_item_settings, R.drawable.icon_cog,
+        "Settings", MenuItem.SHOW_AS_ACTION_NEVER);
+    addToMenu(menu, activity, R.id.menu_item_help, R.drawable.icon_help,
+        "Help", MenuItem.SHOW_AS_ACTION_NEVER);
+    addToMenu(menu, activity, R.id.menu_item_about, R.drawable.icon_info,
+        "About", MenuItem.SHOW_AS_ACTION_NEVER);
+  }
+
+  @SuppressLint("InlinedApi")
+  public final static void createHelpOptionsMenu(Menu menu, Activity activity) {
+    addToMenu(menu, activity, R.id.menu_item_help, R.drawable.icon_help,
+        "Help", MenuItem.SHOW_AS_ACTION_NEVER);
+    addToMenu(menu, activity, R.id.menu_item_about, R.drawable.icon_info,
+        "About", MenuItem.SHOW_AS_ACTION_NEVER);
+  }
+
   public final static void debugLog(String message) {
     Log.d(LOG_TAG, message);
   }
@@ -173,31 +204,6 @@ public class Utils {
     for (String line : json.split(System.getProperty("line.separator"))) {
       Log.d(LOG_TAG, line);
     }
-  }
-
-  @SuppressLint("InlinedApi")
-  public final static boolean onCreateOptionsMenu(Menu menu, Activity activity) {
-    Utils.activateHomeButton(activity);
-
-    addToMenu(menu, activity, R.id.menu_item_remote, R.drawable.icon_remote,
-        "Remote", MenuItem.SHOW_AS_ACTION_IF_ROOM);
-    addToMenu(menu, activity, R.id.menu_item_my_shows, R.drawable.icon_tv32,
-        "My Shows", MenuItem.SHOW_AS_ACTION_IF_ROOM);
-    addToMenu(menu, activity, R.id.menu_item_search, R.drawable.icon_search,
-        "Search", MenuItem.SHOW_AS_ACTION_IF_ROOM);
-    addToMenu(menu, activity, R.id.menu_item_todo, R.drawable.icon_todo,
-        "To Do List", MenuItem.SHOW_AS_ACTION_NEVER);
-    addToMenu(menu, activity, R.id.menu_item_season_pass,
-        R.drawable.icon_seasonpass,
-        "Season Pass Manager", MenuItem.SHOW_AS_ACTION_NEVER);
-    addToMenu(menu, activity, R.id.menu_item_settings, R.drawable.icon_cog,
-        "Settings", MenuItem.SHOW_AS_ACTION_NEVER);
-    addToMenu(menu, activity, R.id.menu_item_help, R.drawable.icon_help,
-        "Help", MenuItem.SHOW_AS_ACTION_NEVER);
-    addToMenu(menu, activity, R.id.menu_item_about, R.drawable.icon_info,
-        "About", MenuItem.SHOW_AS_ACTION_NEVER);
-
-    return true;
   }
 
   public final static boolean onOptionsItemSelected(MenuItem item,
@@ -309,14 +315,14 @@ public class Utils {
     }
   }
 
-  public final static void toast(Activity activity, String message, int length) {
-    Context ctx = activity.getBaseContext();
-    Toast.makeText(ctx, message, length).show();
-  }
-
   public final static void toast(Activity activity, int messageId, int length) {
     Context ctx = activity.getBaseContext();
     Toast.makeText(ctx, messageId, length).show();
+  }
+
+  public final static void toast(Activity activity, String message, int length) {
+    Context ctx = activity.getBaseContext();
+    Toast.makeText(ctx, message, length).show();
   }
 
   public final static String ucFirst(String s) {
