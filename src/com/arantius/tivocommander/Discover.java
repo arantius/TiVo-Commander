@@ -24,6 +24,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
@@ -68,8 +69,6 @@ public class Discover extends ListActivity implements OnItemClickListener,
 
     public void run() {
       if (mOldIndex != null) {
-        Utils.log(String.format("Replace %s with %s", mHosts.get(mOldIndex),
-            mListItem));
         mHosts.set(mOldIndex, mListItem);
       } else {
         mHosts.add(mListItem);
@@ -207,6 +206,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
 
     final String platform = info.getPropertyString("platform");
     if (platform == null) {
+      Utils.log("Unexpected: NULL platform.");
       messageId = R.string.premiere_only;
     } else if (platform.indexOf("Series4") == -1) {
       messageId = R.string.premiere_only;
@@ -242,6 +242,11 @@ public class Discover extends ListActivity implements OnItemClickListener,
     listItem.put("tsn", tsn);
     listItem.put("warn_icon", messageId == 0 ? R.drawable.blank
         : android.R.drawable.ic_dialog_alert);
+
+    if (oldIndex != null) {
+      Utils.log(String.format(Locale.US,
+          "Found dupe!  Replace %s with %s", mHosts.get(oldIndex), listItem));
+    }
 
     runOnUiThread(new DvrListUpdater(listItem, oldIndex));
   }
