@@ -58,25 +58,6 @@ import com.arantius.tivocommander.rpc.MindRpc;
 
 public class Discover extends ListActivity implements OnItemClickListener,
     ServiceListener {
-  private class DvrListUpdater implements Runnable {
-    private final HashMap<String, Object> mListItem;
-    private final Integer mOldIndex;
-
-    public DvrListUpdater(HashMap<String, Object> listItem, Integer oldIndex) {
-      mListItem = listItem;
-      mOldIndex = oldIndex;
-    }
-
-    public void run() {
-      if (mOldIndex != null) {
-        mHosts.set(mOldIndex, mListItem);
-      } else {
-        mHosts.add(mListItem);
-      }
-      mHostAdapter.notifyDataSetChanged();
-    }
-  }
-
   private TextView mEmpty;
   private SimpleAdapter mHostAdapter;
   private volatile ArrayList<HashMap<String, Object>> mHosts =
@@ -238,7 +219,8 @@ public class Discover extends ListActivity implements OnItemClickListener,
           // previous item and add this as a replacement.
           oldIndex = mHosts.indexOf(host);
           Utils.log(String.format(Locale.US,
-              "Found dupe!  Replace %s with %s", host, listItem));
+              "Found item update!  Replace %s with %s", host, listItem));
+          mHosts.set(oldIndex, listItem);
           break;
         } else {
           // Ignore dupes. I'm not sure what Series 2 or 3/HD devices will
@@ -250,7 +232,17 @@ public class Discover extends ListActivity implements OnItemClickListener,
       }
     }
 
-    runOnUiThread(new DvrListUpdater(listItem, oldIndex));
+    if (oldIndex == null) {
+      // We didn't replace an item above as an update, and we didn't short-
+      // circuit to avoid duplicate events.  So add a new item.
+      mHosts.add(listItem);
+    }
+    // And make it visible in the UI either way.
+    runOnUiThread(new Runnable() {
+      public void run() {
+        mHostAdapter.notifyDataSetChanged();
+      };
+    });
   }
 
   private final void showHelp(int messageId) {
