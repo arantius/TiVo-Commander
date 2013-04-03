@@ -108,6 +108,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
       return;
     }
 
+    setTitle("TiVo Device Search");
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.list_discover);
 

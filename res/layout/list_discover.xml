@@ -21,9 +21,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   android:layout_width="fill_parent" android:layout_height="fill_parent"
   android:orientation="vertical"
 >
-  <TextView android:text="TiVo Device Search" android:padding="2dip"
-    android:textAppearance="?android:attr/textAppearanceMedium"
-    android:layout_width="wrap_content" android:layout_height="wrap_content" />
   <Button android:text="Help!" android:onClick="showHelp"
     android:layout_width="fill_parent" android:layout_height="wrap_content" />
 
