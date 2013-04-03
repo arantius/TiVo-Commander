@@ -299,6 +299,10 @@ public class NowShowing extends Activity {
   }
 
   public void doExplore(View unused) {
+    if (mContentType == ContentType.TBA) {
+      return;
+    }
+
     Intent intent = new Intent(this, ExploreTabs.class);
     if (mCollectionId != null) {
       intent.putExtra("collectionId", mCollectionId);
