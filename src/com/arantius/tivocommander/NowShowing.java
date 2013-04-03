@@ -193,10 +193,10 @@ public class NowShowing extends Activity {
           }
           mScrubBar.setVisibility(View.VISIBLE);
 
-          mCollectionId = whatsOn.path("collectionId").asText();
-          mContentId = whatsOn.path("contentId").asText();
-          mOfferId = whatsOn.path("offerId").asText();
-          mRecordingId = whatsOn.path("recordingId").asText();
+          mCollectionId = whatsOn.path("collectionId").textValue();
+          mContentId = whatsOn.path("contentId").textValue();
+          mOfferId = whatsOn.path("offerId").textValue();
+          mRecordingId = whatsOn.path("recordingId").textValue();
 
           if (mWhatsOnId != null) {
             // Ignore extra callbacks where the content has not changed.
@@ -300,16 +300,16 @@ public class NowShowing extends Activity {
 
   public void doExplore(View unused) {
     Intent intent = new Intent(this, ExploreTabs.class);
-    if (mCollectionId != null && !"".equals(mCollectionId)) {
+    if (mCollectionId != null) {
       intent.putExtra("collectionId", mCollectionId);
     }
-    if (mContentId != null && !"".equals(mContentId)) {
+    if (mContentId != null) {
       intent.putExtra("contentId", mContentId);
     }
-    if (mOfferId != null && !"".equals(mOfferId)) {
+    if (mOfferId != null) {
       intent.putExtra("offerId", mOfferId);
     }
-    if (mRecordingId != null && !"".equals(mRecordingId)) {
+    if (mRecordingId != null) {
       intent.putExtra("recordingId", mRecordingId);
     }
 
