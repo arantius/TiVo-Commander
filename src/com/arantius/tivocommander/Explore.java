@@ -248,7 +248,8 @@ public class Explore extends ExploreCommon {
       mChoices.add(RecordActions.SP_MODIFY.toString());
       mChoices.add(RecordActions.SP_CANCEL.toString());
     } else if (mCollectionId != null
-        && !"movie".equals(mContent.path("collectionType").asText())) {
+        && !"movie".equals(mContent.path("collectionType").asText())
+        && !mContent.has("movieYear")) {
       mChoices.add(RecordActions.SP_ADD.toString());
     }
 
