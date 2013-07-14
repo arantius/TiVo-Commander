@@ -35,6 +35,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class ToDo extends ShowList {
   protected int getIconForItem(JsonNode item) {
+    if (item == null) return R.drawable.blank;
+
     switch (Utils.subscriptionTypeForRecording(item)) {
     case RECORDING:
       return R.drawable.recording_recording;
@@ -120,6 +122,8 @@ public class ToDo extends ShowList {
             setProgressIndicator(-1);
 
             mShowIds = (ArrayNode) body.findValue("objectIdAndType");
+            if (mShowIds == null) return;
+
             for (int i = 0; i < mShowIds.size(); i++) {
               mShowData.add(null);
               mShowStatus.add(ShowStatus.MISSING);
