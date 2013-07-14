@@ -51,6 +51,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class Utils {
+  public static boolean DEBUG_LOG = false;
+
   private static final String LOG_TAG = "tivo_commander";
   private static final ObjectMapper mMapper = new ObjectMapper();
   private static final ObjectWriter mMapperPretty = mMapper
@@ -132,10 +134,6 @@ public class Utils {
         "About", MenuItem.SHOW_AS_ACTION_NEVER);
   }
 
-  public final static void debugLog(String message) {
-    Log.d(LOG_TAG, message);
-  }
-
   public static final String findImageUrl(JsonNode node) {
     String url = null;
     int biggestSize = 0;
@@ -188,7 +186,7 @@ public class Utils {
   }
 
   public final static void logDebug(String message) {
-    Log.d(LOG_TAG, message);
+    if (DEBUG_LOG) Log.d(LOG_TAG, message);
   }
 
   public final static void logError(String message) {
@@ -202,7 +200,7 @@ public class Utils {
   public final static void logRpc(Object obj) {
     String json = Utils.stringifyToPrettyJson(obj);
     for (String line : json.split(System.getProperty("line.separator"))) {
-      Log.d(LOG_TAG, line);
+      Utils.logDebug(line);
     }
   }
 

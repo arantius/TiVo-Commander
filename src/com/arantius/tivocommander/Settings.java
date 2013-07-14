@@ -19,8 +19,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 
 import com.arantius.tivocommander.rpc.MindRpc;
@@ -43,6 +45,11 @@ public class Settings extends PreferenceActivity {
   protected void onPause() {
     super.onPause();
     Utils.log("Activity:Pause:Settings");
+
+    SharedPreferences prefs =
+        PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+    Utils.DEBUG_LOG = prefs.getBoolean("debug_log", false);
   }
 
   @Override

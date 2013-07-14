@@ -134,6 +134,8 @@ public enum MindRpc {
         PreferenceManager
             .getDefaultSharedPreferences(activity.getBaseContext());
 
+    Utils.DEBUG_LOG = prefs.getBoolean("debug_log", false);
+
     mTivoAddr = prefs.getString("tivo_addr", "");
     try {
       mTivoPort = Integer.parseInt(prefs.getString("tivo_port", ""));

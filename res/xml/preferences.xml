@@ -37,5 +37,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:summary="This should be discovered automatically"
       android:key="tivo_tsn" android:defaultValue="-"
       android:dialogMessage="@string/pref_tsn_instructions" />
+    <CheckBoxPreference android:title="Verbose debug logging"
+        android:key="debug_log" android:defaultValue="false" />
   </PreferenceCategory>
 </PreferenceScreen>
