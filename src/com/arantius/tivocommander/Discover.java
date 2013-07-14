@@ -189,7 +189,10 @@ public class Discover extends ListActivity implements OnItemClickListener,
     if (platform == null) {
       Utils.log("Unexpected: NULL platform.");
       messageId = R.string.premiere_only;
-    } else if (platform.startsWith("pc/")) {
+    } else if (platform.startsWith("pc/")
+        || platform.equals("pc")
+        || platform.startsWith("pyTivo")
+        ) {
       Utils.log("Ignoring event for PC platform.");
       // This is a e.g. a TiVo Desktop or pyTivo share. Exclude it.
       return;
