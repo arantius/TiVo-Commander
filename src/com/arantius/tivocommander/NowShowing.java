@@ -95,11 +95,22 @@ public class NowShowing extends Activity {
   private final MindRpcResponseListener mOfferCallback =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          JsonNode offer = response.getBody().path("offer").path(0);
-          setTitleFromContent(offer);
+          if (response.getBody().path("offer").size() == 0) {
+            setTba();
+            return;
+          }
 
+          final JsonNode offer = response.getBody().path("offer").path(0);
           final Integer durationSec = offer.path("duration").asInt();
           final String startTimeStr = offer.path("startTime").asText();
+
+          if (durationSec == null || startTimeStr == null) {
+            setTba();
+            return;
+          }
+
+          setTitleFromContent(offer);
+
           try {
             Date beginDate = mDateFormat.parse(startTimeStr);
             mMillisContentBegin = beginDate.getTime();
@@ -184,11 +195,7 @@ public class NowShowing extends Activity {
           } else if ("liveCache".equals(playbackType)) {
             whatsOnId = whatsOn.path("offerId").asText();
           } else {
-            initInstanceVars();
-            mContentType = ContentType.TBA;
-            mWhatsOnId = playbackType;
-            setTitleFromContent(null);
-            rpcComplete();
+            setTba();
             return;
           }
           mScrubBar.setVisibility(View.VISIBLE);
@@ -497,5 +504,13 @@ public class NowShowing extends Activity {
       subtitleView.setVisibility(View.VISIBLE);
       subtitleView.setText(subtitle);
     }
+  }
+
+  protected void setTba() {
+    initInstanceVars();
+    mContentType = ContentType.TBA;
+    mWhatsOnId = null;
+    setTitleFromContent(null);
+    rpcComplete();
   }
 }
