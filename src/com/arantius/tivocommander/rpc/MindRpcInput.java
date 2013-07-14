@@ -56,12 +56,17 @@ public class MindRpcInput extends Thread {
 
         // Use deprecated readline on DataInputStream, because later I have to
         // read _bytes_ from it.
-        @SuppressWarnings("deprecation")
-        String respLine = mStream.readLine();
+        String respLine = null;
+        try {
+          respLine = mStream.readLine();
+        } catch (ArrayIndexOutOfBoundsException e) {
+          break;
+        }
         if (respLine == null) {
           // The socket has closed.
           break;
         }
+
         if (respLine.length() >= 6 && "MRPC/2".equals(respLine.substring(0, 6))) {
           String[] respBytes = respLine.split(" ");
           int headerLen = Integer.parseInt(respBytes[1]);
