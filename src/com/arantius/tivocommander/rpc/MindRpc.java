@@ -62,6 +62,7 @@ import android.widget.Toast;
 
 import com.arantius.tivocommander.Connect;
 import com.arantius.tivocommander.Discover;
+import com.arantius.tivocommander.NowShowing;
 import com.arantius.tivocommander.R;
 import com.arantius.tivocommander.Settings;
 import com.arantius.tivocommander.Utils;
@@ -351,6 +352,16 @@ public enum MindRpc {
 
   /** Finally, (only) the Connect activity calls back here to finish init. */
   public static void init3(final Activity connectActivity) {
+    if (mOriginActivity == null) {
+      // We must have been evicted/quit and restarted while at the connect
+      // screen which calls us.  Restart the app from Now Showing.
+      Intent intent =
+          new Intent(connectActivity.getBaseContext(), NowShowing.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      connectActivity.startActivity(intent);
+      connectActivity.finish();
+    }
+
     Utils.log("MindRpc.init3() " + mOriginActivity.toString());
 
     stopThreads();
@@ -375,7 +386,8 @@ public enum MindRpc {
         } else {
           mBodyIsAuthed = true;
           Intent intent =
-              new Intent(connectActivity.getBaseContext(), mOriginActivity.getClass());
+              new Intent(connectActivity.getBaseContext(),
+                  mOriginActivity.getClass());
           if (mOriginExtras != null) {
             intent.putExtras(mOriginExtras);
           }
