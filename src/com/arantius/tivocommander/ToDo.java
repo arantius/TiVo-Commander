@@ -36,8 +36,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 public class ToDo extends ShowList {
   protected int getIconForItem(JsonNode item) {
     if (item == null) return R.drawable.blank;
+    SubscriptionType subType = Utils.subscriptionTypeForRecording(item);
+    if (subType == null) return R.drawable.blank;
 
-    switch (Utils.subscriptionTypeForRecording(item)) {
+    switch (subType) {
     case RECORDING:
       return R.drawable.recording_recording;
     case SEASON_PASS:
