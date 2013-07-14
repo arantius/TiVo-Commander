@@ -220,7 +220,6 @@ public class Discover extends ListActivity implements OnItemClickListener,
           oldIndex = mHosts.indexOf(host);
           Utils.log(String.format(Locale.US,
               "Found item update!  Replace %s with %s", host, listItem));
-          mHosts.set(oldIndex, listItem);
           break;
         } else {
           // Ignore dupes. I'm not sure what Series 2 or 3/HD devices will
@@ -232,14 +231,18 @@ public class Discover extends ListActivity implements OnItemClickListener,
       }
     }
 
-    if (oldIndex == null) {
-      // We didn't replace an item above as an update, and we didn't short-
-      // circuit to avoid duplicate events.  So add a new item.
-      mHosts.add(listItem);
-    }
-    // And make it visible in the UI either way.
+    final Integer newIndex = oldIndex;  // Final copy that the runnable can see.
     runOnUiThread(new Runnable() {
       public void run() {
+        if (newIndex == null) {
+          // We didn't detect an item above as an update, and we didn't short-
+          // circuit to avoid duplicate events.  So add a new item.
+          mHosts.add(listItem);
+        } else {
+          mHosts.set(newIndex, listItem);
+        }
+
+        // And make it visible in the UI either way.
         mHostAdapter.notifyDataSetChanged();
       };
     });
