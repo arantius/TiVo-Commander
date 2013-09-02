@@ -22,7 +22,10 @@ package com.arantius.tivocommander;
 import java.io.IOException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -52,8 +55,13 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class Utils {
   public static boolean DEBUG_LOG = false;
-
+  public static int LOG_BUFFER_SIZE = 1000;
   private static final String LOG_TAG = "tivo_commander";
+
+  private static final ArrayDeque<String> mLogBuffer = new ArrayDeque<String>(
+      LOG_BUFFER_SIZE);
+  private static final SimpleDateFormat mLogDateFormat =
+      new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
   private static final ObjectMapper mMapper = new ObjectMapper();
   private static final ObjectWriter mMapperPretty = mMapper
       .writerWithDefaultPrettyPrinter();
@@ -183,18 +191,47 @@ public class Utils {
 
   public final static void log(String message) {
     Log.i(LOG_TAG, message);
+    logAddToBuffer(message, "I");
+  }
+
+  public final static synchronized void logAddToBuffer(
+      String message, String level) {
+    mLogBuffer.add(
+        mLogDateFormat.format(Calendar.getInstance().getTime())
+        + " " + level + " " + message);
+    while (mLogBuffer.size() >= LOG_BUFFER_SIZE) {
+      mLogBuffer.pop();
+    }
+  }
+
+  public final static synchronized String logBufferAsString() {
+    StringBuilder sb = new StringBuilder();
+    try {
+      for(Iterator<String> itr = mLogBuffer.iterator(); itr.hasNext();)  {
+        sb.append(itr.next());
+        sb.append("\n");
+      }
+    } catch (ConcurrentModificationException e) {
+      sb.append("Concurrent modification!");
+    }
+    return sb.toString();
   }
 
   public final static void logDebug(String message) {
-    if (DEBUG_LOG) Log.d(LOG_TAG, message);
+    if (DEBUG_LOG) {
+      Log.d(LOG_TAG, message);
+      logAddToBuffer(message, "D");
+    }
   }
 
   public final static void logError(String message) {
     Log.e(LOG_TAG, message);
+    logAddToBuffer(message, "E");
   }
 
   public final static void logError(String message, Throwable e) {
     Log.e(LOG_TAG, message, e);
+    logAddToBuffer(message, "E");
   }
 
   public final static void logRpc(Object obj) {

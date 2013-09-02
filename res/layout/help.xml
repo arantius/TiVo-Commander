@@ -83,6 +83,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         android:text="Ok, as a really last resort: Install the official TiVo app.  If that doesn't work either, something's probably wrong on your end.  You can try calling TiVo for support of their official app.  Once theirs works, this one might too."
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="6dip" />
+
+      <Button android:text="Send Error Report" android:layout_margin="20dp"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_gravity="center" android:onClick="sendReport" />
     </LinearLayout>
   </ScrollView>
   <Button android:text="Custom Settings"
