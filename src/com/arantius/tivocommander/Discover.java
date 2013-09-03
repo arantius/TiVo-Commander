@@ -196,7 +196,10 @@ public class Discover extends ListActivity implements OnItemClickListener,
       Utils.log("Ignoring event for PC platform.");
       // This is a e.g. a TiVo Desktop or pyTivo share. Exclude it.
       return;
-    } else if (platform.indexOf("Series4") == -1) {
+    } else if (
+        platform.indexOf("Series4") == -1
+        && platform.indexOf("Series5") == -1
+    ) {
       messageId = R.string.premiere_only;
     } else if (!mRpcServiceName.equals(info.getType())) {
       messageId = R.string.error_net_control;
