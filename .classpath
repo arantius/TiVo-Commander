@@ -6,6 +6,8 @@
 	<classpathentry exported="true" kind="lib" path="lib/jackson-core-2.1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jackson-databind-2.1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jmdns-3.4.2-20120628.171933-9.jar" sourcepath="lib/jmdns-3.4.2-20120628.171933-9-sources.jar"/>
+	<classpathentry kind="lib" path="/DragSortListView/bin/dragsortlistview.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/DragSortListView"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
