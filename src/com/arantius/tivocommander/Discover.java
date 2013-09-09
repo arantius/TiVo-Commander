@@ -66,7 +66,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
   private MulticastLock mMulticastLock = null;
   private final String mRpcServiceName = "_tivo-mindrpc._tcp.local.";
   private final String[] mServiceNames = new String[] {
-      "_tivo-mindrpc._tcp.local.", "_tivo-videos._tcp.local." };
+      "_tivo-mindrpc._tcp.local." };
 
   public final void customSettings(View v) {
     stopQuery();
@@ -271,6 +271,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
 
   public final void startQuery(View v) {
     stopQuery();
+    Utils.log("Start discovery query ...");
 
     mEmpty.setText("Searching ...");
 
@@ -333,7 +334,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     new Thread(new Runnable() {
       public void run() {
         try {
-          Thread.sleep(7500);
+          Thread.sleep(60000);
         } catch (InterruptedException e) {
           // Ignore.
         }
@@ -343,6 +344,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
   }
 
   protected final void stopQuery() {
+    Utils.log("Stop discovery query ...");
     runOnUiThread(new Runnable() {
       public void run() {
         setProgressBarIndeterminateVisibility(false);
