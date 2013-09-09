@@ -6,7 +6,7 @@ public class TodoSearch extends MindRpcRequest {
   public TodoSearch() {
     super("recordingSearch");
 
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("format", "idSequence");
     mDataMap.put("state", new String[] { "inProgress", "scheduled" });
   }

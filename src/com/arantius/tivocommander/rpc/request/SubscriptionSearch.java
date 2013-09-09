@@ -8,7 +8,7 @@ public class SubscriptionSearch extends MindRpcRequest {
   public SubscriptionSearch() {
     super("subscriptionSearch");
 
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("format", "idSequence");
     mDataMap.put("levelOfDetail", "low");
     mDataMap.put("noLimit", true);
@@ -17,7 +17,7 @@ public class SubscriptionSearch extends MindRpcRequest {
   public SubscriptionSearch(ArrayList<?> subscriptionIds) {
     super("subscriptionSearch");
 
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("levelOfDetail", "medium");
     mDataMap.put("noLimit", true);
     mDataMap.put("objectIdAndType", subscriptionIds);
@@ -26,7 +26,7 @@ public class SubscriptionSearch extends MindRpcRequest {
   public SubscriptionSearch(String collectionId) {
     super("subscriptionSearch");
 
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("collectionId", collectionId);
     mDataMap.put("levelOfDetail", "medium");
   }

@@ -60,7 +60,7 @@ public class RecordingFolderItemSearch extends MindRpcRequest {
 
   private void addCommonDetails(String orderBy) {
     mDataMap.put("orderBy", new String[] { orderBy });
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("note", new String[] { "recordingForChildRecordingId" });
     mDataMap.put("responseTemplate", mResponseTemplate);
   }

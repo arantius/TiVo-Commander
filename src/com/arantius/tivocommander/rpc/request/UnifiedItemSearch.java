@@ -35,7 +35,7 @@ public class UnifiedItemSearch extends MindRpcRequest {
   public UnifiedItemSearch(String keyword) {
     super("unifiedItemSearch");
 
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("count", NUM_RESULTS);
     mDataMap.put("imageRuleset", mImageRuleset);
     mDataMap.put("includeUnifiedItemType", new String[] { "collection",

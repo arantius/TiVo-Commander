@@ -149,7 +149,7 @@ public class SeasonPass extends ListActivity implements
           if (channel.has("logoIndex")) {
             // Wish lists don't have channels, so get the image conditionally.
             final String channelLogoUrl =
-                "http://" + MindRpc.mTivoAddr + "/ChannelLogo/icon-" +
+                "http://" + MindRpc.mTivoDevice.addr + "/ChannelLogo/icon-" +
                     channel.path("logoIndex") + "-1.png";
             new DownloadImageTask(SeasonPass.this, channelView)
                 .execute(channelLogoUrl);

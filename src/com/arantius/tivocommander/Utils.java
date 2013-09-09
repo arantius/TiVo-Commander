@@ -78,22 +78,24 @@ public class Utils {
     switch (menuId) {
     case android.R.id.home:
       return NowShowing.class;
+    case R.id.menu_item_about:
+      return About.class;
+    case R.id.menu_item_settings:
+      return Settings.class;
+    case R.id.menu_item_devices:
+      return Discover.class;
+    case R.id.menu_item_help:
+      return Help.class;
     case R.id.menu_item_remote:
       return Remote.class;
     case R.id.menu_item_my_shows:
       return MyShows.class;
     case R.id.menu_item_search:
       return Search.class;
-    case R.id.menu_item_todo:
-      return ToDo.class;
     case R.id.menu_item_season_pass:
       return SeasonPass.class;
-    case R.id.menu_item_settings:
-      return Discover.class;
-    case R.id.menu_item_help:
-      return Help.class;
-    case R.id.menu_item_about:
-      return About.class;
+    case R.id.menu_item_todo:
+      return ToDo.class;
     }
     return null;
   }
@@ -126,7 +128,9 @@ public class Utils {
     addToMenu(menu, activity, R.id.menu_item_season_pass,
         R.drawable.icon_seasonpass,
         "Season Pass Manager", MenuItem.SHOW_AS_ACTION_NEVER);
-    addToMenu(menu, activity, R.id.menu_item_settings, R.drawable.icon_cog,
+    addToMenu(menu, activity, R.id.menu_item_devices, R.drawable.icon_devices,
+        "Devices", MenuItem.SHOW_AS_ACTION_NEVER);
+    addToMenu(menu, activity, R.id.menu_item_settings, R.drawable.icon_help,
         "Settings", MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_help, R.drawable.icon_help,
         "Help", MenuItem.SHOW_AS_ACTION_NEVER);
@@ -135,7 +139,10 @@ public class Utils {
   }
 
   @SuppressLint("InlinedApi")
-  public final static void createHelpOptionsMenu(Menu menu, Activity activity) {
+  public final static void createShortOptionsMenu(Menu menu, Activity activity) {
+    addToMenu(menu, activity,
+        R.id.menu_item_settings, R.drawable.icon_cog,
+        "Settings", MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_help, R.drawable.icon_help,
         "Help", MenuItem.SHOW_AS_ACTION_NEVER);
     addToMenu(menu, activity, R.id.menu_item_about, R.drawable.icon_info,
@@ -198,7 +205,7 @@ public class Utils {
       String message, String level) {
     mLogBuffer.add(
         mLogDateFormat.format(Calendar.getInstance().getTime())
-        + " " + level + " " + message);
+            + " " + level + " " + message);
     while (mLogBuffer.size() >= LOG_BUFFER_SIZE) {
       mLogBuffer.pop();
     }
@@ -207,7 +214,7 @@ public class Utils {
   public final static synchronized String logBufferAsString() {
     StringBuilder sb = new StringBuilder();
     try {
-      for(Iterator<String> itr = mLogBuffer.iterator(); itr.hasNext();)  {
+      for (Iterator<String> itr = mLogBuffer.iterator(); itr.hasNext();) {
         sb.append(itr.next());
         sb.append("\n");
       }
@@ -325,7 +332,8 @@ public class Utils {
   }
 
   public final static String stripQuotes(String s) {
-    if (s.length() <= 1) return s;
+    if (s.length() <= 1)
+      return s;
     if ('"' == s.charAt(0) && '"' == s.charAt(s.length() - 1)) {
       return s.substring(1, s.length() - 1);
     }

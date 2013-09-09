@@ -63,7 +63,8 @@ public class NowShowing extends Activity {
         public void onResponse(MindRpcResponse response) {
           final JsonNode bodyConfig =
               response.getBody().path("bodyConfig").path(0);
-          MindRpc.saveBodyId(bodyConfig.path("bodyId").asText());
+          MindRpc.saveBodyId(
+              bodyConfig.path("bodyId").asText(), NowShowing.this);
           int gmtOffsetSeconds = bodyConfig.path("secondsFromGmt").asInt();
           mGmtOffsetMillis = gmtOffsetSeconds * 1000;
           rpcComplete();
@@ -342,7 +343,7 @@ public class NowShowing extends Activity {
     case R.id.target_season_pass:
       intent = new Intent(getBaseContext(), SeasonPass.class);
       break;
-    case R.id.target_settings:
+    case R.id.target_devices:
       intent = new Intent(getBaseContext(), Discover.class);
       break;
     case R.id.target_todo:
@@ -360,7 +361,7 @@ public class NowShowing extends Activity {
   }
 
   public final boolean onCreateOptionsMenu(Menu menu) {
-    Utils.createHelpOptionsMenu(menu, this);
+    Utils.createShortOptionsMenu(menu, this);
     return true;
   }
 

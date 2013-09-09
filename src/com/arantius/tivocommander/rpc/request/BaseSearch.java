@@ -36,7 +36,7 @@ public class BaseSearch extends MindRpcRequest {
       mDataMap.put("filterUnavailableContent", false);
     }
 
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("levelOfDetail", "high");
   }
 

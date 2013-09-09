@@ -6,7 +6,7 @@ public class OfferSearch extends MindRpcRequest {
   public OfferSearch() {
     super("offerSearch");
 
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("count", 50);
     mDataMap.put("namespace", "refserver");
     mDataMap.put("searchable", true);
@@ -15,7 +15,7 @@ public class OfferSearch extends MindRpcRequest {
   public OfferSearch(String searchKey, String searchVal) {
     super("offerSearch");
 
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("levelOfDetail", "low");
     mDataMap.put("namespace", "refserver");
     mDataMap.put("note", new String[] { "recordingForContentId" });

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <item type="id" name="menu_item_about" />
+  <item type="id" name="menu_item_devices" />
   <item type="id" name="menu_item_help" />
   <item type="id" name="menu_item_my_shows" />
   <item type="id" name="menu_item_remote" />

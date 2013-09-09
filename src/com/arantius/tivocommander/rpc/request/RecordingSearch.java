@@ -9,7 +9,7 @@ public class RecordingSearch extends MindRpcRequest {
   public RecordingSearch(String recordingId) {
     super("recordingSearch");
 
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     if ("deleted".equals(recordingId)) {
       mDataMap.put("format", "idSequence");
       mDataMap.put("state", new String[] { "deleted" });

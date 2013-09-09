@@ -37,7 +37,7 @@ public class Settings extends PreferenceActivity {
   }
 
   public final boolean onCreateOptionsMenu(Menu menu) {
-    Utils.createHelpOptionsMenu(menu, this);
+    Utils.createShortOptionsMenu(menu, this);
     return true;
   }
 

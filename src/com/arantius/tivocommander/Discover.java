@@ -24,7 +24,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
@@ -35,29 +34,30 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public class Discover extends ListActivity implements OnItemClickListener,
-    ServiceListener {
+    ServiceListener, OnItemLongClickListener {
   private TextView mEmpty;
   private SimpleAdapter mHostAdapter;
   private volatile ArrayList<HashMap<String, Object>> mHosts =
@@ -68,11 +68,108 @@ public class Discover extends ListActivity implements OnItemClickListener,
   private final String[] mServiceNames = new String[] {
       "_tivo-mindrpc._tcp.local." };
 
-  public final void customSettings(View v) {
-    stopQuery();
-    Intent intent = new Intent(Discover.this, Settings.class);
-    startActivity(intent);
-    finish();
+  protected void addDeviceMap(final HashMap<String, Object> listItem) {
+    final String addr = (String) listItem.get("addr");
+    final String name = (String) listItem.get("name");
+    final int warnIcon = (Integer) listItem.get("warn_icon");
+    final int blank = R.drawable.blank;
+
+    Integer oldIndex = null;
+    for (HashMap<String, Object> host : mHosts) {
+      if (name.equals(host.get("name")) && addr.equals(host.get("addr"))) {
+        if ((Integer) host.get("warn_icon") != blank && warnIcon == blank) {
+          oldIndex = mHosts.indexOf(host);
+          listItem.put("deviceId", host.get("deviceId"));
+          break;
+        } else {
+          Utils.log("Ignoring duplicate event.");
+          return;
+        }
+      }
+    }
+
+    final Integer newIndex = oldIndex; // Final copy that the runnable can see.
+    runOnUiThread(new Runnable() {
+      public void run() {
+        if (newIndex == null) {
+          // We didn't detect an item above as an update, and we didn't short-
+          // circuit to avoid duplicate events. So add a new item.
+          mHosts.add(listItem);
+        } else {
+          mHosts.set(newIndex, listItem);
+        }
+
+        // And make it visible in the UI either way.
+        mHostAdapter.notifyDataSetChanged();
+      };
+    });
+  }
+
+  public final void customDevice(View v) {
+    editCustomDevice(new Device());
+  }
+
+  public final void editCustomDevice(final Device device) {
+    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("Custom Device");
+
+    final LayoutInflater inflater =
+        (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    final View dialogView = inflater.inflate(R.layout.device_custom, null);
+    builder.setView(dialogView);
+
+    final EditText input_name = (EditText) dialogView.findViewById(
+        R.id.input_name);
+    input_name.setText(device.device_name);
+    final EditText input_addr = (EditText) dialogView.findViewById(
+        R.id.input_addr);
+    input_addr.setText(device.addr);
+    final EditText input_mak = (EditText) dialogView.findViewById(
+        R.id.input_mak);
+    input_mak.setText(device.mak);
+    final EditText input_tsn = (EditText) dialogView.findViewById(
+        R.id.input_tsn);
+    input_tsn.setText(device.tsn);
+    final EditText input_port = (EditText) dialogView.findViewById(
+        R.id.input_port);
+    input_port.setText(device.port.toString());
+
+    final OnClickListener onClickListener =
+        new OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+            device.device_name =
+                input_name
+                    .getText().toString();
+            device.addr = ((EditText) dialogView.findViewById(R.id.input_addr))
+                .getText().toString();
+            device.mak = ((EditText) dialogView.findViewById(R.id.input_mak))
+                .getText().toString();
+            device.tsn = ((EditText) dialogView.findViewById(R.id.input_tsn))
+                .getText().toString();
+            if ("".equals(device.tsn))
+              device.tsn = "-";
+            final String portStr =
+                ((EditText) dialogView.findViewById(R.id.input_port))
+                    .getText().toString();
+            try {
+              device.port = Integer.parseInt(portStr);
+            } catch (NumberFormatException e) {
+              device.port = 1413;
+            }
+
+            Database db = new Database(Discover.this);
+            db.saveDevice(device);
+            db.switchDevice(device);
+
+            Intent intent = new Intent(Discover.this, NowShowing.class);
+            startActivity(intent);
+            Discover.this.finish();
+          }
+        };
+    builder.setPositiveButton("OK", onClickListener);
+    builder.setNegativeButton("Cancel", null);
+
+    builder.create().show();
   }
 
   @Override
@@ -99,54 +196,94 @@ public class Discover extends ListActivity implements OnItemClickListener,
             new int[] { R.id.discover_name, R.id.discover_warn_icon });
     setListAdapter(mHostAdapter);
 
-    getListView().setOnItemClickListener(this);
+    final ListView lv = getListView();
+    lv.setOnItemClickListener(this);
+    lv.setOnItemLongClickListener(this);
+
     Utils.activateHomeButton(this);
   }
 
   public final boolean onCreateOptionsMenu(Menu menu) {
-    Utils.createHelpOptionsMenu(menu, this);
+    Utils.createShortOptionsMenu(menu, this);
     return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    return Utils.onOptionsItemSelected(item, this, true);
   }
 
   public void onItemClick(AdapterView<?> parent, View view, int position,
       long id) {
     final HashMap<String, Object> item = mHosts.get(position);
 
+    final Database db = new Database(Discover.this);
+    final Long deviceId = (Long) item.get("deviceId");
+    if (deviceId != null) {
+      final Device clickedDevice = db.getDevice(deviceId);
+      if (clickedDevice != null) {
+        db.switchDevice(clickedDevice);
+        Intent intent = new Intent(Discover.this, NowShowing.class);
+        startActivity(intent);
+        this.finish();
+        return;
+      }
+    }
+
     int messageId = (Integer) item.get("messageId");
-    if (messageId != 0) {
+    if (messageId > 0) {
       showHelp(messageId);
       return;
     }
 
-    final SharedPreferences prefs =
-        PreferenceManager.getDefaultSharedPreferences(Discover.this
-            .getBaseContext());
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("MAK");
+    builder.setMessage(R.string.pref_mak_instructions);
 
-    final EditText makEditText = new EditText(Discover.this);
-    makEditText.setInputType(InputType.TYPE_CLASS_PHONE);
-    makEditText.setText(prefs.getString("tivo_mak", ""));
+    final EditText makEditText = new EditText(this);
+    makEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+    builder.setView(makEditText);
 
-    final Discover that = this;
-    new AlertDialog.Builder(Discover.this).setTitle("MAK")
-        .setMessage(R.string.pref_mak_instructions).setView(makEditText)
-        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int whichButton) {
-            Editor editor = prefs.edit();
-            editor.putString("tivo_addr", (String) item.get("addr"));
-            editor.putString("tivo_port", (String) item.get("port"));
-            String mak = makEditText.getText().toString();
-            editor.putString("tivo_mak", mak);
-            editor.commit();
-            Intent intent = new Intent(that, NowShowing.class);
+    // TODO: Be DRY vs. the same in customDevice().
+    final OnClickListener onClickListener =
+        new OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+            Device device = db.getNamedDevice(
+                (String) item.get("name"), (String) item.get("addr"));
+            device.device_name = (String) item.get("name");
+            device.addr = (String) item.get("addr");
+            device.mak = makEditText.getText().toString();
+            device.tsn = "=";
+            final String portStr = (String) item.get("port");
+            device.port = Integer.parseInt(portStr);
+
+            db.saveDevice(device);
+            db.switchDevice(device);
+
+            Intent intent = new Intent(Discover.this, NowShowing.class);
             startActivity(intent);
             Discover.this.finish();
           }
-        }).setNegativeButton("Cancel", null).create().show();
+        };
+    builder.setPositiveButton("OK", onClickListener);
+    builder.setNegativeButton("Cancel", null);
+
+    builder.create().show();
+  }
+
+  public boolean onItemLongClick(AdapterView<?> parent, View view,
+      int position, long id) {
+    final HashMap<String, Object> item = mHosts.get(position);
+    final Long deviceId = (Long) item.get("deviceId");
+    if (deviceId == null) {
+      return false;
+    }
+
+    final Database db = new Database(this);
+    final Device device = db.getDevice(deviceId);
+    editCustomDevice(device);
+
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    return Utils.onOptionsItemSelected(item, this, true);
   }
 
   @Override
@@ -178,6 +315,10 @@ public class Discover extends ListActivity implements OnItemClickListener,
   public void serviceResolved(ServiceEvent event) {
     ServiceInfo info = event.getInfo();
     Utils.log("Discovery serviceResolved(): " + event.toString());
+    if (mJmdns == null) {
+      Utils.log("Ignoring because search is not running.");
+      return;
+    }
 
     String name = event.getName();
     String addr = info.getHostAddresses()[0];
@@ -191,15 +332,12 @@ public class Discover extends ListActivity implements OnItemClickListener,
       messageId = R.string.premiere_only;
     } else if (platform.startsWith("pc/")
         || platform.equals("pc")
-        || platform.startsWith("pyTivo")
-        ) {
+        || platform.startsWith("pyTivo")) {
       Utils.log("Ignoring event for PC platform.");
       // This is a e.g. a TiVo Desktop or pyTivo share. Exclude it.
       return;
-    } else if (
-        platform.indexOf("Series4") == -1
-        && platform.indexOf("Series5") == -1
-    ) {
+    } else if (platform.indexOf("Series4") == -1
+        && platform.indexOf("Series5") == -1) {
       messageId = R.string.premiere_only;
     } else if (!mRpcServiceName.equals(info.getType())) {
       messageId = R.string.error_net_control;
@@ -209,49 +347,14 @@ public class Discover extends ListActivity implements OnItemClickListener,
 
     final HashMap<String, Object> listItem = new HashMap<String, Object>();
     listItem.put("addr", addr);
+    listItem.put("deviceId", null);
     listItem.put("messageId", messageId);
     listItem.put("name", name);
     listItem.put("port", port);
     listItem.put("tsn", tsn);
     listItem.put("warn_icon", messageId == 0 ? R.drawable.blank
         : android.R.drawable.ic_dialog_alert);
-
-    Integer oldIndex = null;
-    for (HashMap<String, Object> host : mHosts) {
-      if (name.equals(host.get("name")) && addr.equals(host.get("addr"))) {
-        if ((Integer) host.get("messageId") != 0 && messageId == 0) {
-          // If we previously added this as an error (i.e. mindrpc was not the
-          // first discovered service) but now we're satisfied: remove the
-          // previous item and add this as a replacement.
-          oldIndex = mHosts.indexOf(host);
-          Utils.log(String.format(Locale.US,
-              "Found item update!  Replace %s with %s", host, listItem));
-          break;
-        } else {
-          // Ignore dupes. I'm not sure what Series 2 or 3/HD devices will
-          // report, so I listen for everything it might be, and skip dupes
-          // here. Also, timing issues are rarely caught here.
-          Utils.log("Ignoring duplicate event.");
-          return;
-        }
-      }
-    }
-
-    final Integer newIndex = oldIndex;  // Final copy that the runnable can see.
-    runOnUiThread(new Runnable() {
-      public void run() {
-        if (newIndex == null) {
-          // We didn't detect an item above as an update, and we didn't short-
-          // circuit to avoid duplicate events.  So add a new item.
-          mHosts.add(listItem);
-        } else {
-          mHosts.set(newIndex, listItem);
-        }
-
-        // And make it visible in the UI either way.
-        mHostAdapter.notifyDataSetChanged();
-      };
-    });
+    addDeviceMap(listItem);
   }
 
   private final void showHelp(int messageId) {
@@ -341,6 +444,20 @@ public class Discover extends ListActivity implements OnItemClickListener,
         stopQuery();
       }
     }).start();
+
+    // Add stored (i.e. custom) devices.
+    final Database db = new Database(this);
+    for (Device device : db.getDevices()) {
+      final HashMap<String, Object> listItem = new HashMap<String, Object>();
+      listItem.put("addr", device.addr);
+      listItem.put("deviceId", device.id);
+      listItem.put("messageId", -1);
+      listItem.put("name", device.device_name);
+      listItem.put("port", device.port);
+      listItem.put("tsn", "-");
+      listItem.put("warn_icon", android.R.drawable.ic_menu_recent_history);
+      addDeviceMap(listItem);
+    }
   }
 
   protected final void stopQuery() {

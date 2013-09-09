@@ -63,8 +63,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
         android:drawableTop="@drawable/icon_seasonpass" android:onClick="onClickButton"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:layout_weight="1" android:padding="16dp" />
-      <Button android:id="@+id/target_settings" android:text="Settings"
-        android:drawableTop="@drawable/icon_cog" android:onClick="onClickButton"
+      <Button android:id="@+id/target_devices" android:text="Devices"
+        android:drawableTop="@drawable/icon_devices" android:onClick="onClickButton"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:layout_weight="1" android:padding="16dp" />
     </LinearLayout>

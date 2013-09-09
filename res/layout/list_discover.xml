@@ -40,9 +40,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:layout_width="fill_parent" android:layout_height="wrap_content"
       android:layout_gravity="center" android:onClick="startQuery"
       android:layout_weight="1" />
-    <Button android:id="@+id/custom_button" android:text="Custom Settings"
+    <Button android:id="@+id/custom_button" android:text="Custom Device"
       android:layout_width="fill_parent" android:layout_height="wrap_content"
-      android:layout_gravity="center" android:onClick="customSettings"
+      android:layout_gravity="center" android:onClick="customDevice"
       android:layout_weight="1" />
   </LinearLayout>
 </LinearLayout>

@@ -9,7 +9,7 @@ public class Subscribe extends MindRpcRequest {
   public Subscribe() {
     super("subscribe");
 
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("recordingQuality", "best");
   }
 

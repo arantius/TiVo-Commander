@@ -8,7 +8,7 @@ public class SubscriptionsReprioritize extends MindRpcRequest {
 
   public SubscriptionsReprioritize(ArrayList<String> subscriptionIds) {
     super("subscriptionsReprioritize");
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("subscriptionId", subscriptionIds);
   }
 }

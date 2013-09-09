@@ -54,13 +54,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.Connect;
+import com.arantius.tivocommander.Database;
+import com.arantius.tivocommander.Device;
 import com.arantius.tivocommander.Discover;
 import com.arantius.tivocommander.NowShowing;
 import com.arantius.tivocommander.R;
@@ -91,9 +92,8 @@ public enum MindRpc {
 
   private static final String LOG_TAG = "tivo_commander";
 
-  public static String mBodyId = "-";
   public static Boolean mBodyIsAuthed = false;
-  public static String mTivoAddr;
+  public static Device mTivoDevice;
 
   private static DataInputStream mInputStream;
   private static MindRpcInput mInputThread;
@@ -101,13 +101,11 @@ public enum MindRpc {
   private static Bundle mOriginExtras;
   private static DataOutputStream mOutputStream;
   private static MindRpcOutput mOutputThread;
-  private static TreeMap<Integer,MindRpcResponseListener> mResponseListenerMap =
-      new TreeMap<Integer,MindRpcResponseListener>();
+  private static TreeMap<Integer, MindRpcResponseListener> mResponseListenerMap =
+      new TreeMap<Integer, MindRpcResponseListener>();
   private static volatile int mRpcId = 1;
   private static volatile int mSessionId;
   private static Socket mSocket;
-  private static String mTivoMak;
-  private static int mTivoPort;
   private static final int TIMEOUT_CONNECT = 2500;
 
   /**
@@ -118,7 +116,7 @@ public enum MindRpc {
    */
   public static void addRequest(MindRpcRequest request,
       MindRpcResponseListener listener) {
-    // Reconnect if necessary; but not for BodyAuthenticate!  That one RPC
+    // Reconnect if necessary; but not for BodyAuthenticate! That one RPC
     // is sent during connection as part of the verification.
     if (!isConnected() && !(request instanceof BodyAuthenticate)) {
       init2();
@@ -131,26 +129,23 @@ public enum MindRpc {
   }
 
   private static boolean checkSettings(Activity activity) {
-    SharedPreferences prefs =
-        PreferenceManager
-            .getDefaultSharedPreferences(activity.getBaseContext());
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
+        activity.getBaseContext());
 
     Utils.DEBUG_LOG = prefs.getBoolean("debug_log", false);
 
-    mTivoAddr = prefs.getString("tivo_addr", "");
-    try {
-      mTivoPort = Integer.parseInt(prefs.getString("tivo_port", ""));
-    } catch (NumberFormatException e) {
-      mTivoPort = 0;
-    }
-    mTivoMak = prefs.getString("tivo_mak", "");
+    final Database db = new Database(activity);
+    db.portLegacySettings(activity);
+    mTivoDevice = db.getLastDevice();
 
     int error = 0;
-    if ("" == mTivoAddr) {
+    if (mTivoDevice == null) {
+      error = R.string.error_no_device;
+    } else if (mTivoDevice.addr == null || "".equals(mTivoDevice.addr)) {
       error = R.string.error_addr;
-    } else if (0 >= mTivoPort) {
+    } else if (mTivoDevice.port == null || 0 >= mTivoDevice.port) {
       error = R.string.error_port;
-    } else if ("" == mTivoMak) {
+    } else if (mTivoDevice.mak == null || "".equals(mTivoDevice.mak)) {
       error = R.string.error_mak;
     }
 
@@ -158,9 +153,6 @@ public enum MindRpc {
       settingsError(activity, error);
       return false;
     }
-
-    // No errors found, so load the bodyId value.
-    mBodyId = prefs.getString("tivo_tsn", "-");
 
     return true;
   }
@@ -177,7 +169,7 @@ public enum MindRpc {
           mSessionId = 0x26c000 + new Random().nextInt(0xFFFF);
           mSocket = sslSocketFactory.createSocket();
           InetSocketAddress remoteAddr =
-              new InetSocketAddress(mTivoAddr, mTivoPort);
+              new InetSocketAddress(mTivoDevice.addr, mTivoDevice.port);
           mSocket.connect(remoteAddr, TIMEOUT_CONNECT);
           mInputStream = new DataInputStream(mSocket.getInputStream());
           mOutputStream = new DataOutputStream(mSocket.getOutputStream());
@@ -208,22 +200,22 @@ public enum MindRpc {
 
   private static SSLSocketFactory createSocketFactory(
       final Activity originActivity
-  ) {
+      ) {
     final String password = readPassword(originActivity);
     try {
-       KeyStore keyStore = KeyStore.getInstance("PKCS12");
-       KeyManagerFactory fac = KeyManagerFactory.getInstance("X509");
-       InputStream keyInput = originActivity.getResources().openRawResource(
-           R.raw.cdata);
+      KeyStore keyStore = KeyStore.getInstance("PKCS12");
+      KeyManagerFactory fac = KeyManagerFactory.getInstance("X509");
+      InputStream keyInput = originActivity.getResources().openRawResource(
+          R.raw.cdata);
 
-       keyStore.load(keyInput, password.toCharArray());
-       keyInput.close();
+      keyStore.load(keyInput, password.toCharArray());
+      keyInput.close();
 
-       fac.init(keyStore, password.toCharArray());
-       SSLContext context = SSLContext.getInstance("TLS");
-       TrustManager[] tm = new TrustManager[] { new AlwaysTrustManager() };
-       context.init(fac.getKeyManagers(), tm, new SecureRandom());
-       return context.getSocketFactory();
+      fac.init(keyStore, password.toCharArray());
+      SSLContext context = SSLContext.getInstance("TLS");
+      TrustManager[] tm = new TrustManager[] { new AlwaysTrustManager() };
+      context.init(fac.getKeyManagers(), tm, new SecureRandom());
+      return context.getSocketFactory();
     } catch (CertificateException e) {
       Log.e(LOG_TAG, "createSocketFactory: CertificateException!", e);
     } catch (IOException e) {
@@ -325,7 +317,7 @@ public enum MindRpc {
     mOriginActivity = originActivity;
 
     if (isConnected()) {
-      // Already connected?  No-op.
+      // Already connected? No-op.
       Utils.log("MindRpc.init(): already connected.");
       return false;
     }
@@ -354,7 +346,7 @@ public enum MindRpc {
   public static void init3(final Activity connectActivity) {
     if (mOriginActivity == null) {
       // We must have been evicted/quit and restarted while at the connect
-      // screen which calls us.  Restart the app from Now Showing.
+      // screen which calls us. Restart the app from Now Showing.
       Intent intent =
           new Intent(connectActivity.getBaseContext(), NowShowing.class);
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -382,6 +374,12 @@ public enum MindRpc {
       public void onResponse(MindRpcResponse response) {
         if ("failure".equals(response.getBody().path("status").asText())) {
           settingsError(connectActivity, R.string.error_auth);
+          try {
+            mTivoDevice.mak = "";
+            new Database(connectActivity).saveDevice(mTivoDevice);
+          } catch (Exception e) {
+            Utils.logError("Could not remove bad MAK.", e);
+          }
           connectActivity.finish();
         } else {
           mBodyIsAuthed = true;
@@ -399,7 +397,7 @@ public enum MindRpc {
       }
     };
     Utils.log("MindRpc.init3(): start auth.");
-    addRequest(new BodyAuthenticate(mTivoMak), authListener);
+    addRequest(new BodyAuthenticate(mTivoDevice.mak), authListener);
   }
 
   protected static boolean isConnected() {
@@ -431,18 +429,13 @@ public enum MindRpc {
     }
   }
 
-  public static void saveBodyId(String bodyId) {
-    if (bodyId == null || bodyId == "" || bodyId == mBodyId) {
+  public static void saveBodyId(String bodyId, Context context) {
+    if (bodyId == null || bodyId == "" || bodyId == mTivoDevice.tsn) {
       return;
     }
 
-    mBodyId = bodyId;
-    SharedPreferences prefs =
-        PreferenceManager.getDefaultSharedPreferences(mOriginActivity
-            .getBaseContext());
-    Editor edit = prefs.edit();
-    edit.putString("tivo_tsn", bodyId);
-    edit.commit();
+    mTivoDevice.tsn = bodyId;
+    new Database(context).saveDevice(mTivoDevice);
   }
 
   public static void settingsError(final Activity activity, final int messageId) {

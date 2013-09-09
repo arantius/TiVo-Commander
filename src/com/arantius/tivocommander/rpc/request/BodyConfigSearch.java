@@ -24,6 +24,6 @@ import com.arantius.tivocommander.rpc.MindRpc;
 public class BodyConfigSearch extends MindRpcRequest {
   public BodyConfigSearch() {
     super("bodyConfigSearch");
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
   }
 }

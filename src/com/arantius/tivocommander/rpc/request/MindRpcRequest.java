@@ -83,7 +83,7 @@ public abstract class MindRpcRequest {
         "Content-Type: application/json",
         "RequestType: " + mReqType,
         "ResponseCount: " + mResponseCount,
-        "BodyId: " + MindRpc.mBodyId,
+        "BodyId: " + MindRpc.mTivoDevice.tsn,
         "X-ApplicationName: Quicksilver ",
         "X-ApplicationVersion: 1.2 ",
         String.format("X-ApplicationSessionId: 0x%x", mSessionId));

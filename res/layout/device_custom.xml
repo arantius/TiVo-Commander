@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+DVR Commander for TiVo allows control of a TiVo Premiere device.
+Copyright (C) 2011  Anthony Lieuallen (arantius@gmail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent" android:layout_height="match_parent"
+  android:orientation="vertical" android:padding="6dp"
+>
+  <TextView style="@android:style/TextAppearance.Large"
+      android:text="Device Name"
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
+  <EditText android:inputType="textUri" android:id="@+id/input_name"
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
+  <TextView style="@android:style/TextAppearance.Large"
+      android:text="IP Address or Host name"
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
+  <EditText android:inputType="textUri" android:id="@+id/input_addr"
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
+  <TextView style="@android:style/TextAppearance.Large"
+      android:text="MAK"
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
+  <EditText android:inputType="number" android:id="@+id/input_mak"
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+  <TextView style="@android:style/TextAppearance.Small"
+      android:paddingLeft="6dp" android:paddingRight="6dp"
+      android:paddingBottom="6dp" android:paddingTop="24dp"
+      android:text="It's safe to leave these fields as-is unless you're sure you know what you're doing."
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+  <TextView style="@android:style/TextAppearance.Large"
+      android:text="Port"
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
+  <EditText android:inputType="number"  android:id="@+id/input_port"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:text="1413" />
+  <TextView style="@android:style/TextAppearance.Large"
+      android:text="TSN"
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
+  <EditText android:inputType="text" android:id="@+id/input_tsn"
+      android:layout_width="fill_parent" android:layout_height="wrap_content" />
+</LinearLayout>

@@ -271,7 +271,7 @@ public class MyShows extends ShowList {
     }
 
     mListAdapter = new ShowsAdapter(this);
-    ListView lv = getListView();
+    final ListView lv = getListView();
     lv.setAdapter(mListAdapter);
     lv.setOnItemClickListener(mOnClickListener);
     lv.setLongClickable(true);
@@ -291,7 +291,8 @@ public class MyShows extends ShowList {
             ArrayList<Integer> slotMap =
                 mRequestSlotMap.get(response.getRpcId());
 
-            MindRpc.saveBodyId(items.path(0).path("bodyId").asText());
+            MindRpc.saveBodyId(
+                items.path(0).path("bodyId").asText(), MyShows.this);
 
             for (int i = 0; i < items.size(); i++) {
               int pos = slotMap.get(i);

@@ -25,7 +25,7 @@ public class RecordingUpdate extends MindRpcRequest {
   public RecordingUpdate(String recordingId, String state) {
     super("recordingUpdate");
 
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("recordingId", new String[] { recordingId });
     mDataMap.put("state", state);
   }

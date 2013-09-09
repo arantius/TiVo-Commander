@@ -28,7 +28,7 @@ public class TodoRecordingSearch extends MindRpcRequest {
   public TodoRecordingSearch(ArrayList<JsonNode> showIds, String orderBy) {
     super("recordingSearch");
 
-    mDataMap.put("bodyId", MindRpc.mBodyId);
+    mDataMap.put("bodyId", MindRpc.mTivoDevice.tsn);
     mDataMap.put("levelOfDetail", "medium");
     mDataMap.put("objectIdAndType", showIds);
     mDataMap.put("state", new String[] { "inProgress", "scheduled" });
