@@ -21,7 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <string name="app_name">DVR Commander for TiVo®</string>
   <string name="beta_expired">This beta has expired, please update the app.</string>
   <string name="blackberry_discovery">Automatic discovery is not supported on BlackBerry devices, please enter values manually with "Custom Settings".</string>
-  <string name="pref_mak_instructions">"Log in to tivo.com, then open the 'View media access key' section to find this value."</string>
+  <string name="pref_mak_instructions">"Log in to tivo.com, then open the 'View media access key' section to find this value.\n\nOr, on your TiVo, navigate to Settings > Account &amp; System Info > Media Access Key."</string>
   <string name="pref_tsn_instructions">"Log in to tivo.com, then open the 'DVR preferences' section to find this value; it should be like 'tsn:###' with 15 digits and no hyphens."</string>
   <string name="error_addr">"Missing TiVo's address."</string>
   <string name="error_mak">"Please provide your TiVo's Media Access Key."</string>
