@@ -27,7 +27,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -36,39 +39,27 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
+import com.arantius.tivocommander.rpc.request.RecordingUpdate;
 import com.arantius.tivocommander.rpc.request.UpcomingSearch;
 import com.arantius.tivocommander.rpc.response.MindRpcResponse;
 import com.arantius.tivocommander.rpc.response.MindRpcResponseListener;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class Upcoming extends ListActivity {
+public class Upcoming extends ListActivity implements OnItemClickListener,
+    OnItemLongClickListener {
   private class DateInPast extends Throwable {
     private static final long serialVersionUID = -4184008452910054505L;
   }
 
-  private final OnItemClickListener mOnClickListener =
-      new OnItemClickListener() {
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-            long id) {
-          @SuppressWarnings("unchecked")
-          HashMap<String, Object> listItem =
-              (HashMap<String, Object>) parent.getItemAtPosition(position);
-          JsonNode show =
-              mShows.path(((Integer) listItem.get("index")).intValue());
-
-          Intent intent = new Intent(Upcoming.this, ExploreTabs.class);
-          intent.putExtra("contentId", show.path("contentId").asText());
-          intent.putExtra("collectionId", show.path("collectionId")
-              .asText());
-          intent.putExtra("offerId", show.path("offerId").asText());
-          startActivity(intent);
-        }
-      };
+  protected SimpleAdapter mListAdapter;
+  protected JsonNode mShows;
 
   private final MindRpcResponseListener mUpcomingListener =
       new MindRpcResponseListener() {
@@ -118,16 +109,17 @@ public class Upcoming extends ListActivity {
           }
 
           final ListView lv = getListView();
-          lv.setAdapter(new SimpleAdapter(Upcoming.this, listItems,
+          mListAdapter = new SimpleAdapter(Upcoming.this, listItems,
               R.layout.item_upcoming,
               new String[] { "details", "icon", "title" }, new int[] {
                   R.id.upcoming_details, R.id.upcoming_icon,
-                  R.id.upcoming_title }));
-          lv.setOnItemClickListener(mOnClickListener);
+                  R.id.upcoming_title });
+          lv.setAdapter(mListAdapter);
+          lv.setOnItemClickListener(Upcoming.this);
+          lv.setLongClickable(true);
+          lv.setOnItemLongClickListener(Upcoming.this);
         }
       };
-
-  protected JsonNode mShows;
 
   protected String formatTime(JsonNode item) throws DateInPast {
     String timeIn = item.path("startTime").asText();
@@ -174,6 +166,83 @@ public class Upcoming extends ListActivity {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     Utils.createFullOptionsMenu(menu, this);
+    return true;
+  }
+
+  protected JsonNode showItemFromListPosition(int position) {
+    @SuppressWarnings("unchecked")
+    final HashMap<String, Object> listItem =
+        (HashMap<String, Object>) mListAdapter.getItem(position);
+    final JsonNode show =
+        mShows.path(((Integer) listItem.get("index")).intValue());
+    return show;
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    // This should only come from a long-press "record" activity finishing.
+    // Refresh the whole thing to get the check.  (Lazy and slow, but it works.)
+    startActivity(getIntent());
+    finish();
+  }
+
+  public void onItemClick(AdapterView<?> parent, View view, int position,
+      long id) {
+    final JsonNode show = showItemFromListPosition(position);
+    Intent intent = new Intent(Upcoming.this, ExploreTabs.class);
+    intent.putExtra("contentId", show.path("contentId").asText());
+    intent.putExtra("collectionId", show.path("collectionId")
+        .asText());
+    intent.putExtra("offerId", show.path("offerId").asText());
+    startActivity(intent);
+  }
+
+  public boolean onItemLongClick(AdapterView<?> parent, View view,
+      int position, long id) {
+    final JsonNode show = showItemFromListPosition(position);
+    final ArrayList<String> choices = new ArrayList<String>();
+    if (show.has("recordingForOfferId")) {
+      choices.add("Don't Record");
+    } else {
+      choices.add("Record");
+    }
+    ArrayAdapter<String> choicesAdapter =
+        new ArrayAdapter<String>(this, android.R.layout.select_dialog_item,
+            choices);
+
+    DialogInterface.OnClickListener onClickListener =
+        new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int position) {
+            final String action = choices.get(position);
+            if ("Record".equals(action)) {
+              Intent intent =
+                  new Intent(getBaseContext(), SubscribeOffer.class);
+              intent.putExtra("offerId", show.path("offerId").asText());
+              intent.putExtra("contentId", show.path("contentId").asText());
+              startActivityForResult(intent, 1);
+            } else if ("Don't Record".equals(action)) {
+              Upcoming.this.setProgressBarIndeterminateVisibility(true);
+              final String recordingId =
+                  show.path("recordingForOfferId")
+                      .path(0).path("recordingId").asText();
+              MindRpc.addRequest(
+                  new RecordingUpdate(recordingId, "cancelled"),
+                  new MindRpcResponseListener() {
+                    public void onResponse(MindRpcResponse response) {
+                      // Refresh the whole thing, to remove the check.
+                      // (Lazy and slow, but it works.)
+                      startActivity(getIntent());
+                      finish();
+                    }
+                  });
+            }
+          }
+        };
+
+    Builder dialogBuilder = new AlertDialog.Builder(this);
+    dialogBuilder.setTitle("Operation?");
+    dialogBuilder.setAdapter(choicesAdapter, onClickListener);
+    dialogBuilder.create().show();
     return true;
   }
 

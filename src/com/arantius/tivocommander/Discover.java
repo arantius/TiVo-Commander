@@ -280,8 +280,8 @@ public class Discover extends ListActivity implements OnItemClickListener,
     final Database db = new Database(this);
     final Device device = db.getDevice(deviceId);
     final ArrayList<String> choices = new ArrayList<String>();
-    choices.add(0, "Edit");
-    choices.add(1, "Delete");
+    choices.add("Edit");
+    choices.add("Delete");
 
     ArrayAdapter<String> choicesAdapter =
         new ArrayAdapter<String>(this, android.R.layout.select_dialog_item,

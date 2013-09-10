@@ -350,10 +350,12 @@ public abstract class ShowList extends ListActivity implements
 
   public boolean onItemLongClick(AdapterView<?> parent, View view,
       int position, long id) {
-    if (position > mShowData.size())
+    if (position > mShowData.size()) {
       return false;
-    if (mShowStatus.get(position) != ShowStatus.LOADED)
+    }
+    if (mShowStatus.get(position) != ShowStatus.LOADED) {
       return false;
+    }
 
     mLongPressIndex = position;
     mLongPressItem = mShowData.get(position);
