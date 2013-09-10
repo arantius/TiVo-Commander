@@ -54,9 +54,13 @@ public class MyShows extends ShowList {
           ProgressBar mMeter = (ProgressBar) findViewById(R.id.meter);
           TextView mMeterText = (TextView) findViewById(R.id.meter_text);
           JsonNode bodyConfig = response.getBody().path("bodyConfig").path(0);
-          int used = bodyConfig.path("userDiskUsed").asInt();
-          int size = bodyConfig.path("userDiskSize").asInt();
 
+          // Convert long kilobytes to int megabytes.  Roamio has 3TB, which
+          // is more KB than fits in a 32 bit int (!).
+          int used = (int) Math.floor(
+              bodyConfig.path("userDiskUsed").asLong() / 1024);
+          int size = (int) Math.floor(
+              bodyConfig.path("userDiskSize").asLong() / 1024);
           mMeter.setMax(size);
           mMeter.setProgress(used);
 
