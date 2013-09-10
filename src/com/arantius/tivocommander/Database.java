@@ -51,7 +51,7 @@ public class Database extends SQLiteOpenHelper {
     // TODO
   }
 
-  public void deleteDevice(Integer id) {
+  public void deleteDevice(Long id) {
     SQLiteDatabase db = this.getWritableDatabase();
     db.delete("devices", "id = ?", new String[] { String.valueOf(id) });
     db.close();

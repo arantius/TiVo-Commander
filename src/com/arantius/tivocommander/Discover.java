@@ -31,6 +31,7 @@ import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -49,6 +50,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -216,7 +218,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     final Long deviceId = (Long) item.get("deviceId");
     if (deviceId != null) {
       final Device clickedDevice = db.getDevice(deviceId);
-      if (clickedDevice != null) {
+      if (clickedDevice != null && !"".equals(clickedDevice.mak)) {
         db.switchDevice(clickedDevice);
         Intent intent = new Intent(Discover.this, NowShowing.class);
         startActivity(intent);
@@ -245,10 +247,11 @@ public class Discover extends ListActivity implements OnItemClickListener,
           public void onClick(DialogInterface dialog, int which) {
             Device device = db.getNamedDevice(
                 (String) item.get("name"), (String) item.get("addr"));
+            if (device == null) device = new Device();
             device.device_name = (String) item.get("name");
             device.addr = (String) item.get("addr");
             device.mak = makEditText.getText().toString();
-            device.tsn = "=";
+            device.tsn = "-";
             final String portStr = (String) item.get("port");
             device.port = Integer.parseInt(portStr);
 
@@ -276,7 +279,34 @@ public class Discover extends ListActivity implements OnItemClickListener,
 
     final Database db = new Database(this);
     final Device device = db.getDevice(deviceId);
-    editCustomDevice(device);
+    final ArrayList<String> choices = new ArrayList<String>();
+    choices.add(0, "Edit");
+    choices.add(1, "Delete");
+
+    ArrayAdapter<String> choicesAdapter =
+        new ArrayAdapter<String>(this, android.R.layout.select_dialog_item,
+            choices);
+
+    DialogInterface.OnClickListener onClickListener =
+        new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int position) {
+            switch (position) {
+            case 0:
+              editCustomDevice(device);
+              break;
+            case 1:
+              db.deleteDevice(deviceId);
+              stopQuery();
+              startQuery(null);
+              break;
+            }
+          }
+        };
+
+    Builder dialogBuilder = new AlertDialog.Builder(this);
+    dialogBuilder.setTitle("Operation?");
+    dialogBuilder.setAdapter(choicesAdapter, onClickListener);
+    dialogBuilder.create().show();
 
     return true;
   }
