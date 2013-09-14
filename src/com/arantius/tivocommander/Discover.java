@@ -55,6 +55,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
@@ -178,14 +179,6 @@ public class Discover extends ListActivity implements OnItemClickListener,
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     MindRpc.disconnect();
-
-    final String osName = System.getProperty("os.name");
-    Utils.log("Discover; os.name = " + osName);
-    if ("qnx".equals(osName)) {
-      showHelp(R.string.blackberry_discovery);
-      finish();
-      return;
-    }
 
     setTitle("TiVo Device Search");
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -403,14 +396,37 @@ public class Discover extends ListActivity implements OnItemClickListener,
   }
 
   public final void startQuery(View v) {
-    stopQuery();
-    Utils.log("Start discovery query ...");
-
-    mEmpty.setText("Searching ...");
-
     mHosts.clear();
     mHostAdapter.notifyDataSetChanged();
 
+    // Add stored (i.e. custom) devices.
+    final Database db = new Database(this);
+    for (Device device : db.getDevices()) {
+      final HashMap<String, Object> listItem = new HashMap<String, Object>();
+      listItem.put("addr", device.addr);
+      listItem.put("deviceId", device.id);
+      listItem.put("messageId", -1);
+      listItem.put("name", device.device_name);
+      listItem.put("port", device.port);
+      listItem.put("tsn", "-");
+      listItem.put("warn_icon", android.R.drawable.ic_menu_recent_history);
+      addDeviceMap(listItem);
+    }
+
+    // Skip mDNS discovery on BlackBerry.
+    final String osName = System.getProperty("os.name");
+    Utils.log("Discover; os.name = " + osName);
+    if ("qnx".equals(osName)) {
+      if (mHosts.size() == 0) {
+        Utils.toast(this, R.string.blackberry_discovery, Toast.LENGTH_LONG);
+      }
+      findViewById(R.id.refresh_button).setVisibility(View.GONE);
+      return;
+    }
+
+    stopQuery();
+    Utils.log("Start discovery query ...");
+    mEmpty.setText("Searching ...");
     setProgressBarIndeterminateVisibility(true);
     findViewById(R.id.refresh_button).setEnabled(false);
 
@@ -474,24 +490,9 @@ public class Discover extends ListActivity implements OnItemClickListener,
         stopQuery();
       }
     }).start();
-
-    // Add stored (i.e. custom) devices.
-    final Database db = new Database(this);
-    for (Device device : db.getDevices()) {
-      final HashMap<String, Object> listItem = new HashMap<String, Object>();
-      listItem.put("addr", device.addr);
-      listItem.put("deviceId", device.id);
-      listItem.put("messageId", -1);
-      listItem.put("name", device.device_name);
-      listItem.put("port", device.port);
-      listItem.put("tsn", "-");
-      listItem.put("warn_icon", android.R.drawable.ic_menu_recent_history);
-      addDeviceMap(listItem);
-    }
   }
 
   protected final void stopQuery() {
-    Utils.log("Stop discovery query ...");
     runOnUiThread(new Runnable() {
       public void run() {
         setProgressBarIndeterminateVisibility(false);
@@ -507,6 +508,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
 
     // JmDNS close seems to take ~6 seconds, so do that on a background thread.
     if (mJmdns != null) {
+      Utils.log("Stop discovery query ...");
       final JmDNS oldMdns = mJmdns;
       mJmdns = null;
       new Thread(new Runnable() {
