@@ -17,9 +17,12 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent" android:layout_height="match_parent"
-  android:orientation="vertical" android:padding="6dp"
+  android:fillViewport="true"
+>
+<LinearLayout android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
 >
   <TextView style="@android:style/TextAppearance.Large"
       android:text="Device Name"
@@ -55,3 +58,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <EditText android:inputType="text" android:id="@+id/input_tsn"
       android:layout_width="fill_parent" android:layout_height="wrap_content" />
 </LinearLayout>
+</ScrollView>
