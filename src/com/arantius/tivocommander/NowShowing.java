@@ -240,6 +240,10 @@ public class NowShowing extends Activity {
     final int millisHalfHour = 1000 * 60 * 30;
     PlaybackRange range = new PlaybackRange();
 
+    if (mMillisContentBegin == null || mMillisContentEnd == null) {
+      return null;
+    }
+
     range.absoluteBegin = mMillisContentBegin;
     range.absoluteEnd = mMillisContentEnd;
     range.max = (int) (mMillisContentEnd - mMillisContentBegin);
@@ -452,6 +456,10 @@ public class NowShowing extends Activity {
     }
 
     PlaybackRange range = getPlaybackRange();
+    if (range == null) {
+      mScrubBar.setVisibility(View.GONE);
+      return;
+    }
 
     String labelLeft = null;
     String labelRight = null;
