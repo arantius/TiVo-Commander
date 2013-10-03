@@ -245,8 +245,13 @@ public class Discover extends ListActivity implements OnItemClickListener,
             device.addr = (String) item.get("addr");
             device.mak = makEditText.getText().toString();
             device.tsn = "-";
-            final String portStr = (String) item.get("port");
-            device.port = Integer.parseInt(portStr);
+            try {
+              final String portStr = (String) item.get("port");
+              device.port = Integer.parseInt(portStr);
+            } catch (ClassCastException e) {
+              // I don't know why this is showing up, but handle it anyway.
+              device.port = (Integer) item.get("port");
+            }
 
             db.saveDevice(device);
             db.switchDevice(device);
@@ -407,7 +412,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
       listItem.put("deviceId", device.id);
       listItem.put("messageId", -1);
       listItem.put("name", device.device_name);
-      listItem.put("port", device.port);
+      listItem.put("port", device.port.toString());
       listItem.put("tsn", "-");
       listItem.put("warn_icon", android.R.drawable.ic_menu_recent_history);
       addDeviceMap(listItem);
