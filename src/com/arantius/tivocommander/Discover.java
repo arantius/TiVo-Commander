@@ -348,13 +348,21 @@ public class Discover extends ListActivity implements OnItemClickListener,
       return;
     }
 
-    String name = event.getName();
-    String addr = info.getHostAddresses()[0];
-    String port = Integer.toString(info.getPort());
-    String tsn = "";
+    addDevice(
+        event.getName(),
+        info.getHostAddresses()[0],
+        Integer.toString(info.getPort()),
+        info.getPropertyString("platform"),
+        info.getType(),
+        info.getPropertyString("TSN"));
+  }
+
+  // Separate so that I can pass mock testing data.
+  void addDevice(
+      final String name, final String addr, final String port,
+      final String platform, final String type, final String tsn) {
     int messageId = 0;
 
-    final String platform = info.getPropertyString("platform");
     if (platform == null) {
       Utils.log("Unexpected: NULL platform.");
       messageId = R.string.premiere_only;
@@ -364,13 +372,13 @@ public class Discover extends ListActivity implements OnItemClickListener,
       Utils.log("Ignoring event for PC platform.");
       // This is a e.g. a TiVo Desktop or pyTivo share. Exclude it.
       return;
+    } else if (platform.startsWith("tcd/VM") || platform.startsWith("VM")) {
+      messageId = R.string.no_virgin_media;
     } else if (platform.indexOf("Series4") == -1
         && platform.indexOf("Series5") == -1) {
       messageId = R.string.premiere_only;
-    } else if (!mRpcServiceName.equals(info.getType())) {
+    } else if (!mRpcServiceName.equals(type)) {
       messageId = R.string.error_net_control;
-    } else {
-      tsn = info.getPropertyString("TSN");
     }
 
     final HashMap<String, Object> listItem = new HashMap<String, Object>();
