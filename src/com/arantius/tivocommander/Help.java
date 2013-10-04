@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,12 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Help extends Activity {
-  public final void customSettings(View v) {
-    Intent intent = new Intent(this, Settings.class);
-    startActivity(intent);
-    finish();
-  }
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

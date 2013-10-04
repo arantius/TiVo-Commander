@@ -17,79 +17,71 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
-<LinearLayout
-  android:layout_width="match_parent" android:layout_height="fill_parent"
-  android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+  android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android"
 >
-  <ScrollView
-    android:layout_width="match_parent" android:layout_height="0dp"
-    android:layout_weight="1"
+  <LinearLayout
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_margin="6dip" android:orientation="vertical"
   >
-    <LinearLayout
-      android:layout_width="match_parent" android:layout_height="wrap_content"
-      android:layout_margin="6dip" android:orientation="vertical"
-    >
-      <TextView android:layout_width="wrap_content" android:text="Got problems?"
-        android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_gravity="center" android:layout_margin="8dip" />
+    <TextView android:layout_width="wrap_content" android:text="Got problems?"
+      android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge"
+      android:layout_gravity="center" android:layout_margin="8dip" />
 
-      <TextView android:id="@+id/note" android:textColor="#ECF76A"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginBottom="6dip" android:gravity="center_vertical"
-        android:minHeight="30dip" android:layout_marginLeft="6dip"
-        android:drawableLeft="@android:drawable/ic_dialog_alert"
-        android:drawablePadding="4dp"
-        android:visibility="gone" />
+    <TextView android:id="@+id/note" android:textColor="#ECF76A"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" android:gravity="center_vertical"
+      android:minHeight="30dip" android:layout_marginLeft="6dip"
+      android:drawableLeft="@android:drawable/ic_dialog_alert"
+      android:drawablePadding="4dp"
+      android:visibility="gone" />
 
-      <TextView android:text="Is your TiVo is not found?"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
-      <TextView
-        android:text="WiFi should be on.  If the TiVo is still not found, you're probably not connected to the right network.  Read on to troubleshoot."
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginBottom="6dip" />
+    <TextView android:text="Is your TiVo is not found?"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
+    <TextView
+      android:text="WiFi should be on.  If the TiVo is still not found, you're probably not connected to the right network.  Read on to troubleshoot."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
 
-      <TextView
-        android:text="Do you get a connection error?"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
-      <TextView
-        android:text="On your TiVo, check the Settings &amp; Messages > Remote, CableCARD &amp; Devices > Network Remote Control setting.  Make sure it is enabled."
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginBottom="6dip" />
+    <TextView
+      android:text="Do you get a connection error?"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
+    <TextView
+      android:text="On your TiVo, check the Settings &amp; Messages > Remote, CableCARD &amp; Devices > Network Remote Control setting.  Make sure it is enabled."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
 
-      <TextView
-        android:text="Do you get an authentication error?"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
-      <TextView
-        android:text="On your TiVo, open Settings &amp; Messages > Account &amp; System Information > Media Access Key.  Double check that you've entered this value for the MAK."
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginBottom="6dip" />
-      <TextView
-        android:text="Is the MAK not displayed here (or, just to be sure)?  Log into your tivo.com account and check that the &quot;Video Sharing&quot; option is enabled.  According to TiVo, this setting can take up to 24 hours to take effect.  Maybe less."
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginBottom="6dip" />
+    <TextView
+      android:text="Do you get an authentication error?"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
+    <TextView
+      android:text="On your TiVo, open Settings &amp; Messages > Account &amp; System Information > Media Access Key.  Double check that you've entered this value for the MAK."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
+    <TextView
+      android:text="Is the MAK not displayed here (or, just to be sure)?  Log into your tivo.com account and check that the &quot;Video Sharing&quot; option is enabled.  According to TiVo, this setting can take up to 24 hours to take effect.  Maybe less."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
 
-      <TextView
-        android:text="What, it STILL doesn&apos;t work?"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
-      <TextView
-        android:text="Let's try one more thing: From TiVo Central, go to > Settings &amp; messages > Settings > Network &amp; Phone.  Read the &quot;Ip addr&quot; there, and put it in via the custom settings button.  If THAT doesn't work, something's really wrong.  Drat."
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginBottom="6dip" />
-      <TextView
-        android:text="Ok, as a really last resort: Install the official TiVo app.  If that doesn't work either, something's probably wrong on your end.  You can try calling TiVo for support of their official app.  Once theirs works, this one might too."
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginBottom="6dip" />
+    <TextView
+      android:text="What, it STILL doesn&apos;t work?"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
+    <TextView
+      android:text="Let's try one more thing: From TiVo Central, go to > Settings &amp; messages > Settings > Network &amp; Phone.  Read the &quot;Ip addr&quot; there, and put it in via the custom settings button.  If THAT doesn't work, something's really wrong.  Drat."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
+    <TextView
+      android:text="Ok, as a really last resort: Install the official TiVo app.  If that doesn't work either, something's probably wrong on your end.  You can try calling TiVo for support of their official app.  Once theirs works, this one might too."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
 
-      <Button android:text="Send Error Report" android:layout_margin="20dp"
-        android:layout_width="fill_parent" android:layout_height="wrap_content"
-        android:layout_gravity="center" android:onClick="sendReport" />
-    </LinearLayout>
-  </ScrollView>
-  <Button android:text="Custom Settings"
-    android:layout_width="fill_parent" android:layout_height="wrap_content"
-    android:layout_gravity="center" android:onClick="customSettings" />
-</LinearLayout>
+    <Button android:text="Send Error Report" android:layout_margin="20dp"
+      android:layout_width="fill_parent" android:layout_height="wrap_content"
+      android:layout_gravity="center" android:onClick="sendReport" />
+  </LinearLayout>
+</ScrollView>
