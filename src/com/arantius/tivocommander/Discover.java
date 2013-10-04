@@ -67,9 +67,10 @@ public class Discover extends ListActivity implements OnItemClickListener,
       new ArrayList<HashMap<String, Object>>();
   private JmDNS mJmdns;
   private MulticastLock mMulticastLock = null;
-  private final String mRpcServiceName = "_tivo-mindrpc._tcp.local.";
+  private final String mServiceNameRpc = "_tivo-mindrpc._tcp.local.";
+  private final String mServiceNameVideos = "_tivo-videos._tcp.local.";
   private final String[] mServiceNames = new String[] {
-      "_tivo-mindrpc._tcp.local." };
+      mServiceNameRpc, mServiceNameVideos };
 
   protected void addDeviceMap(final HashMap<String, Object> listItem) {
     final String addr = (String) listItem.get("addr");
@@ -377,7 +378,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     } else if (platform.indexOf("Series4") == -1
         && platform.indexOf("Series5") == -1) {
       messageId = R.string.premiere_only;
-    } else if (!mRpcServiceName.equals(type)) {
+    } else if (!mServiceNameRpc.equals(type)) {
       messageId = R.string.error_net_control;
     }
 
