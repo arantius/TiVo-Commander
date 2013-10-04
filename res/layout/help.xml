@@ -44,6 +44,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:text="WiFi should be on.  If the TiVo is still not found, you're probably not connected to the right network.  Read on to troubleshoot."
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="6dip" />
+    <TextView
+      android:text="Sometimes it just takes a while.  Sometimes a second search helps.  Try once or twice more."
+      android:layout_width="wrap_content" android:layout_height="wrap_content"
+      android:layout_marginBottom="6dip" />
 
     <TextView
       android:text="Do you get a connection error?"

@@ -8,6 +8,9 @@ import java.nio.charset.Charset;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,6 +53,30 @@ public class Help extends Activity {
   }
 
   public final void sendReport(View v) {
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("Help me help you!");
+    builder.setMessage(
+        "Sorry you're having trouble.  But I'm just one guy, giving this app "
+        + "away for free.  Please help me help you: describe in detail "
+        + "exactly what you did, and be prepared to answer my followup "
+        + "questions.");
+
+    // TODO: Be DRY vs. the same in customDevice().
+    final OnClickListener onClickListener =
+        new OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+            sendReport();
+          }
+        };
+    builder.setPositiveButton("OK", onClickListener);
+    builder.setNegativeButton("Cancel", null);
+
+    builder.create().show();
+  }
+
+  @SuppressLint("WorldReadableFiles")
+  void sendReport() {
     String buildProp = "unknown";
     try {
       InputStream propStream = Runtime.getRuntime().exec("/system/bin/getprop")
@@ -70,6 +97,7 @@ public class Help extends Activity {
     i.setType("message/rfc822");
     i.putExtra(Intent.EXTRA_EMAIL, new String[] { "arantius+tivo@gmail.com" });
     i.putExtra(Intent.EXTRA_SUBJECT, "Error Log -- DVR Commander for TiVo");
+    i.putExtra(Intent.EXTRA_TEXT, "Please explain the problem here:\n\n");
 
     final String error_text =
         "Log data for the developer:\n\n"
