@@ -39,7 +39,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     <activity android:name=".About"></activity>
     <activity android:name=".Connect"></activity>
     <activity android:name=".Credits"></activity>
-    <activity android:name=".Discover"></activity>
+    <activity android:name=".Discover">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+      </intent-filter>
+    </activity>
     <activity android:name=".Explore"></activity>
     <activity android:name=".ExploreTabs">
       <intent-filter>
