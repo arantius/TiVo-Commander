@@ -6,4 +6,4 @@ DVR Commander for TiVo is copyright (C) 2011, Anthony Lieuallen.  Released under
 
 DVR Commander for TiVo is not affiliated with TiVo Inc.
 
-This project depends on the [DragNDropList](https://github.com/terlici/DragNDropList) project.
+This project depends on the [DragSortListView](https://github.com/bauerca/drag-sort-listview) project.  Make sure to check it out into an Eclipse project called DragSortListView, and build it, for the dependency to resolve correctly.
