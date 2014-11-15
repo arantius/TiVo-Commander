@@ -106,7 +106,7 @@ public enum MindRpc {
   private static volatile int mRpcId = 1;
   private static volatile int mSessionId;
   private static Socket mSocket;
-  private static final int TIMEOUT_CONNECT = 2500;
+  private static final int TIMEOUT_CONNECT = 25000;
 
   /**
    * Add an outgoing request to the queue.
