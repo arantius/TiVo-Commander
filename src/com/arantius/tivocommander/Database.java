@@ -1,6 +1,7 @@
 package com.arantius.tivocommander;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -171,5 +172,11 @@ public class Database extends SQLiteOpenHelper {
         "devices", values,
         "id = ?", new String[] { String.valueOf(device.id) });
     db.close();
+
+    Utils.log(String.format(
+        Locale.US,
+        "Switched to device: %s / %s / %d",
+        device.addr, device.device_name, device.id
+        ));
   }
 }
