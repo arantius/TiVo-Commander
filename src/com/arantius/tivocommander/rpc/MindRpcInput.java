@@ -44,6 +44,7 @@ public class MindRpcInput extends Thread {
     mStream = mInputStream;
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public void run() {
     MindRpcResponseFactory mindRpcResponseFactory =
