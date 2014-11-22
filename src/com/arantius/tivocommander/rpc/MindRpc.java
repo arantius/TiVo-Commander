@@ -26,7 +26,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -36,6 +39,8 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
@@ -160,6 +165,36 @@ public enum MindRpc {
   private static boolean connect(final Activity originActivity) {
     Callable<Boolean> connectCallable = new Callable<Boolean>() {
       public Boolean call() {
+        Utils.log(String.format(Locale.US,
+            "Connecting to %s:%d ...", mTivoDevice.addr, mTivoDevice.port
+            ));
+
+        Enumeration<NetworkInterface> ifaces = null;
+        try {
+          ifaces = NetworkInterface.getNetworkInterfaces();
+        } catch (SocketException e1) {
+          Utils.log("Cannot get interfaces!");
+        }
+        while (ifaces != null && ifaces.hasMoreElements()) {
+          NetworkInterface iface = ifaces.nextElement();
+          StringBuilder ifaceStrBld = new StringBuilder();
+          ifaceStrBld.append(String.format(Locale.US,
+              "Have interface %s %s",
+              iface.getName(), iface.getDisplayName()
+              ));
+
+          boolean haveAddr = false;
+          for (InterfaceAddress addr : iface.getInterfaceAddresses()) {
+            if (addr.getAddress().isLoopbackAddress()) continue;
+            if (addr.getAddress().isLinkLocalAddress()) continue;
+            ifaceStrBld.append(", ");
+            ifaceStrBld.append(addr.toString());
+            haveAddr = true;
+          }
+
+          if (haveAddr) Utils.log(ifaceStrBld.toString());
+        }
+
         SSLSocketFactory sslSocketFactory = createSocketFactory(originActivity);
         if (sslSocketFactory == null) {
           return false;
