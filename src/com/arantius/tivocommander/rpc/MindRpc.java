@@ -62,7 +62,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.arantius.tivocommander.Connect;
@@ -95,8 +94,6 @@ public enum MindRpc {
       return new X509Certificate[0];
     }
   }
-
-  private static final String LOG_TAG = "tivo_commander";
 
   public static Boolean mBodyIsAuthed = false;
   public static Device mTivoDevice;
