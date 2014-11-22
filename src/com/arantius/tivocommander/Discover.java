@@ -365,8 +365,11 @@ public class Discover extends ListActivity implements OnItemClickListener,
         try {
           mJmdns = JmDNS.create(addr, "localhost");
         } catch (IOException e1) {
-          showHelp(R.string.error_multicast);
-          finish();
+          runOnUiThread(new Runnable() {
+            public void run() {
+              showWarning(R.string.error_multicast, -1);
+            }
+          });
           return;
         }
 
@@ -510,7 +513,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     AlertDialog.Builder alert = new AlertDialog.Builder(this);
     alert.setTitle(R.string.unsupported_device);
     alert.setMessage(message);
-    if (messageId == R.string.premiere_only) {
+    if (position >= 0 && messageId == R.string.premiere_only) {
       alert.setCancelable(true).setNegativeButton("Cancel", null)
           .setPositiveButton("Try Anyway", new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {

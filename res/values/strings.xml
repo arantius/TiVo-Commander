@@ -43,7 +43,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <string name="record_which">Record</string>
   <string name="error_wifi_lock">Could not do discovery; falling back to manual settings.</string>
   <string name="error_get_wifi_addr">Could not access wifi, is it enabled?</string>
-  <string name="error_multicast">Device search failed.  (Read below and) Try custom settings.</string>
+  <string name="error_multicast">Device search failed.  Add a custom device.</string>
   <string name="error_net_control">You need to enable network control and/or video sharing to connect to this TiVo.  (See below.)</string>
   <string name="premiere_only">This app only works with a TiVo branded device, of the Premiere or Roamio model line; not Series 2, Series 3 or HD.</string>
   <string name="no_virgin_media">"Sorry, this app does not work with Virgin Media branded devices.  If you are a Virgin Media customer, perhaps you can convince them to get in touch with me and work that out?  I've tried, they don't answer me."</string>
