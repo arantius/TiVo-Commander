@@ -122,7 +122,7 @@ public abstract class ShowList extends ListActivity implements
           (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
       if (mShowStatus.get(position) == ShowStatus.LOADED) {
         // If this item is available, display it.
-        v = vi.inflate(R.layout.item_my_shows, null);
+        v = vi.inflate(R.layout.item_my_shows, parent, false);
         final JsonNode item = mShowData.get(position);
         final JsonNode recording = getRecordingFromItem(item);
 
@@ -169,7 +169,7 @@ public abstract class ShowList extends ListActivity implements
             .setImageDrawable(getResources().getDrawable(iconId));
       } else {
         // Otherwise give a loading indicator.
-        v = vi.inflate(R.layout.progress, null);
+        v = vi.inflate(R.layout.progress, parent, false);
       }
 
       return v;
