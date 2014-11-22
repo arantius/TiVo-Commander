@@ -55,6 +55,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -233,6 +234,7 @@ public enum MindRpc {
     }
   }
 
+  @SuppressLint("TrulyRandom")
   private static SSLSocketFactory createSocketFactory(
       final Activity originActivity
       ) {
