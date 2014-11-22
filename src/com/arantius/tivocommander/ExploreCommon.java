@@ -20,6 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 package com.arantius.tivocommander;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -103,5 +104,11 @@ abstract public class ExploreCommon extends Activity {
     getParent().setProgressBarIndeterminateVisibility(true);
     MindRpcRequest req = getRequest();
     MindRpc.addRequest(req, mListener);
+  }
+
+  protected void setRefreshResult() {
+    Intent resultIntent = new Intent();
+    resultIntent.putExtra("refresh", true);
+    getParent().setResult(Activity.RESULT_OK, resultIntent);
   }
 }

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -177,7 +178,7 @@ public class SeasonPass extends ListActivity implements
       new SparseArray<ArrayList<Integer>>();
   protected final ArrayList<JsonNode> mSubscriptionData =
       new ArrayList<JsonNode>();
-  protected ArrayList<String> mSubscriptionIds;
+  protected final ArrayList<String> mSubscriptionIds = new ArrayList<String>();
   protected ArrayList<String> mSubscriptionIdsBeforeReorder =
       new ArrayList<String>();
   protected final ArrayList<SubscriptionStatus> mSubscriptionStatus =
@@ -221,9 +222,8 @@ public class SeasonPass extends ListActivity implements
 
           Intent intent = new Intent(SeasonPass.this, ExploreTabs.class);
           intent.putExtra("collectionId", collectionId);
-          startActivity(intent);
+          startActivityForResult(intent, 1);
         }
-
       };
 
   final protected DragSortListView.DropListener mOnDrop =
@@ -269,6 +269,17 @@ public class SeasonPass extends ListActivity implements
   }
 
   @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (resultCode != Activity.RESULT_OK) {
+      return;
+    }
+
+    if (data.getBooleanExtra("refresh", false)) {
+      startRequest();
+    }
+  };
+
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (MindRpc.init(this, null)) {
@@ -288,12 +299,18 @@ public class SeasonPass extends ListActivity implements
     dslv.setLongClickable(true);
     dslv.setOnItemLongClickListener(this);
 
+    startRequest();
+  }
+
+  protected void startRequest() {
+    mSubscriptionData.clear();
+    mSubscriptionIds.clear();
+    mSubscriptionStatus.clear();
     MindRpcResponseListener idSequenceCallback =
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             JsonNode body = response.getBody();
 
-            mSubscriptionIds = new ArrayList<String>();
             for (JsonNode node : body.path("objectIdAndType")) {
               mSubscriptionIds.add(node.asText());
             }

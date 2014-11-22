@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -76,10 +75,7 @@ public class Explore extends ExploreCommon {
             Utils.toast(Explore.this, "Delete failed!.", Toast.LENGTH_SHORT);
             return;
           }
-          // .. and tell the show list to refresh itself.
-          Intent resultIntent = new Intent();
-          resultIntent.putExtra("refresh", true);
-          getParent().setResult(Activity.RESULT_OK, resultIntent);
+          setRefreshResult();
           finish();
         }
       };
@@ -144,6 +140,8 @@ public class Explore extends ExploreCommon {
     dialogBuilder.setAdapter(choicesAdapter,
         new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int position) {
+            setRefreshResult();
+
             String label = mChoices.get(position);
             if (RecordActions.DONT_RECORD.toString().equals(label)) {
               getParent().setProgressBarIndeterminateVisibility(true);
