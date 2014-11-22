@@ -3,7 +3,6 @@ package com.arantius.tivocommander;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
@@ -78,22 +77,6 @@ public class Help extends Activity {
 
   @SuppressLint("WorldReadableFiles")
   void sendReport() {
-    String buildProp = "unknown";
-    try {
-      InputStream propStream = Runtime.getRuntime().exec("/system/bin/getprop")
-          .getInputStream();
-
-      StringBuffer buildPropBuf = new StringBuffer("");
-      byte[] buffer = new byte[1024];
-      while (propStream.read(buffer) != -1) {
-        buildPropBuf.append(new String(buffer));
-      }
-      buildProp = buildPropBuf.toString();
-    } catch (IOException e) {
-      // Ignore.
-      buildProp = "Error:\n" + e.toString();
-    }
-
     Intent i = new Intent(Intent.ACTION_SEND_MULTIPLE);
     i.setType("message/rfc822");
     i.putExtra(Intent.EXTRA_EMAIL, new String[] { "arantius+tivo@gmail.com" });
