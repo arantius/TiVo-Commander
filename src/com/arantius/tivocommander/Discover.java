@@ -589,8 +589,6 @@ public class Discover extends ListActivity implements OnItemClickListener,
       Utils.log("Ignoring event for PC platform.");
       // This is a e.g. a TiVo Desktop or pyTivo share. Exclude it.
       return;
-    } else if (platform.startsWith("tcd/VM") || platform.startsWith("VM")) {
-      messageId = R.string.no_virgin_media;
     } else if (platform.indexOf("Series4") == -1
         && platform.indexOf("Series5") == -1
         // The Pace MG1 reports "tcd/XG1" and works.
