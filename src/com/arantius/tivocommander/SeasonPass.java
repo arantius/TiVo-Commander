@@ -103,7 +103,7 @@ public class SeasonPass extends ListActivity implements
           (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
       if (mSubscriptionStatus.get(position) == SubscriptionStatus.LOADED) {
         // If this item is available, display it.
-        v = vi.inflate(R.layout.item_season_pass, null);
+        v = vi.inflate(R.layout.item_season_pass, parent, false);
         v.setLayoutParams(new AbsListView.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -157,7 +157,7 @@ public class SeasonPass extends ListActivity implements
         }
       } else {
         // Otherwise give a loading indicator.
-        v = vi.inflate(R.layout.progress, null);
+        v = vi.inflate(R.layout.progress, parent, false);
       }
 
       return v;
