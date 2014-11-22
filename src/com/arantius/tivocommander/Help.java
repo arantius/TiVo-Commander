@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -93,18 +94,19 @@ public class Help extends Activity {
       buildProp = "Error:\n" + e.toString();
     }
 
-    Intent i = new Intent(Intent.ACTION_SEND);
+    Intent i = new Intent(Intent.ACTION_SEND_MULTIPLE);
     i.setType("message/rfc822");
     i.putExtra(Intent.EXTRA_EMAIL, new String[] { "arantius+tivo@gmail.com" });
-    i.putExtra(Intent.EXTRA_SUBJECT, "Error Log -- DVR Commander for TiVo");
+    i.putExtra(Intent.EXTRA_SUBJECT,
+        "Error Log " + Utils.getVersion(this) + " DVR Commander for TiVo");
     i.putExtra(Intent.EXTRA_TEXT, "Please explain the problem here:\n\n");
 
     final String error_text =
         "Log data for the developer:\n\n"
             + "Version: " + Utils.getVersion(this) + "\n\n"
-            + "Raw logs:\n" + Utils.logBufferAsString() + "\n\n"
-            + "build.prop:\n" + buildProp;
+            + "Raw logs:\n" + Utils.logBufferAsString();
 
+    ArrayList<Uri> uris = new ArrayList<Uri>();
     final String error_file_name = "error.txt";
     try {
       @SuppressWarnings("deprecation")
@@ -118,7 +120,7 @@ public class Help extends Activity {
       Uri uri = Uri.fromFile(new File(sdCard +
           new String(new char[sdCard.replaceAll("[^/]", "").length()])
               .replace("\0", "/..") + getFilesDir() + "/" + error_file_name));
-      i.putExtra(android.content.Intent.EXTRA_STREAM, uri);
+      uris.add(uri);
     } catch (IOException e) {
       Utils.logError("could not write error text", e);
       i.putExtra(
@@ -126,6 +128,11 @@ public class Help extends Activity {
           error_text + "\n\nWrite error:\n" + e.toString()
           );
     }
+
+    File buildprop = new File("/system/build.prop");
+    if (buildprop.exists()) uris.add(Uri.fromFile(buildprop));
+
+    i.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
 
     try {
       this.startActivity(Intent.createChooser(i, "Send mail..."));
