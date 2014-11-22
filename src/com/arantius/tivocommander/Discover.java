@@ -30,6 +30,7 @@ import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
@@ -76,6 +77,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     editCustomDevice(new Device());
   }
 
+  @SuppressLint("InflateParams")
   public final void editCustomDevice(final Device device) {
     final AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setTitle("Custom Device");
