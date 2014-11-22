@@ -210,10 +210,10 @@ public enum MindRpc {
           mInputStream = new DataInputStream(mSocket.getInputStream());
           mOutputStream = new DataOutputStream(mSocket.getOutputStream());
         } catch (UnknownHostException e) {
-          Log.e(LOG_TAG, "connect: unknown host!", e);
+          Utils.logError("connect: unknown host!", e);
           return false;
         } catch (IOException e) {
-          Log.e(LOG_TAG, "connect: io exception!", e);
+          Utils.logError("connect: io exception!", e);
           return false;
         }
 
@@ -226,10 +226,10 @@ public enum MindRpc {
     try {
       return success.get();
     } catch (InterruptedException e) {
-      Log.e(LOG_TAG, "connect: interrupted exception!", e);
+      Utils.logError("connect: interrupted exception!", e);
       return false;
     } catch (ExecutionException e) {
-      Log.e(LOG_TAG, "connect: execution exception!", e);
+      Utils.logError("connect: execution exception!", e);
       return false;
     }
   }
@@ -254,17 +254,17 @@ public enum MindRpc {
       context.init(fac.getKeyManagers(), tm, new SecureRandom());
       return context.getSocketFactory();
     } catch (CertificateException e) {
-      Log.e(LOG_TAG, "createSocketFactory: CertificateException!", e);
+      Utils.logError("createSocketFactory: CertificateException!", e);
     } catch (IOException e) {
-      Log.e(LOG_TAG, "createSocketFactory: IOException!", e);
+      Utils.logError("createSocketFactory: IOException!", e);
     } catch (KeyManagementException e) {
-      Log.e(LOG_TAG, "createSocketFactory: KeyManagementException!", e);
+      Utils.logError("createSocketFactory: KeyManagementException!", e);
     } catch (KeyStoreException e) {
-      Log.e(LOG_TAG, "createSocketFactory: KeyStoreException!", e);
+      Utils.logError("createSocketFactory: KeyStoreException!", e);
     } catch (NoSuchAlgorithmException e) {
-      Log.e(LOG_TAG, "createSocketFactory: NoSuchAlgorithmException!", e);
+      Utils.logError("createSocketFactory: NoSuchAlgorithmException!", e);
     } catch (UnrecoverableKeyException e) {
-      Log.e(LOG_TAG, "createSocketFactory: UnrecoverableKeyException!", e);
+      Utils.logError("createSocketFactory: UnrecoverableKeyException!", e);
     }
     return null;
   }
@@ -286,21 +286,21 @@ public enum MindRpc {
           try {
             mSocket.close();
           } catch (IOException e) {
-            Log.e(LOG_TAG, "disconnect() socket", e);
+            Utils.logError("disconnect() socket", e);
           }
         }
         if (mInputStream != null) {
           try {
             mInputStream.close();
           } catch (IOException e) {
-            Log.e(LOG_TAG, "disconnect() input stream", e);
+            Utils.logError("disconnect() input stream", e);
           }
         }
         if (mOutputStream != null) {
           try {
             mOutputStream.close();
           } catch (IOException e) {
-            Log.e(LOG_TAG, "disconnect() output stream", e);
+            Utils.logError("disconnect() output stream", e);
           }
         }
       }
@@ -310,7 +310,7 @@ public enum MindRpc {
     try {
       disconnectThread.join();
     } catch (InterruptedException e) {
-      Log.e(LOG_TAG, "disconnect() interrupted exception", e);
+      Utils.logError("disconnect() interrupted exception", e);
     }
   }
 
@@ -461,7 +461,7 @@ public enum MindRpc {
     try {
       return reader.readLine();
     } catch (IOException e) {
-      Log.e(LOG_TAG, "readpassword: IOException!", e);
+      Utils.logError("readpassword: IOException!", e);
       return "";
     }
   }

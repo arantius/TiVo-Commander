@@ -239,6 +239,7 @@ public class Utils {
   public final static void logError(String message, Throwable e) {
     Log.e(LOG_TAG, message, e);
     logAddToBuffer(message, "E");
+    logAddToBuffer(Log.getStackTraceString(e), "E");
   }
 
   public final static void logRpc(Object obj) {
