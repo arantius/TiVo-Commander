@@ -273,6 +273,7 @@ public abstract class ShowList extends ListActivity implements
         } else {
           // Load the list of remaining shows.
           startRequest();
+          notifyParentToRefresh();
         }
       }
     }
@@ -311,14 +312,17 @@ public abstract class ShowList extends ListActivity implements
     case R.string.stop_recording_and_delete:
       req = new RecordingUpdate(recordingId, "deleted");
       listener = removeListener;
+      notifyParentToRefresh();
       break;
     case R.string.dont_record:
       req = new RecordingUpdate(recordingId, "cancelled");
       listener = removeListener;
+      notifyParentToRefresh();
       break;
     case R.string.stop_recording:
     case R.string.undelete:
       req = new RecordingUpdate(recordingId, "complete");
+      notifyParentToRefresh();
       break;
     case R.string.watch_now:
       req = new UiNavigate(recordingId);
@@ -335,6 +339,12 @@ public abstract class ShowList extends ListActivity implements
 
     setProgressIndicator(1);
     MindRpc.addRequest(req, listener);
+  }
+
+  protected void notifyParentToRefresh() {
+    Intent resultIntent = new Intent();
+    resultIntent.putExtra("refresh", true);
+    setResult(Activity.RESULT_OK, resultIntent);
   }
 
   @Override

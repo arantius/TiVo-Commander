@@ -123,7 +123,7 @@ public class MyShows extends ShowList {
             MindRpc.addRequest(req, null);
 
             Intent intent = new Intent(MyShows.this, NowShowing.class);
-            startActivity(intent);
+            startActivityForResult(intent, EXPECT_REFRESH_INTENT_ID);
           }
         });
       }
