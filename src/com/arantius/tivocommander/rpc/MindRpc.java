@@ -388,6 +388,7 @@ public enum MindRpc {
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
       connectActivity.startActivity(intent);
       connectActivity.finish();
+      return;
     }
 
     Utils.log("MindRpc.init3() " + mOriginActivity.toString());
