@@ -51,4 +51,5 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <string name="sub_wishlist">You have a Wishlist.</string>
   <string name="sub_recording">This is recording now.</string>
   <string name="undelete">Undelete</string>
+  <string name="unexpected_please_report">Unexpected condition, please send an error report, with the button at the bottom of the help screen.</string>
 </resources>

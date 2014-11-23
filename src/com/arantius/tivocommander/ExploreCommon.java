@@ -101,6 +101,13 @@ abstract public class ExploreCommon extends Activity {
       mRecordingId = bundle.getString("recordingId");
     }
 
+    if (getParent() == null) {
+      Utils.logError("Null getParent() in ExploreCommon.onCreate() ?!");
+      Utils.toast(this, R.string.unexpected_please_report, Toast.LENGTH_LONG);
+      finish();
+      return;
+    }
+
     getParent().setProgressBarIndeterminateVisibility(true);
     MindRpcRequest req = getRequest();
     MindRpc.addRequest(req, mListener);
