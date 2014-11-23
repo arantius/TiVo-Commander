@@ -142,6 +142,16 @@ public abstract class ShowList extends ListActivity implements
         }
         ((TextView) v.findViewById(R.id.show_channel)).setText(channelStr);
 
+        if (0 == folderItemCount && item != mDeletedItem) {
+          if (recording.path("episodic").asBoolean()
+              && !recording.path("repeat").asBoolean()) {
+            v.findViewById(R.id.badge_new).setVisibility(View.VISIBLE);
+          }
+          if (recording.has("hdtv") && recording.path("hdtv").asBoolean()) {
+            v.findViewById(R.id.badge_hd).setVisibility(View.VISIBLE);
+          }
+        }
+
         String startTimeStr = item.path("startTime").asText();
         if ("".equals(startTimeStr)) {
           // Rarely the time is only on the recording, not the item.

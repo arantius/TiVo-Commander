@@ -281,11 +281,14 @@ public class Explore extends ExploreCommon {
     }
 
     // Display (only the proper) badges.
-    if (mRecording == null || mRecording.path("repeat").asBoolean()) {
-      findViewById(R.id.badge_new).setVisibility(View.GONE);
+    if (mRecording != null
+        && mRecording.path("episodic").asBoolean()
+        && !mRecording.path("repeat").asBoolean()
+    ) {
+      findViewById(R.id.badge_new).setVisibility(View.VISIBLE);
     }
-    if (mRecording == null || !mRecording.path("hdtv").asBoolean()) {
-      findViewById(R.id.badge_hd).setVisibility(View.GONE);
+    if (mRecording != null && mRecording.path("hdtv").asBoolean()) {
+      findViewById(R.id.badge_hd).setVisibility(View.VISIBLE);
     }
     ImageView iconSubType = (ImageView) findViewById(R.id.icon_sub_type);
     TextView textSubType = (TextView) findViewById(R.id.text_sub_type);

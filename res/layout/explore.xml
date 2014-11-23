@@ -52,11 +52,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       >
         <ImageView android:id="@+id/badge_new"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
-          android:src="@drawable/badge_new" android:layout_gravity="center_vertical" />
+          android:src="@drawable/badge_new" android:visibility="gone"
+          android:layout_gravity="center_vertical" />
         <ImageView android:id="@+id/badge_hd"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
           android:src="@drawable/badge_hd" android:paddingLeft="6dip"
-          android:layout_gravity="center_vertical" />
+          android:layout_gravity="center_vertical" android:visibility="gone" />
 
         <ImageView android:id="@+id/icon_sub_type"
           android:layout_width="wrap_content" android:layout_height="wrap_content"
