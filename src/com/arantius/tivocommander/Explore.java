@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -339,10 +340,18 @@ public class Explore extends ExploreCommon {
       if (isRecordingPartial()) {
         durationStr += " (partial)";
       }
-      ((TextView) findViewById(R.id.content_time)).setText(channelStr
+      ((TextView) findViewById(R.id.content_chan_len)).setText(channelStr
           + durationStr);
+
+      String airTime = new SimpleDateFormat(
+          "EEE MMM d, hh:mm a", Locale.US).format(
+              Utils.parseDateTimeStr(
+                  mRecording.path("actualStartTime").asText()));
+      ((TextView) findViewById(R.id.content_air_time)).setText(
+          "Air time: " + airTime);
     } else {
-      ((TextView) findViewById(R.id.content_time)).setVisibility(View.GONE);
+      ((TextView) findViewById(R.id.content_chan_len)).setVisibility(View.GONE);
+      ((TextView) findViewById(R.id.content_air_time)).setVisibility(View.GONE);
     }
 
     // Construct and display details.
