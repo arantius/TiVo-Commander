@@ -21,6 +21,7 @@ package com.arantius.tivocommander;
 
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.Window;
@@ -73,6 +74,13 @@ public class ToDo extends ShowList {
 
   protected JsonNode getRecordingFromItem(JsonNode item) {
     return item;
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    // Assume we've been asked to refresh, restart the activity.
+    startActivity(getIntent());
+    finish();
   }
 
   @Override
