@@ -167,6 +167,7 @@ public enum MindRpc {
             "Connecting to %s:%d ...", mTivoDevice.addr, mTivoDevice.port
             ));
 
+        Utils.log(">>> With interfaces:");
         Enumeration<NetworkInterface> ifaces = null;
         try {
           ifaces = NetworkInterface.getNetworkInterfaces();
@@ -177,7 +178,7 @@ public enum MindRpc {
           NetworkInterface iface = ifaces.nextElement();
           StringBuilder ifaceStrBld = new StringBuilder();
           ifaceStrBld.append(String.format(Locale.US,
-              "Have interface %s %s",
+              "    %s %s",
               iface.getName(), iface.getDisplayName()
               ));
 
@@ -192,6 +193,7 @@ public enum MindRpc {
 
           if (haveAddr) Utils.log(ifaceStrBld.toString());
         }
+        Utils.log("<<<");
 
         SSLSocketFactory sslSocketFactory = createSocketFactory(originActivity);
         if (sslSocketFactory == null) {
@@ -394,7 +396,9 @@ public enum MindRpc {
     disconnect();
 
     if (!connect(connectActivity)) {
-      settingsError(mOriginActivity, R.string.error_connect);
+      settingsError(mOriginActivity, R.string.error_connect, Toast.LENGTH_LONG);
+      connectActivity.finish();
+      connectActivity.overridePendingTransition(0, 0);
       return;
     }
 
@@ -472,11 +476,17 @@ public enum MindRpc {
     new Database(context).saveDevice(mTivoDevice);
   }
 
-  public static void settingsError(final Activity activity, final int messageId) {
-    Utils.log("Settings: " + activity.getResources().getString(messageId));
+  public static void settingsError(
+      final Activity activity, final int messageId) {
+    settingsError(activity, messageId, Toast.LENGTH_SHORT);
+  }
+
+  public static void settingsError(
+      final Activity activity, final int messageId, final int toastLen) {
+    Utils.log("Settings error: " + activity.getResources().getString(messageId));
     activity.runOnUiThread(new Runnable() {
       public void run() {
-        Utils.toast(activity, messageId, Toast.LENGTH_SHORT);
+        Utils.toast(activity, messageId, toastLen);
         Intent i;
         if (activity.getClass() == Discover.class) {
           i = new Intent(activity.getBaseContext(), Settings.class);

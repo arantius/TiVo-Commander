@@ -314,6 +314,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
       listItem.put("warn_icon", android.R.drawable.ic_menu_recent_history);
       addDeviceMap(listItem);
     }
+    final boolean haveStoredDevices = !mHosts.isEmpty();
 
     // Skip mDNS discovery on BlackBerry.
     final String osName = System.getProperty("os.name");
@@ -329,8 +330,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     stopQuery();
     Utils.log("Start discovery query ...");
     mEmpty.setText("Searching ...");
-    setProgressBarIndeterminateVisibility(true);
-    findViewById(R.id.refresh_button).setEnabled(false);
+    setProgressSpinner(true);
 
     final Discover that = this;
     Thread jmdnsThread = new Thread(new Runnable() {
@@ -339,8 +339,18 @@ public class Discover extends ListActivity implements OnItemClickListener,
         WifiInfo wifiInfo = wifi.getConnectionInfo();
 
         Utils.log("Starting discovery via wifi: " + wifiInfo.toString());
-
         int intaddr = wifiInfo.getIpAddress();
+        if (intaddr == 0) {
+          runOnUiThread(new Runnable() {
+            public void run() {
+              showWarning(R.string.error_get_wifi_addr, -1);
+              setProgressSpinner(false);
+            }
+          });
+          return;
+        }
+
+        // JmDNS wants an InetAddress; WifiInfo gives us an int.  Convert.
         byte[] byteaddr =
             new byte[] { (byte) (intaddr & 0xff), (byte) (intaddr >> 8 & 0xff),
                 (byte) (intaddr >> 16 & 0xff), (byte) (intaddr >> 24 & 0xff) };
@@ -348,7 +358,11 @@ public class Discover extends ListActivity implements OnItemClickListener,
         try {
           addr = InetAddress.getByAddress(byteaddr);
         } catch (UnknownHostException e1) {
-          showHelp(R.string.error_get_wifi_addr);
+          runOnUiThread(new Runnable() {
+            public void run() {
+              showHelp(R.string.error_get_wifi_addr);
+            }
+          });
           finish();
           return;
         }
@@ -367,11 +381,14 @@ public class Discover extends ListActivity implements OnItemClickListener,
         try {
           mJmdns = JmDNS.create(addr, "localhost");
         } catch (IOException e1) {
-          runOnUiThread(new Runnable() {
-            public void run() {
-              showWarning(R.string.error_multicast, -1);
-            }
-          });
+          setProgressSpinner(false);
+          if (!haveStoredDevices) {
+            runOnUiThread(new Runnable() {
+              public void run() {
+                showWarning(R.string.error_multicast, -1);
+              }
+            });
+          }
           return;
         }
 
@@ -513,7 +530,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     Utils.log("Showing warning: " + message);
 
     AlertDialog.Builder alert = new AlertDialog.Builder(this);
-    alert.setTitle(R.string.unsupported_device);
+    alert.setTitle("Warning!");
     alert.setMessage(message);
     if (position >= 0 && messageId == R.string.premiere_only) {
       alert.setCancelable(true).setNegativeButton("Cancel", null)
@@ -533,11 +550,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
   protected final void stopQuery() {
     runOnUiThread(new Runnable() {
       public void run() {
-        setProgressBarIndeterminateVisibility(false);
-        View refreshButton = findViewById(R.id.refresh_button);
-        if (refreshButton != null) {
-          refreshButton.setEnabled(true);
-        }
+        setProgressSpinner(false);
         if (mEmpty != null) {
           mEmpty.setText("No results found.");
         }
@@ -610,5 +623,13 @@ public class Discover extends ListActivity implements OnItemClickListener,
     listItem.put("warn_icon", messageId == 0 ? R.drawable.blank
         : android.R.drawable.ic_dialog_alert);
     addDeviceMap(listItem);
+  }
+
+  protected void setProgressSpinner(boolean running) {
+    setProgressBarIndeterminateVisibility(running);
+    View refreshButton = findViewById(R.id.refresh_button);
+    if (refreshButton != null) {
+      refreshButton.setEnabled(!running);
+    }
   }
 }

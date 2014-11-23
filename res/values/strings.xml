@@ -27,7 +27,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <string name="error_mak">"Please provide your TiVo's Media Access Key."</string>
   <string name="error_no_device">Plase choose a TiVo device.</string>
   <string name="error_port">"Missing TiVo's port."</string>
-  <string name="error_connect">Could not connect.  Are you connected to the right WiFi network?</string>
+  <string name="error_connect">Could not connect.  Are you on the right WiFi network?</string>
   <string name="error_auth">Authentication failed; check MAK settings.</string>
   <string name="keep_until">Keep Until</string>
   <string name="start_recording">Start recording</string>
@@ -51,5 +51,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <string name="sub_wishlist">You have a Wishlist.</string>
   <string name="sub_recording">This is recording now.</string>
   <string name="undelete">Undelete</string>
-  <string name="unsupported_device">Unsupported device!</string>
 </resources>
