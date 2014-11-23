@@ -314,9 +314,14 @@ public class MyShows extends ShowList {
         new MindRpcResponseListener() {
           public void onResponse(MindRpcResponse response) {
             JsonNode body = response.getBody();
-            if ("error".equals(body.path("status").asText())
-                || !body.has("objectIdAndType")) {
+            if ("error".equals(body.path("status").asText())) {
               Utils.log("Handling mIdSequenceCallback error response by "
+                  + "finishWithRefresh()");
+              finishWithRefresh();
+              return;
+            }
+            if (!body.has("objectIdAndType")) {
+              Utils.log("Handling mIdSequenceCallback empty response by "
                   + "finishWithRefresh()");
               finishWithRefresh();
               return;
