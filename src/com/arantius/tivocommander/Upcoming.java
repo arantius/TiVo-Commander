@@ -194,7 +194,7 @@ public class Upcoming extends ListActivity implements OnItemClickListener,
     intent.putExtra("collectionId", show.path("collectionId")
         .asText());
     intent.putExtra("offerId", show.path("offerId").asText());
-    startActivity(intent);
+    startActivityForResult(intent, 1);
   }
 
   public boolean onItemLongClick(AdapterView<?> parent, View view,
