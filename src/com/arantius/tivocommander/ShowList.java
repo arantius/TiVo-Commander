@@ -302,6 +302,10 @@ public abstract class ShowList extends ListActivity implements
             mShowData.remove(mLongPressIndex);
             mShowIds.remove(mLongPressIndex);
             mShowStatus.remove(mLongPressIndex);
+            if (mShowData.isEmpty()) {
+              finishWithRefresh();
+              return;
+            }
             mListAdapter.notifyDataSetChanged();
           }
         };
