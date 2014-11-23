@@ -159,6 +159,9 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
       conn.connect();
       InputStream is = conn.getInputStream();
       return BitmapFactory.decodeStream(is);
+    } catch (NullPointerException e) {
+      Utils.logError("Download URL; " + urls[0], e);
+      return null;
     } catch (IOException e) {
       Utils.logError("Download URL; " + urls[0], e);
       return null;
