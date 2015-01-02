@@ -24,6 +24,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
@@ -68,10 +69,22 @@ public class Discover extends ListActivity implements OnItemClickListener,
       new ArrayList<HashMap<String, Object>>();
   private JmDNS mJmdns;
   private MulticastLock mMulticastLock = null;
+  private final Pattern mPatternCompat = Pattern.compile(
+      "^("
+          + "746|748|750|758|"  // Series 4 DVRs
+          + "A90|A92|A93|"  // Series 4 non-DVRs (e.g. Mini)
+          + "840|846|848|D18"  // Series 5 DVRs
+          + ")");
+  private final Pattern mPatternNonCompat = Pattern.compile(
+      "^("
+          + "110|240|540|649|"  // Series 2 DVRs
+          + "648|652|658|663|"  // Series 3 DVRs
+          + "B42|C00|C8A|CF0|E80" // Virgin Media
+          + ")");
   private final String mServiceNameRpc = "_tivo-mindrpc._tcp.local.";
   private final String mServiceNameVideos = "_tivo-videos._tcp.local.";
   private final String[] mServiceNames = new String[] {
-      mServiceNameRpc, mServiceNameVideos };
+      mServiceNameRpc, mServiceNameVideos};
 
   public final void customDevice(View v) {
     editCustomDevice(new Device());
@@ -282,7 +295,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
       return;
     }
 
-    addDevice(
+    checkDevice(
         event.getName(),
         info.getHostAddresses()[0],
         Integer.toString(info.getPort()),
@@ -406,28 +419,42 @@ public class Discover extends ListActivity implements OnItemClickListener,
 
     // Test / mock data.
     /*
-    addDevice(
+    checkDevice(
         "TEST Pace MG1",
         "127.0.0.2",
         "1413",
         "tcd/XG1",
         mServiceNameRpc,
-        "Q635509555840S2");
-    addDevice(
+        "D180509555840S2");
+    checkDevice(
         "TEST Series 2",
         "127.0.0.3",
         "1413",
         "tcd/Series2",
         mServiceNameVideos,
-        "0955556Q5753378");
-    addDevice(
+        "6490556Q5753378");
+    checkDevice(
         "TEST Virgin Media",
-        "127.0.0.4",
+        "127.0.0.5",
         "1413",
         "tcd/VM",
         mServiceNameRpc,
-        "d96bfedfbd02");
-    */
+        "B42bfedfbd02");
+    checkDevice(
+        "TEST No Net Control",
+        "127.0.0.6",
+        "1413",
+        "tcd/Series4",
+        mServiceNameVideos,
+        "758623bea591");
+    checkDevice(
+        "TEST Unknown",
+        "127.0.0.7",
+        "1413",
+        "tcd/SeriesQ",
+        mServiceNameRpc,
+        "QQQ129ae7882");
+    /**/
 
     // Don't run for too long.
     new Thread(new Runnable() {
@@ -532,7 +559,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     AlertDialog.Builder alert = new AlertDialog.Builder(this);
     alert.setTitle("Warning!");
     alert.setMessage(message);
-    if (position >= 0 && messageId == R.string.premiere_only) {
+    if (position >= 0 && messageId == R.string.device_unknown) {
       alert.setCancelable(true).setNegativeButton("Cancel", null)
           .setPositiveButton("Try Anyway", new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -589,29 +616,10 @@ public class Discover extends ListActivity implements OnItemClickListener,
     }
   }
 
-  // Separate so that I can pass mock testing data.
   void addDevice(
       final String name, final String addr, final String port,
-      final String platform, final String type, final String tsn) {
-    int messageId = 0;
-
-    if (platform == null) {
-      Utils.log("Unexpected: NULL platform.");
-      messageId = R.string.premiere_only;
-    } else if (platform.startsWith("pc/")
-        || platform.equals("pc")
-        || platform.startsWith("pyTivo")) {
-      Utils.log("Ignoring event for PC platform.");
-      // This is a e.g. a TiVo Desktop or pyTivo share. Exclude it.
-      return;
-    } else if (platform.indexOf("Series4") == -1
-        && platform.indexOf("Series5") == -1
-        // The Pace MG1 reports "tcd/XG1" and works.
-        && platform.indexOf("XG1") == -1) {
-      messageId = R.string.premiere_only;
-    } else if (!mServiceNameRpc.equals(type)) {
-      messageId = R.string.error_net_control;
-    }
+      final String platform, final String type, final String tsn,
+      int messageId) {
 
     final HashMap<String, Object> listItem = new HashMap<String, Object>();
     listItem.put("addr", addr);
@@ -620,9 +628,32 @@ public class Discover extends ListActivity implements OnItemClickListener,
     listItem.put("name", name);
     listItem.put("port", port);
     listItem.put("tsn", tsn);
-    listItem.put("warn_icon", messageId == 0 ? R.drawable.blank
-        : android.R.drawable.ic_dialog_alert);
+    listItem.put(
+        "warn_icon",
+        messageId == 0
+            ? R.drawable.blank
+            : messageId == R.string.device_unknown
+                ? android.R.drawable.ic_menu_help
+                : android.R.drawable.ic_dialog_alert);
     addDeviceMap(listItem);
+  }
+
+  void checkDevice(
+      final String name, final String addr, final String port,
+      final String platform, final String type, final String tsn) {
+    int messageId = 0;
+
+    if (mPatternCompat.matcher(tsn).find()) {
+      if (!mServiceNameRpc.equals(type)) {
+        messageId = R.string.error_net_control;
+      }
+    } else if (mPatternNonCompat.matcher(tsn).find()) {
+      messageId = R.string.device_unsupported;
+    } else {
+      messageId = R.string.device_unknown;
+    }
+
+    addDevice(name, addr, port, platform, type, tsn, messageId);
   }
 
   protected void setProgressSpinner(boolean running) {
