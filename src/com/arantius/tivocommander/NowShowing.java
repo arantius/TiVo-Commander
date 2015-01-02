@@ -274,7 +274,7 @@ public class NowShowing extends Activity {
     // TODO: Do these need to be whiles in case of big padding?
     if (range.activeMin < -30000) {
       Utils.logDebug(String.format(Locale.US,
-          "Adjusting beginning back becase %d < 0", range.activeMin));
+          "Adjusting beginning back becase %d << 0", range.activeMin));
       range.absoluteBegin -= millisHalfHour;
       // Since min must be 0, actually shift everything else forward.
       range.max += millisHalfHour;
@@ -286,7 +286,7 @@ public class NowShowing extends Activity {
     }
     if (range.activeMax > range.max + 30000) {
       Utils.logDebug(String.format(Locale.US,
-          "Adjusting end forward becase %d > %d", range.activeMax, range.max));
+          "Adjusting end forward becase %d >> %d", range.activeMax, range.max));
       range.absoluteEnd += millisHalfHour;
       range.max += millisHalfHour;
     } else if (range.activeMax > range.max) {
