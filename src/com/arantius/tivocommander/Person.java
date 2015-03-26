@@ -233,7 +233,7 @@ public class Person extends ListActivity {
       Date birthdate =
           Utils.parseDateStr(mPerson.path("birthDate").asText());
       SimpleDateFormat dateFormatter =
-          new SimpleDateFormat("MMMMM d, yyyy", Locale.US);
+          new SimpleDateFormat("MMMM d, yyyy", Locale.US);
       dateFormatter.setTimeZone(TimeZone.getDefault());
       Spannable birthdateStr =
           new SpannableString("Birthdate: " + dateFormatter.format(birthdate));
