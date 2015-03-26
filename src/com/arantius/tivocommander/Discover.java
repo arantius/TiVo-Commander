@@ -296,7 +296,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     }
 
     checkDevice(
-        event.getName(),
+        event.getName().replaceAll(" \\(\\d\\)$", ""),
         info.getHostAddresses()[0],
         Integer.toString(info.getPort()),
         info.getPropertyString("platform"),
