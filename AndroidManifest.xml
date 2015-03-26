@@ -21,7 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   android:versionCode="210" android:versionName="21"
   package="com.arantius.tivocommander"
 >
-  <uses-sdk android:targetSdkVersion="18" android:minSdkVersion="10"></uses-sdk>
+  <uses-sdk android:targetSdkVersion="21" android:minSdkVersion="15"></uses-sdk>
   <uses-permission android:name="android.permission.INTERNET"></uses-permission>
   <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"></uses-permission>
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
