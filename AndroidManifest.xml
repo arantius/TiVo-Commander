@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  android:versionCode="210" android:versionName="21"
+  android:versionCode="220" android:versionName="22"
   package="com.arantius.tivocommander"
 >
   <uses-sdk android:targetSdkVersion="21" android:minSdkVersion="15"></uses-sdk>
