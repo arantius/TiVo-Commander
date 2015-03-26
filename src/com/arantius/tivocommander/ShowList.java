@@ -31,7 +31,9 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Pair;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -358,6 +360,10 @@ public abstract class ShowList extends ListActivity implements
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    SharedPreferences sharedPrefs = PreferenceManager
+        .getDefaultSharedPreferences(this);
+    mOrderBy = sharedPrefs.getString("my_shows_order_by", mOrderBy);
   }
 
   @Override
