@@ -55,7 +55,7 @@ public class Credits extends ExploreCommon {
       if (v == null) {
         LayoutInflater vi =
             (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        v = vi.inflate(R.layout.item_credits, null);
+        v = vi.inflate(R.layout.item_credits, parent, false);
       }
 
       ImageView iv = (ImageView) v.findViewById(R.id.person_image);
@@ -84,6 +84,7 @@ public class Credits extends ExploreCommon {
       if (item.has("characterName")) {
         ((TextView) v.findViewById(R.id.person_char)).setText("\""
             + item.path("characterName").asText() + "\"");
+        v.findViewById(R.id.person_char).setVisibility(View.VISIBLE);
       } else {
         v.findViewById(R.id.person_char).setVisibility(View.GONE);
       }
