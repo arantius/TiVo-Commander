@@ -104,7 +104,7 @@ public class Suggestions extends Activity {
   private final MindRpcResponseListener mSuggestionListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          getParent().setProgressBarIndeterminateVisibility(false);
+          Utils.showProgress(getParent(), false);
           mShows =
               response.getBody().path("collection").path(0)
                   .path("correlatedCollectionForCollectionId");
@@ -142,7 +142,7 @@ public class Suggestions extends Activity {
       if (collectionId == null) {
         Utils.toast(this, "Oops; missing collection ID", Toast.LENGTH_SHORT);
       } else {
-        getParent().setProgressBarIndeterminateVisibility(true);
+        Utils.showProgress(getParent(), true);
         SuggestionsSearch request = new SuggestionsSearch(collectionId);
         MindRpc.addRequest(request, mSuggestionListener);
       }

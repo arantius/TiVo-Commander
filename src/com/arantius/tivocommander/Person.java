@@ -173,7 +173,7 @@ public class Person extends ListActivity {
         mPersonCreditsListener);
     mOutstandingRequests++;
 
-    setProgressBarIndeterminateVisibility(true);
+    Utils.showProgress(this, true);
   }
 
   @Override
@@ -192,7 +192,7 @@ public class Person extends ListActivity {
     if (--mOutstandingRequests > 0) {
       return;
     }
-    setProgressBarIndeterminateVisibility(false);
+    Utils.showProgress(this, false);
 
     if (mPerson == null || mCredits == null) {
       setContentView(R.layout.no_results);

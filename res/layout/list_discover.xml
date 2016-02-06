@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent" android:layout_height="fill_parent"
-  android:orientation="vertical"
+  android:orientation="vertical" android:paddingTop="6dip"
 >
   <Button android:text="Help!" android:onClick="showHelp"
     android:layout_width="fill_parent" android:layout_height="wrap_content" />

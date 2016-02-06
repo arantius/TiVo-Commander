@@ -64,7 +64,7 @@ public class Upcoming extends ListActivity implements OnItemClickListener,
   private final MindRpcResponseListener mUpcomingListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          setProgressBarIndeterminateVisibility(false);
+          Utils.showProgress(Upcoming.this, false);
           findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
 
           mShows = response.getBody().path("offer");
@@ -154,7 +154,7 @@ public class Upcoming extends ListActivity implements OnItemClickListener,
       if (collectionId == null) {
         Utils.toast(this, "Oops; missing collection ID", Toast.LENGTH_SHORT);
       } else {
-        setProgressBarIndeterminateVisibility(true);
+        Utils.showProgress(Upcoming.this, true);
         UpcomingSearch request = new UpcomingSearch(collectionId);
         MindRpc.addRequest(request, mUpcomingListener);
       }
@@ -221,7 +221,7 @@ public class Upcoming extends ListActivity implements OnItemClickListener,
               intent.putExtra("contentId", show.path("contentId").asText());
               startActivityForResult(intent, 1);
             } else if ("Don't Record".equals(action)) {
-              Upcoming.this.setProgressBarIndeterminateVisibility(true);
+              Utils.showProgress(Upcoming.this, true);
               final String recordingId =
                   show.path("recordingForOfferId")
                       .path(0).path("recordingId").asText();

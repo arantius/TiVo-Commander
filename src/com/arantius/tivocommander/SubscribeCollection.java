@@ -258,7 +258,7 @@ public class SubscribeCollection extends SubscribeBase {
   }
 
   private void handleConflicts(JsonNode conflicts) {
-    setProgressBarIndeterminateVisibility(false);
+    Utils.showProgress(this, false);
     setContentView(R.layout.subscribe_conflicts);
 
     if (mPriority == 1) {

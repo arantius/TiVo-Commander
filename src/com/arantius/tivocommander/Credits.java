@@ -118,7 +118,7 @@ public class Credits extends ExploreCommon {
 
   @Override
   protected void onContent() {
-    getParent().setProgressBarIndeterminateVisibility(false);
+    Utils.showProgress(getParent(), false);
 
     mCredits = mContent.path("credit");
 

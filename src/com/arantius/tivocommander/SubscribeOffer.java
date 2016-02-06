@@ -18,7 +18,7 @@ public class SubscribeOffer extends SubscribeBase {
         .setOffer(bundle.getString("offerId"), bundle.getString("contentId"));
     subscribeRequestCommon(request);
 
-    setProgressBarIndeterminateVisibility(true);
+    Utils.showProgress(this, true);
     MindRpc.addRequest(request, new MindRpcResponseListener() {
       public void onResponse(MindRpcResponse response) {
         finish();

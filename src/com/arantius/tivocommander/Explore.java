@@ -70,7 +70,7 @@ public class Explore extends ExploreCommon {
   private final MindRpcResponseListener mDeleteListener =
       new MindRpcResponseListener() {
         public void onResponse(MindRpcResponse response) {
-          getParent().setProgressBarIndeterminateVisibility(false);
+          Utils.showProgress(getParent(), false);
           if (!("success".equals(response.getRespType()))) {
             Utils.logError("Delete attempt failed!");
             Utils.toast(Explore.this, "Delete failed!.", Toast.LENGTH_SHORT);
@@ -122,7 +122,7 @@ public class Explore extends ExploreCommon {
 
   public void doDelete(View v) {
     // FIXME: Fails when deleting the currently-playing show.
-    getParent().setProgressBarIndeterminateVisibility(true);
+    Utils.showProgress(getParent(), true);
     String newState = "deleted";
     if (v.getId() == R.id.explore_btn_undelete) {
       newState = "complete";
@@ -145,12 +145,12 @@ public class Explore extends ExploreCommon {
 
             String label = mChoices.get(position);
             if (RecordActions.DONT_RECORD.toString().equals(label)) {
-              getParent().setProgressBarIndeterminateVisibility(true);
+              Utils.showProgress(getParent(), true);
               MindRpc.addRequest(
                   new RecordingUpdate(mRecordingId, "cancelled"),
                   new MindRpcResponseListener() {
                     public void onResponse(MindRpcResponse response) {
-                      getParent().setProgressBarIndeterminateVisibility(false);
+                      Utils.showProgress(getParent(), false);
                       ImageView iconSubType =
                           (ImageView) findViewById(R.id.icon_sub_type);
                       TextView textSubType =
@@ -166,11 +166,11 @@ public class Explore extends ExploreCommon {
               intent.putExtra("offerId", mOfferId);
               startActivity(intent);
             } else if (RecordActions.RECORD_STOP.toString().equals(label)) {
-              getParent().setProgressBarIndeterminateVisibility(true);
+              Utils.showProgress(getParent(), true);
               MindRpc.addRequest(new RecordingUpdate(mRecordingId, "complete"),
                   new MindRpcResponseListener() {
                     public void onResponse(MindRpcResponse response) {
-                      getParent().setProgressBarIndeterminateVisibility(false);
+                      Utils.showProgress(getParent(), false);
                       mRecordingId = null;
                     }
                   });
@@ -181,11 +181,11 @@ public class Explore extends ExploreCommon {
               startActivity(intent);
               // TODO: Start for result, get subscription ID.
             } else if (RecordActions.SP_CANCEL.toString().equals(label)) {
-              getParent().setProgressBarIndeterminateVisibility(true);
+              Utils.showProgress(getParent(), true);
               MindRpc.addRequest(new Unsubscribe(mSubscriptionId),
                   new MindRpcResponseListener() {
                     public void onResponse(MindRpcResponse response) {
-                      getParent().setProgressBarIndeterminateVisibility(false);
+                      Utils.showProgress(getParent(), false);
                       mSubscriptionId = null;
                     }
                   });
@@ -221,7 +221,7 @@ public class Explore extends ExploreCommon {
       return;
     }
 
-    getParent().setProgressBarIndeterminateVisibility(false);
+    Utils.showProgress(getParent(), false);
 
     if (mRecordingId == null) {
       for (JsonNode recording : mContent.path("recordingForContentId")) {

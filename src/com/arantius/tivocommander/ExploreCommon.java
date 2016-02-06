@@ -108,7 +108,7 @@ abstract public class ExploreCommon extends Activity {
       return;
     }
 
-    getParent().setProgressBarIndeterminateVisibility(true);
+    Utils.showProgress(getParent(), true);
     MindRpcRequest req = getRequest();
     MindRpc.addRequest(req, mListener);
   }

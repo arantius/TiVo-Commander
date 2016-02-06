@@ -413,7 +413,7 @@ public abstract class ShowList extends ListActivity implements
 
   protected void setProgressIndicator(int change) {
     mRequestCount += change;
-    setProgressBarIndeterminateVisibility(mRequestCount > 0);
+    Utils.showProgress(this, mRequestCount > 0);
   }
 
   protected void setRefreshResult() {

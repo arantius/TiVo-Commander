@@ -253,11 +253,11 @@ public class SeasonPass extends ListActivity implements
       startActivity(intent);
       break;
     case 1:
-      setProgressBarIndeterminateVisibility(true);
+      Utils.showProgress(SeasonPass.this, true);
       MindRpc.addRequest(new Unsubscribe(sub.path("subscriptionId").asText()),
           new MindRpcResponseListener() {
             public void onResponse(MindRpcResponse response) {
-              setProgressBarIndeterminateVisibility(false);
+              Utils.showProgress(SeasonPass.this, false);
               mSubscriptionData.remove(mLongClickPosition);
               mSubscriptionIds.remove(mLongClickPosition);
               mSubscriptionStatus.remove(mLongClickPosition);

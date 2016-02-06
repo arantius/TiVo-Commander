@@ -44,6 +44,10 @@ import android.os.Build;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -305,6 +309,25 @@ public class Utils {
     }
     logError("When parsing:\n" + json);
     return null;
+  }
+
+  public final static void showProgress(Activity activity, boolean show) {
+    ViewGroup vg = (ViewGroup) activity.findViewById(android.R.id.content);
+    ProgressBar p = (ProgressBar) vg.findViewById(R.id.global_progress);
+    if (p == null) {
+      log("Creating missing progress bar.");
+      p = new ProgressBar(
+          activity, null, android.R.attr.progressBarStyleHorizontal);
+      p.setId(R.id.global_progress);
+      p.setIndeterminate(true);
+      p.setLayoutParams(new LinearLayout.LayoutParams(
+          LinearLayout.LayoutParams.MATCH_PARENT,
+          LinearLayout.LayoutParams.WRAP_CONTENT));
+      vg.addView(p, 0);
+    }
+    log("For activity " + activity.getClass().getName()
+        + " showing progress: " + show);
+    p.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
   public final static String stringifyToJson(Object obj) {

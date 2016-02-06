@@ -667,7 +667,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
   }
 
   protected void setProgressSpinner(boolean running) {
-    setProgressBarIndeterminateVisibility(running);
+    Utils.showProgress(this, running);
     View refreshButton = findViewById(R.id.refresh_button);
     if (refreshButton != null) {
       refreshButton.setEnabled(!running);

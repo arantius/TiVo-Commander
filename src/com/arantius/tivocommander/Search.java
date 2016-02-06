@@ -132,7 +132,7 @@ public class Search extends ListActivity {
       }
       runOnUiThread(new Runnable() {
         public void run() {
-          setProgressBarIndeterminateVisibility(true);
+          Utils.showProgress(Search.this, true);
         }
       });
 
@@ -187,7 +187,7 @@ public class Search extends ListActivity {
           }
           mAdapter.notifyDataSetChanged();
 
-          setProgressBarIndeterminateVisibility(false);
+          Utils.showProgress(Search.this, false);
         }
       };
 
