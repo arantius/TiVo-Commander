@@ -396,11 +396,26 @@ public enum MindRpc {
     stopThreads();
     disconnect();
 
-    if (!connect(connectActivity)) {
-      settingsError(mOriginActivity, R.string.error_connect, Toast.LENGTH_LONG);
-      connectActivity.finish();
-      connectActivity.overridePendingTransition(0, 0);
-      return;
+    // Try for several seconds to connect, in case e.g. disable-wifi-during
+    // -sleep is enabled, thus the connection is being established just as
+    // we're being shown, e.g. if we were the last active app being resumed.
+    int connectTries = 0;
+    while (true) {
+      connectTries += 1;
+      if (connectTries > 60) {
+        settingsError(mOriginActivity, R.string.error_connect, Toast.LENGTH_LONG);
+        connectActivity.finish();
+        connectActivity.overridePendingTransition(0, 0);
+        return;
+      }
+      if (connect(connectActivity)) {
+        break;
+      }
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        // Ignore.
+      }
     }
 
     mInputThread = new MindRpcInput(mInputStream);
