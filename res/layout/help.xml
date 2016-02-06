@@ -37,7 +37,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       android:drawablePadding="4dp"
       android:visibility="gone" />
 
-    <TextView android:text="Is your TiVo is not found?"
+    <TextView android:text="Is your TiVo not found?"
       android:layout_width="wrap_content" android:layout_height="wrap_content"
       android:layout_marginBottom="2dip" android:textColor="#EEEEEE" />
     <TextView
