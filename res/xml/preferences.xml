@@ -25,6 +25,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <PreferenceCategory android:title="Advanced"
     android:summary="You should not change these."
   >
+    <CheckBoxPreference android:title="Skip compatibility checks"
+        android:key="skip_compat" android:defaultValue="false" />
     <CheckBoxPreference android:title="Verbose debug logging"
         android:key="debug_log" android:defaultValue="false" />
   </PreferenceCategory>

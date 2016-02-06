@@ -37,12 +37,14 @@ import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -74,6 +76,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
           + "746|748|750|758|"  // Series 4 DVRs
           + "A90|A92|A93|"  // Series 4 non-DVRs (e.g. Mini)
           + "840|846|848|D18"  // Series 5 DVRs
+          + "849"  // Series 6 DVRs (i.e. Bolt)
           + ")");
   private final Pattern mPatternNonCompat = Pattern.compile(
       "^("
@@ -559,7 +562,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
     AlertDialog.Builder alert = new AlertDialog.Builder(this);
     alert.setTitle("Warning!");
     alert.setMessage(message);
-    if (position >= 0 && messageId == R.string.device_unknown) {
+    if (position >= 0 && messageIdIsMinor(messageId)) {
       alert.setCancelable(true).setNegativeButton("Cancel", null)
           .setPositiveButton("Try Anyway", new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -632,7 +635,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
         "warn_icon",
         messageId == 0
             ? R.drawable.blank
-            : messageId == R.string.device_unknown
+            : messageIdIsMinor(messageId)
                 ? android.R.drawable.ic_menu_help
                 : android.R.drawable.ic_dialog_alert);
     addDeviceMap(listItem);
@@ -643,10 +646,15 @@ public class Discover extends ListActivity implements OnItemClickListener,
       final String platform, final String type, final String tsn) {
     int messageId = 0;
 
+    SharedPreferences prefs
+        = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
     if (mPatternCompat.matcher(tsn).find()) {
       if (!mServiceNameRpc.equals(type)) {
         messageId = R.string.error_net_control;
       }
+    } else if (prefs.getBoolean("skip_compat", false)) {
+      messageId = R.string.device_compat_skip;
     } else if (mPatternNonCompat.matcher(tsn).find()) {
       messageId = R.string.device_unsupported;
     } else {
@@ -662,5 +670,10 @@ public class Discover extends ListActivity implements OnItemClickListener,
     if (refreshButton != null) {
       refreshButton.setEnabled(!running);
     }
+  }
+
+  private boolean messageIdIsMinor(int messageId) {
+    return (messageId == R.string.device_unknown
+        || messageId == R.string.device_compat_skip);
   }
 }

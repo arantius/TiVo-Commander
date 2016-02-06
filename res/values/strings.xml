@@ -45,8 +45,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
   <string name="error_get_wifi_addr">Could not access wifi, is it enabled?</string>
   <string name="error_multicast">Device search failed.  Add a custom device.</string>
   <string name="error_net_control">You need to enable network control and/or video sharing to connect to this TiVo.  Check the help screen.</string>
-  <string name="device_unsupported">This app designed only to work with a TiVo branded device, of the Premiere or Roamio model line.\n\nThe selected device is incompatible.</string>
-  <string name="device_unknown">This app designed only to work with a TiVo branded device, of the Premiere or Roamio model line.\n\nThe selected device is unknown, and is very likely incompatible.</string>
+  <string name="device_unsupported">This app designed only to work with a TiVo branded device, of the Premiere, Roamio, Bolt, or newer model line.\n\nThe selected device is incompatible.</string>
+  <string name="device_unknown">This app designed only to work with a TiVo branded device, of the Premiere, Roamio, Bolt, or newer line.\n\nThe selected device is unknown, and is very likely incompatible.</string>
+  <string name="device_compat_skip">WARNING: device compatibility checks skipped.  This device may not function correctly.</string>
   <string name="sub_season_pass">You have a Season Pass.</string>
   <string name="sub_single_offer">This show will be recorded.</string>
   <string name="sub_wishlist">You have a Wishlist.</string>
