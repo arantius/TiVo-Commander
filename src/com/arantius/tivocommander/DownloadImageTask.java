@@ -35,6 +35,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -49,77 +50,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-  private final static long MAX_CACHE_SIZE = 8 * 1024 * 1024; // 8Mb
-
   private final Context mContext;
   private final ImageView mImageView;
   private final View mProgressView;
   private final TextView mTextView;
-
-  private final ResponseCache mResponseCache = new ResponseCache() {
-    // Thanks to: http://pivotallabs.com/users/tyler/blog/articles/1754
-    @Override
-    public CacheResponse get(URI uri, String rqstMethod,
-        Map<String, List<String>> rqstHeaders) throws IOException {
-      final File file =
-          new File(mContext.getCacheDir(), java.net.URLEncoder.encode(
-              uri.toString(), "UTF-8"));
-      if (file.exists()) {
-        return new CacheResponse() {
-          @Override
-          public InputStream getBody() throws IOException {
-            file.setLastModified(System.currentTimeMillis());
-            return new FileInputStream(file);
-          }
-
-          @Override
-          public Map<String, List<String>> getHeaders() throws IOException {
-            return null;
-          }
-        };
-      } else {
-        return null;
-      }
-    }
-
-    @Override
-    public CacheRequest put(URI uri, URLConnection conn) throws IOException {
-      final File file =
-          new File(mContext.getCacheDir(), java.net.URLEncoder.encode(conn
-              .getURL().toString(), "UTF-8"));
-      return new CacheRequest() {
-        @Override
-        public void abort() {
-          file.delete();
-        }
-
-        @Override
-        public OutputStream getBody() throws IOException {
-          // Maintain a maximum cache size; 5% garbage collect.
-          if (new Random().nextDouble() >= 0.95) {
-            File[] files = mContext.getCacheDir().listFiles();
-
-            Arrays.sort(files, new Comparator<File>() {
-              public int compare(File f1, File f2) {
-                return Long.valueOf(f1.lastModified()).compareTo(
-                    f2.lastModified());
-              }
-            });
-
-            long cacheSize = 0;
-            for (File file : files) {
-              cacheSize += file.length();
-              if (cacheSize > MAX_CACHE_SIZE) {
-                file.delete();
-              }
-            }
-          }
-
-          return new FileOutputStream(file);
-        }
-      };
-    }
-  };
 
   public DownloadImageTask(Context context, ImageView imageView,
       View progressView) {
@@ -127,7 +61,6 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     mImageView = imageView;
     mProgressView = progressView;
     mTextView = null;
-    ResponseCache.setDefault(mResponseCache);
   }
 
   public DownloadImageTask(Context context, TextView textView) {
@@ -135,7 +68,6 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     mImageView = null;
     mProgressView = null;
     mTextView = textView;
-    ResponseCache.setDefault(mResponseCache);
   }
 
   @Override

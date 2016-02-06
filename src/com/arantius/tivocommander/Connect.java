@@ -19,11 +19,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.http.HttpResponseCache;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -56,6 +59,19 @@ public class Connect extends Activity {
       intent.setData(Uri.parse("market://details?id=com.arantius.tivocommander"));
       startActivity(intent);
       finish();
+    }
+
+    // However we're connecting, now is a good time to (re-)start caching.
+    HttpResponseCache cache = HttpResponseCache.getInstalled();
+    if (cache != null) {
+      cache.flush();
+    }
+    try {
+      File httpCacheDir = new File(this.getCacheDir(), "http");
+      long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
+      HttpResponseCache.install(httpCacheDir, httpCacheSize);
+    } catch (IOException e) {
+      Utils.logError("HTTP response cache installation failed:", e);
     }
 
     // Start on a separate thread so this UI shows immediately.
