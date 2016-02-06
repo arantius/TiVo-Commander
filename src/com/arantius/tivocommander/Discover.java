@@ -490,7 +490,9 @@ public class Discover extends ListActivity implements OnItemClickListener,
     Integer oldIndex = null;
     for (HashMap<String, Object> host : mHosts) {
       if (name.equals(host.get("name")) && addr.equals(host.get("addr"))) {
-        if ((Integer) host.get("warn_icon") != blank && warnIcon == blank) {
+        if (((Integer) host.get("warn_icon") != blank && warnIcon == blank)
+            || (warnIcon == android.R.drawable.ic_menu_recent_history)
+        ) {
           oldIndex = mHosts.indexOf(host);
           listItem.put("deviceId", host.get("deviceId"));
           break;
