@@ -86,6 +86,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
     <Button android:text="Send Error Report" android:layout_margin="20dp"
       android:layout_width="fill_parent" android:layout_height="wrap_content"
-      android:layout_gravity="center" android:onClick="sendReport" />
+      android:layout_gravity="center" android:onClick="sendReport"
+      android:visibility="gone" />
   </LinearLayout>
 </ScrollView>
