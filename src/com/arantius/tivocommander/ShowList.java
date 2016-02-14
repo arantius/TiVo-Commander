@@ -179,6 +179,13 @@ public abstract class ShowList extends ListActivity implements
         final int iconId = getIconForItem(item);
         ((ImageView) v.findViewById(R.id.show_icon))
             .setImageDrawable(getResources().getDrawable(iconId));
+
+        final String subTitle = getSubTitleFromItem(item);
+        if (subTitle != null && subTitle != "") {
+          TextView subTitleView = (TextView) v.findViewById(R.id.sub_title);
+          subTitleView.setText(subTitle);
+          subTitleView.setVisibility(View.VISIBLE);
+        }
       } else {
         // Otherwise give a loading indicator.
         v = vi.inflate(R.layout.progress, parent, false);
@@ -264,6 +271,10 @@ public abstract class ShowList extends ListActivity implements
   protected abstract JsonNode getRecordingFromItem(JsonNode item);
 
   protected abstract void startRequest();
+
+  protected String getSubTitleFromItem(JsonNode item) {
+    return null;
+  };
 
   protected void finishWithRefresh() {
     setRefreshResult();

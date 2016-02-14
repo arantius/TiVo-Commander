@@ -54,6 +54,10 @@ public class ToDo extends ShowList {
     return R.drawable.blank;
   }
 
+  protected String getSubTitleFromItem(JsonNode item) {
+    return item.path("subtitle").asText();
+  };
+
   protected Pair<ArrayList<String>, ArrayList<Integer>> getLongPressChoices(
       JsonNode item) {
     final ArrayList<String> choices = new ArrayList<String>();
