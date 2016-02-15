@@ -72,6 +72,20 @@ public class Database extends SQLiteOpenHelper {
     return device;
   }
 
+  public Device getDeviceByTsn(final String tsn) {
+    SQLiteDatabase db = this.getReadableDatabase();
+    Cursor cursor = db.rawQuery(
+        QUERY_SELECT_DEVICE + " WHERE tsn = ?",
+        new String[] { tsn });
+
+    Device device = null;
+    if (cursor.moveToFirst()) {
+      device = deviceFromCursor(cursor);
+    }
+    db.close();
+    return device;
+  }
+
   public ArrayList<Device> getDevices() {
     ArrayList<Device> devices = new ArrayList<Device>();
 
@@ -90,7 +104,7 @@ public class Database extends SQLiteOpenHelper {
     return devices;
   }
 
-  public Device getLastDevice() {
+  public Device getLastUsedDevice() {
     SQLiteDatabase db = this.getReadableDatabase();
     Cursor cursor = db.rawQuery(
         QUERY_SELECT_DEVICE + " ORDER BY used_time DESC LIMIT 1",

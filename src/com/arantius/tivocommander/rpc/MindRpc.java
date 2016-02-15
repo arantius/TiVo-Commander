@@ -140,7 +140,7 @@ public enum MindRpc {
 
     final Database db = new Database(activity);
     db.portLegacySettings(activity);
-    mTivoDevice = db.getLastDevice();
+    mTivoDevice = db.getLastUsedDevice();
 
     int error = 0;
     if (mTivoDevice == null) {

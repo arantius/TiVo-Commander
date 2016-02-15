@@ -65,6 +65,8 @@ import com.arantius.tivocommander.rpc.MindRpc;
 
 public class Discover extends ListActivity implements OnItemClickListener,
     ServiceListener, OnItemLongClickListener {
+  private static Database db;
+
   private TextView mEmpty;
   private SimpleAdapter mHostAdapter;
   private volatile ArrayList<HashMap<String, Object>> mHosts =
@@ -142,7 +144,6 @@ public class Discover extends ListActivity implements OnItemClickListener,
               device.port = 1413;
             }
 
-            Database db = new Database(Discover.this);
             db.saveDevice(device);
             db.switchDevice(device);
 
@@ -177,7 +178,6 @@ public class Discover extends ListActivity implements OnItemClickListener,
   public void onItemClickResume(int position) {
     final HashMap<String, Object> item = mHosts.get(position);
 
-    final Database db = new Database(Discover.this);
     final Long deviceId = (Long) item.get("deviceId");
     if (deviceId != null) {
       final Device clickedDevice = db.getDevice(deviceId);
@@ -239,7 +239,6 @@ public class Discover extends ListActivity implements OnItemClickListener,
       return false;
     }
 
-    final Database db = new Database(this);
     final Device device = db.getDevice(deviceId);
     final ArrayList<String> choices = new ArrayList<String>();
     choices.add("Edit");
@@ -318,7 +317,6 @@ public class Discover extends ListActivity implements OnItemClickListener,
     mHostAdapter.notifyDataSetChanged();
 
     // Add stored (i.e. custom) devices.
-    final Database db = new Database(this);
     for (Device device : db.getDevices()) {
       final HashMap<String, Object> listItem = new HashMap<String, Object>();
       listItem.put("addr", device.addr);
@@ -524,6 +522,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     MindRpc.disconnect();
+    db = new Database(this);
 
     setTitle("TiVo Device Search");
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -625,7 +624,6 @@ public class Discover extends ListActivity implements OnItemClickListener,
       final String name, final String addr, final String port,
       final String platform, final String type, final String tsn,
       int messageId) {
-
     final HashMap<String, Object> listItem = new HashMap<String, Object>();
     listItem.put("addr", addr);
     listItem.put("deviceId", null);
@@ -641,6 +639,15 @@ public class Discover extends ListActivity implements OnItemClickListener,
                 ? android.R.drawable.ic_menu_help
                 : android.R.drawable.ic_dialog_alert);
     addDeviceMap(listItem);
+
+    Device device = db.getDeviceByTsn(tsn);
+    if (device != null && device.addr != addr) {
+      // We've discovered a device already listed in the DB, and its address
+      // has changed (DHCP!!! *shake fist*).  Update the DB so that future
+      // connections work as expected without forcing discovery.
+      device.addr = addr;
+      db.saveDevice(device);
+    }
   }
 
   void checkDevice(
