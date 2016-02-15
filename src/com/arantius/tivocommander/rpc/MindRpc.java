@@ -96,6 +96,7 @@ public enum MindRpc {
   }
 
   public static Boolean mBodyIsAuthed = false;
+  public static volatile Boolean mConnectInterrupted = false;
   public static Device mTivoDevice;
 
   private static DataInputStream mInputStream;
@@ -396,16 +397,14 @@ public enum MindRpc {
     stopThreads();
     disconnect();
 
-    // Try for several seconds to connect, in case e.g. disable-wifi-during
-    // -sleep is enabled, thus the connection is being established just as
-    // we're being shown, e.g. if we were the last active app being resumed.
-    int connectTries = 0;
+    // Try to connect in an infinite loop.  In case e.g. we need to wait for
+    // WiFi to resume from sleep to be successful.  Only the Connect activity
+    // calls init3(), and it is responsible for terminating this thread if
+    // it takes too long.
+    mConnectInterrupted = false;
     while (true) {
-      connectTries += 1;
-      if (connectTries > 60) {
-        settingsError(mOriginActivity, R.string.error_connect, Toast.LENGTH_LONG);
-        connectActivity.finish();
-        connectActivity.overridePendingTransition(0, 0);
+      if (mConnectInterrupted) {
+        Utils.log("MindRpc.init3() interrupting connect attempt.");
         return;
       }
       if (connect(connectActivity)) {

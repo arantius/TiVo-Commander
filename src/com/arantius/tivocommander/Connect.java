@@ -23,12 +23,33 @@ import java.io.File;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
+import android.view.View;
 
 import com.arantius.tivocommander.rpc.MindRpc;
 
 public class Connect extends Activity {
+  private static Thread mConnectThread;
+  private static Thread mLimitThread;
+  private static Thread mShowCancelThread;
+
+  public void doCancel(View v) {
+    stopThreads();
+    Intent intent = new Intent(getBaseContext(), Discover.class);
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    startActivity(intent);
+    finish();
+  }
+
+  private void stopThreads() {
+    MindRpc.mConnectInterrupted = true;
+    if (mConnectThread != null) mConnectThread.interrupt();
+    if (mLimitThread != null) mLimitThread.interrupt();
+    if (mShowCancelThread != null) mShowCancelThread.interrupt();
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -61,10 +82,51 @@ public class Connect extends Activity {
     }
 
     // Start on a separate thread so this UI shows immediately.
-    new Thread(new Runnable() {
+    mConnectThread = new Thread(new Runnable() {
       public void run() {
         MindRpc.init3(Connect.this);
+        stopThreads();
       }
-    }).start();
+    });
+
+    // A second thread limits the infinite loop built in to the above.
+    mLimitThread = new Thread(new Runnable() {
+      public void run() {
+        try {
+          Thread.sleep(30000);
+        } catch (InterruptedException e) {
+          return;
+        }
+
+        // We were not interrupted, so we ran too long.  Error.
+        doCancel(null);
+        Connect.this.overridePendingTransition(0, 0);
+      }
+    });
+
+    // While a third allows the user to cancel even sooner.
+    mShowCancelThread = new Thread(new Runnable() {
+      public void run() {
+        try {
+          Thread.sleep(10000);
+        } catch (InterruptedException e) {
+          return;
+        }
+
+        runOnUiThread(new Runnable() {
+          public void run() {
+
+            View b = findViewById(R.id.cancel);
+            if (b != null) {
+              b.setVisibility(View.VISIBLE);
+            }
+          }
+        });
+      }
+    });
+
+    mConnectThread.start();
+    mLimitThread.start();
+    mShowCancelThread.start();
   }
 }
