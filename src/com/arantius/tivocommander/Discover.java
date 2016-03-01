@@ -77,7 +77,7 @@ public class Discover extends ListActivity implements OnItemClickListener,
       "^("
           + "746|748|750|758|"  // Series 4 DVRs
           + "A90|A92|A93|"  // Series 4 non-DVRs (e.g. Mini)
-          + "840|846|848|D18"  // Series 5 DVRs
+          + "840|846|848|D18|"  // Series 5 DVRs
           + "849"  // Series 6 DVRs (i.e. Bolt)
           + ")");
   private final Pattern mPatternNonCompat = Pattern.compile(
