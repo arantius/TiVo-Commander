@@ -144,13 +144,24 @@ public abstract class ShowList extends ListActivity implements
         }
         ((TextView) v.findViewById(R.id.show_channel)).setText(channelStr);
 
+        TextView episodeNumView = (TextView) v.findViewById(R.id.episode_num);
+        episodeNumView.setVisibility(View.GONE);
         if (0 == folderItemCount && item != mDeletedItem) {
-          if (recording.path("episodic").asBoolean()
-              && !recording.path("repeat").asBoolean()) {
-            v.findViewById(R.id.badge_new).setVisibility(View.VISIBLE);
-          }
           if (recording.has("hdtv") && recording.path("hdtv").asBoolean()) {
             v.findViewById(R.id.badge_hd).setVisibility(View.VISIBLE);
+          }
+          if (recording.path("episodic").asBoolean()) {
+            if (!recording.path("repeat").asBoolean()) {
+              v.findViewById(R.id.badge_new).setVisibility(View.VISIBLE);
+            }
+
+            Integer seasonNum = recording.path("seasonNumber").asInt();
+            Integer episodeNum = recording.path("episodeNum").path(0).asInt();
+            if (seasonNum > 0 && episodeNum > 0) {
+              episodeNumView.setVisibility(View.VISIBLE);
+              episodeNumView.setText(String.format(
+                  Locale.ENGLISH, "S%02dE%02d", seasonNum, episodeNum));
+            }
           }
         }
 
@@ -164,11 +175,10 @@ public abstract class ShowList extends ListActivity implements
             || "1970".equals(startTimeStr.substring(0, 4))) {
           v.findViewById(R.id.show_time).setVisibility(View.GONE);
         } else {
-          Date startTime =
-              Utils.parseDateTimeStr(startTimeStr);
+          Date startTime = Utils.parseDateTimeStr(startTimeStr);
           String timeFormat = "EEE M/d";
           if (mContext instanceof ToDo) {
-            timeFormat += " h:mm aa";
+            timeFormat += "\nh:mm aa";
           }
           SimpleDateFormat dateFormatter =
               new SimpleDateFormat(timeFormat, Locale.US);
@@ -181,10 +191,12 @@ public abstract class ShowList extends ListActivity implements
             .setImageDrawable(getResources().getDrawable(iconId));
 
         final String subTitle = getSubTitleFromItem(item);
+        TextView subTitleView = (TextView) v.findViewById(R.id.sub_title);
         if (subTitle != null && subTitle != "") {
-          TextView subTitleView = (TextView) v.findViewById(R.id.sub_title);
           subTitleView.setText(subTitle);
           subTitleView.setVisibility(View.VISIBLE);
+        } else {
+          subTitleView.setVisibility(View.GONE);
         }
       } else {
         // Otherwise give a loading indicator.

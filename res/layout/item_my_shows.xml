@@ -58,21 +58,29 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     >
       <ImageView android:id="@+id/badge_new"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:src="@drawable/badge_new" android:paddingRight="6dip"
-        android:visibility="gone" android:layout_gravity="center_vertical" />
+        android:src="@drawable/badge_new"
+        android:paddingRight="6dip" android:paddingTop="3dip"
+        android:layout_gravity="top" android:visibility="gone" />
       <ImageView android:id="@+id/badge_hd"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:src="@drawable/badge_hd" android:paddingRight="6dip"
-        android:visibility="gone" android:layout_gravity="center_vertical" />
+        android:src="@drawable/badge_hd"
+        android:paddingRight="6dip" android:paddingTop="3dip"
+        android:layout_gravity="top" android:visibility="gone" />
       <TextView android:id="@+id/show_channel"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_width="0dp" android:layout_height="wrap_content"
         android:focusable="false" android:focusableInTouchMode="false"
-        android:gravity="left" android:layout_weight="1" android:text="000 WXYZ"
+        android:layout_gravity="top" android:layout_weight="1" android:text="000 WXYZ"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+      <TextView android:id="@+id/episode_num"
+        android:layout_width="60dip" android:layout_height="wrap_content"
+        android:focusable="false" android:focusableInTouchMode="false"
+        android:layout_gravity="top" android:text="S01E01"
         android:textAppearance="?android:attr/textAppearanceSmall" />
       <TextView android:id="@+id/show_time"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_width="80dip" android:layout_height="wrap_content"
         android:focusable="false" android:focusableInTouchMode="false"
-        android:gravity="right" android:layout_weight="1" android:text="Day 00/00"
+        android:layout_gravity="center_vertical" android:text="Day 00/00"
+        android:gravity="right"
         android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
   </LinearLayout>
