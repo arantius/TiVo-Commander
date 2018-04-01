@@ -19,26 +19,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 package com.arantius.tivocommander;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.CacheRequest;
-import java.net.CacheResponse;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ResponseCache;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 import android.content.Context;
 import android.graphics.Bitmap;
