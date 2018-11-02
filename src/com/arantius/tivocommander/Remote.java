@@ -107,6 +107,7 @@ public class Remote extends Activity implements OnClickListener {
       case R.id.remote_liveTv:      eventStr = "liveTv"; break;
       case R.id.remote_info:        eventStr = "info"; break;
       case R.id.remote_zoom:        eventStr = "zoom"; break;
+      case R.id.remote_back:        eventStr = "back"; break;
       case R.id.remote_guide:       eventStr = "guide"; break;
       case R.id.remote_up:          eventStr = "up"; break;
       case R.id.remote_down:        eventStr = "down"; break;
